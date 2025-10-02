@@ -1,0 +1,24 @@
+services:
+  frontend:
+    container_name: aka-frontend
+    image: ${REGISTRY}/frontend:latest
+    restart: always
+    networks:
+      - aka-network
+    profiles:
+      - frontend
+      - deploy
+
+  cloudflare-tunnel:
+    container_name: aka-cloudflare
+    image: cloudflare/cloudflared
+    restart: unless-stopped
+    command: tunnel run
+    environment:
+      - TUNNEL_TOKEN=${CLOUDFLARE_TUNNEL_TOKEN}
+    networks:
+      - aka-network
+
+networks:
+  aka-network:
+    external: true

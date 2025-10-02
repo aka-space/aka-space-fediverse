@@ -1,0 +1,9 @@
+services:
+  frontend:
+    image: ${REGISTRY}/frontend:latest
+    build:
+      context: frontend
+      dockerfile: Dockerfile
+    profiles:
+      - frontend
+      - build
