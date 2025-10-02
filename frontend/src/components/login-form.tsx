@@ -1,5 +1,4 @@
 'use client';
-
 import { cn } from '@/lib/utils';
 import { Button } from '@/components/ui/button';
 import {
@@ -12,6 +11,7 @@ import {
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { useState } from 'react';
+import Link from 'next/link';
 
 export function LoginForm({
     className,
@@ -67,6 +67,15 @@ export function LoginForm({
                                     </svg>
                                     Login with Google
                                 </Button>
+                                <div className="text-center text-sm mt-1.5">
+                                    Don&apos;t have an account?{' '}
+                                    <Link
+                                        href="#"
+                                        className="underline underline-offset-4"
+                                    >
+                                        Register
+                                    </Link>
+                                </div>
                             </div>
                         </div>
                     </form>
