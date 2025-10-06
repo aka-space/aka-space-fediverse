@@ -10,6 +10,7 @@ import {
     DropdownMenuTrigger,
 } from '../ui/dropdown-menu';
 import { type User } from './HeaderUserInfo';
+import Link from 'next/link';
 
 const UserDropdownMenu: React.FC<{ user: User }> = ({ user }) => (
     <DropdownMenu>
@@ -28,7 +29,9 @@ const UserDropdownMenu: React.FC<{ user: User }> = ({ user }) => (
                     {user.email}
                 </DropdownMenuLabel>
                 <DropdownMenuItem>Profile</DropdownMenuItem>
-                <DropdownMenuItem>My Posts</DropdownMenuItem>
+                <DropdownMenuItem>
+                    <Link href="/my-posts">My Posts</Link>
+                </DropdownMenuItem>
                 <DropdownMenuItem>Settings</DropdownMenuItem>
             </DropdownMenuGroup>
             <DropdownMenuSeparator />
