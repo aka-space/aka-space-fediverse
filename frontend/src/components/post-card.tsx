@@ -83,7 +83,7 @@ export function PostCard({ post }: PostCardProps) {
                     </p>
                 </div>
 
-                <div className='flex flex-row justify-between'>
+                <div className="flex flex-row justify-between">
                     <div className="flex flex-wrap gap-2">
                         {post.tags.map((tag) => (
                             <Badge

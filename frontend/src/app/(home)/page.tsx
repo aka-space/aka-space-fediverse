@@ -1,9 +1,9 @@
 'use client';
 
-import { FilterPosts } from "@/components/filter-posts";
-import { PostCard } from "@/components/post-card";
-import { Spinner } from "@/components/ui/spinner";
-import { useEffect, useCallback, useState } from "react";
+import { FilterPosts } from '@/components/filter-posts';
+import { PostCard } from '@/components/post-card';
+import { Spinner } from '@/components/ui/spinner';
+import { useEffect, useCallback, useState } from 'react';
 
 type Post = {
     id: number;
@@ -20,7 +20,7 @@ type Post = {
     overview: string;
     tags: string[];
 };
-const api = "https://68765855814c0dfa653bba48.mockapi.io/mockTest"
+const api = 'https://68765855814c0dfa653bba48.mockapi.io/mockTest';
 
 export default function Home() {
     const [posts, setPosts] = useState<Post[]>([]);
@@ -30,16 +30,16 @@ export default function Home() {
         setLoading(true);
         try {
             const response = await fetch(api, {
-                method: "GET"
-            })
+                method: 'GET',
+            });
 
-            if(!response.ok) throw new Error("Error fetching api");
+            if (!response.ok) throw new Error('Error fetching api');
 
             const data = await response.json();
-            console.log("data: ", data);
+            console.log('data: ', data);
             setPosts(data);
         } catch (error: any) {
-            console.error("Error fetching posts", error)
+            console.error('Error fetching posts', error);
         } finally {
             setLoading(false);
         }
@@ -47,7 +47,7 @@ export default function Home() {
 
     useEffect(() => {
         handleFetchPosts();
-    }, [handleFetchPosts])
+    }, [handleFetchPosts]);
 
     return (
         <div className="w-[calc[100%-42rem] flex justify-center mb-6">

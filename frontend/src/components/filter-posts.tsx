@@ -15,23 +15,29 @@ export function FilterPosts() {
 
     return (
         <div className="flex gap-2">
-            {filters.map((filter: { id: string; label: string; icon: React.ElementType }) => {
-                const Icon = filter.icon;
-                const isActive = activeFilter === filter.id;
+            {filters.map(
+                (filter: {
+                    id: string;
+                    label: string;
+                    icon: React.ElementType;
+                }) => {
+                    const Icon = filter.icon;
+                    const isActive = activeFilter === filter.id;
 
-                return (
-                    <Button
-                        key={filter.id}
-                        variant={isActive ? 'default' : 'secondary'}
-                        size="sm"
-                        onClick={() => setActiveFilter(filter.id)}
-                        className="gap-2 rounded-3xl"
-                    >
-                        <Icon className="h-4 w-4" />
-                        {filter.label}
-                    </Button>
-                );
-            })}
+                    return (
+                        <Button
+                            key={filter.id}
+                            variant={isActive ? 'default' : 'secondary'}
+                            size="sm"
+                            onClick={() => setActiveFilter(filter.id)}
+                            className="gap-2 rounded-3xl"
+                        >
+                            <Icon className="h-4 w-4" />
+                            {filter.label}
+                        </Button>
+                    );
+                },
+            )}
         </div>
     );
 }
