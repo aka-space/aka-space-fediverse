@@ -38,7 +38,7 @@ export default function Home() {
             const data = await response.json();
             console.log('data: ', data);
             setPosts(data);
-        } catch (error: any) {
+        } catch (error) {
             console.error('Error fetching posts', error);
         } finally {
             setLoading(false);
