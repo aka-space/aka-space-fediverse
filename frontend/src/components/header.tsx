@@ -5,6 +5,7 @@ import { useRouter } from 'next/navigation';
 import React from 'react';
 import { Input } from './ui/input';
 import { UserMenu } from './user-menu';
+import { Button } from './ui/button';
 
 type HeaderProps = {
     isLogged: boolean;
@@ -42,23 +43,25 @@ export default function Header({ isLogged, showInput }: HeaderProps) {
             {/* Menu */}
             {isLogged === false ? (
                 <ul className="flex items-center gap-5">
-                    <button
+                    <Button
+                        variant="dark"
+                        size="lg"
                         onClick={() => {
                             router.push('/register');
                         }}
-                        className="flex items-center bg-black text-white py-3 px-6 rounded-md gap-2 font-bold "
                     >
                         <UserPlus size={18} />
                         Register
-                    </button>
-                    <button
+                    </Button>
+                    <Button
+                        variant="light"
+                        size="lg"
                         onClick={() => {
                             router.push('/login');
                         }}
-                        className="bg-gray-200 text-black py-3 px-6 rounded-md font-bold"
                     >
                         Login
-                    </button>
+                    </Button>
                 </ul>
             ) : (
                 <div className="flex items-center gap-7">
