@@ -1,9 +1,9 @@
 'use client';
 
-import { FilterPosts } from '@/components/filter-posts';
+import { PostsFilter } from '@/components/posts-filter';
 import { PostCard } from '@/components/post-card';
 import { Spinner } from '@/components/ui/spinner';
-import { useEffect, useCallback, useState } from 'react';
+import 
 
 type Post = {
     id: number;
@@ -23,37 +23,13 @@ type Post = {
 const api = 'https://68765855814c0dfa653bba48.mockapi.io/mockTest';
 
 export default function Home() {
-    const [posts, setPosts] = useState<Post[]>([]);
-    const [loading, setLoading] = useState<boolean>(false);
-
-    const handleFetchPosts = useCallback(async () => {
-        setLoading(true);
-        try {
-            const response = await fetch(api, {
-                method: 'GET',
-            });
-
-            if (!response.ok) throw new Error('Error fetching api');
-
-            const data = await response.json();
-            console.log('data: ', data);
-            setPosts(data);
-        } catch (error) {
-            console.error('Error fetching posts', error);
-        } finally {
-            setLoading(false);
-        }
-    }, []);
-
-    useEffect(() => {
-        handleFetchPosts();
-    }, [handleFetchPosts]);
+    
 
     return (
         <div className="w-[calc[100%-42rem] flex justify-center mb-6">
             <div className="flex flex-col gap-6 max-w-4xl w-full">
                 <div className="space-y-8">
-                    <FilterPosts />
+                    <PostsFilter />
 
                     {posts.map((post) => (
                         <PostCard key={post.id} post={post} />
