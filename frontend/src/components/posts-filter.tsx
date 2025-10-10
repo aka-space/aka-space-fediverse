@@ -10,7 +10,7 @@ const filters = [
     { id: 'closed', label: 'Closed', icon: CheckCircle },
 ];
 
-export function FilterPosts() {
+export function PostsFilter() {
     const [activeFilter, setActiveFilter] = useState<string>('new');
 
     return (
