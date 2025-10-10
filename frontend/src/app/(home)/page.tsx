@@ -3,7 +3,11 @@
 import { PostsFilter } from '@/components/posts-filter';
 import { PostCard } from '@/components/post-card';
 import { Spinner } from '@/components/ui/spinner';
-import { useQuery, QueryClient, QueryClientProvider } from '@tanstack/react-query';
+import {
+    useQuery,
+    QueryClient,
+    QueryClientProvider,
+} from '@tanstack/react-query';
 
 type Post = {
     id: number;
