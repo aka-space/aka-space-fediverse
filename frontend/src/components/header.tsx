@@ -50,7 +50,7 @@ export default function Header({ isLogged, showInput }: HeaderProps) {
                             router.push('/register');
                         }}
                     >
-                        <UserPlus size={18} />
+                        <UserPlus className="size-3" />
                         Register
                     </Button>
                     <Button
