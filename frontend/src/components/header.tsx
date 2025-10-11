@@ -23,8 +23,8 @@ export default function Header({ isLogged, showInput }: HeaderProps) {
                 }}
                 className="flex items-center"
             >
-                <Image src="/logo.png" alt="Logo" width={48} height={48} />
-                <span className="font-bold text-2xl">AKA</span>
+                <Image src="/logo.png" alt="Logo" width={38} height={38} />
+                <span className="font-bold text-xl">AKA</span>
             </div>
             {showInput && (
                 <div>
