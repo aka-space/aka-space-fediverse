@@ -19,8 +19,8 @@ export function UserMenu() {
     return (
         <DropdownMenu>
             <DropdownMenuTrigger asChild>
-                <Button className="w-11 h-11 rounded-full flex items-center justify-center bg-gray-300 text-white">
-                    <UserIcon size={20} />
+                <Button className="w-8 h-8 rounded-full flex items-center justify-center bg-gray-300 text-white">
+                    <UserIcon size={18} />
                 </Button>
             </DropdownMenuTrigger>
             <DropdownMenuContent className="w-56" align="start">
