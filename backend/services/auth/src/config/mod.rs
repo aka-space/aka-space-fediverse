@@ -1,6 +1,10 @@
+pub mod cors;
+
 use std::sync::LazyLock;
 
 use serde::Deserialize;
+
+use cors::CorsConfig;
 
 const fn default_port() -> u16 {
     3000
@@ -12,6 +16,8 @@ pub struct Config {
     pub port: u16,
 
     pub database_url: String,
+
+    pub cors: CorsConfig,
 }
 
 pub static CONFIG: LazyLock<Config> = LazyLock::new(|| {
