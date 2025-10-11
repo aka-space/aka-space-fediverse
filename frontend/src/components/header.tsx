@@ -65,10 +65,10 @@ export default function Header({ isLogged, showInput }: HeaderProps) {
                 </ul>
             ) : (
                 <div className="flex items-center gap-7">
-                    <button className="rounded-full bg-gray-300 w-25 h-9 flex items-center gap-1 justify-center ">
-                        <CirclePlus size={15} />
+                    <Button variant="rounded" size="default">
+                        <CirclePlus className="size-3" />
                         Create
-                    </button>
+                    </Button>
 
                     <Bell size={23} className="text-gray-400" />
 
