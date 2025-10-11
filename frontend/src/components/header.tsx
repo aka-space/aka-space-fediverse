@@ -70,7 +70,7 @@ export default function Header({ isLogged, showInput }: HeaderProps) {
                         Create
                     </button>
 
-                    <Bell size={30} className="text-gray-400" />
+                    <Bell size={23} className="text-gray-400" />
 
                     <UserMenu />
                 </div>
