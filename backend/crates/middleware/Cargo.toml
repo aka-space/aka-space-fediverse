@@ -1,9 +1,9 @@
 [package]
-name = "auth"
+name = "middleware"
 version = "0.1.0"
 edition = "2024"
 
 [dependencies]
-config = { version = "0.15.18", default-features = false }
+axum = "0.8.6"
 serde = { version = "1.0.228", features = ["derive"] }
-thiserror = "2.0.17"
+tower-http = { version = "0.6.6", features = ["cors"] }
