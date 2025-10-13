@@ -8,6 +8,8 @@ use axum::http::{
 use serde::Deserialize;
 use tower_http::cors::CorsLayer;
 
+const ENV_PREFIX: &str = "CORS";
+
 const ALLOW_HEADERS: [HeaderName; 7] = [
     ORIGIN,
     AUTHORIZATION,
@@ -31,6 +33,18 @@ pub struct Config {
 }
 
 impl Config {
+    pub fn from_env() -> Result<Config, config::ConfigError> {
+        config::Config::builder()
+            .add_source(
+                config::Environment::default()
+                    .try_parsing(true)
+                    .list_separator(",")
+                    .prefix(ENV_PREFIX),
+            )
+            .build()
+            .and_then(|x| x.try_deserialize())
+    }
+
     pub fn build(self) -> Result<CorsLayer, InvalidHeaderValue> {
         let origin = self
             .origin

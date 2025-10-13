@@ -311,6 +311,7 @@ name = "middleware"
 version = "0.1.0"
 dependencies = [
  "axum",
+ "config",
  "serde",
  "tower-http",
 ]
