@@ -8,7 +8,7 @@ use tower_http::cors::CorsLayer;
 pub use crate::config::Config;
 use crate::{header::ALLOW_HEADERS, method::ALLOW_METHODS};
 
-pub fn build(config: Config) -> Result<CorsLayer, InvalidHeaderValue> {
+pub fn new(config: Config) -> Result<CorsLayer, InvalidHeaderValue> {
     let origin = config
         .origin
         .into_iter()

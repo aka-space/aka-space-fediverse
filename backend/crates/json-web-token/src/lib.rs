@@ -13,13 +13,11 @@ pub struct Jwt {
 }
 
 impl Jwt {
-    pub fn new() -> Result<Self, ::config::ConfigError> {
-        let cfg = Config::new()?;
-
-        Ok(Self {
-            encoding_key: EncodingKey::from_secret(cfg.secret.as_bytes()),
-            decoding_key: DecodingKey::from_secret(cfg.secret.as_bytes()),
-            expired_in: cfg.expired_in,
-        })
+    pub fn new(config: Config) -> Self {
+        Self {
+            encoding_key: EncodingKey::from_secret(config.secret.as_bytes()),
+            decoding_key: DecodingKey::from_secret(config.secret.as_bytes()),
+            expired_in: config.expired_in,
+        }
     }
 }
