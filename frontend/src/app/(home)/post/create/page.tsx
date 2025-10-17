@@ -31,8 +31,14 @@ const CreatePostForm = () => {
         console.log('Post Data:', postData);
     };
     return (
-        <div>
-            <PostForm postData={postData} handleChange={handleChange} handleSubmit={handleSubmit} />
+        <div className="w-full px-6 mt-10">
+            <div className="max-w-4xl mx-auto w-full">
+                <PostForm
+                    postData={postData}
+                    handleChange={handleChange}
+                    handleSubmit={handleSubmit}
+                />
+            </div>
         </div>
     );
 };
