@@ -78,7 +78,7 @@ const PostForm = ({ postData, handleChange, handleSubmit }: PostFormProps) => {
                                 size="sm"
                                 className="px-6"
                             >
-                                <span className='flex items-center p-1'>
+                                <span className="flex items-center p-1">
                                     <BookImage className="mr-2 h-4 w-4" />
                                     Add Image
                                 </span>
