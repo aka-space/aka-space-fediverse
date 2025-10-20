@@ -1,6 +1,6 @@
 use anyhow::Result;
 use chrono::Local;
-use jsonwebtoken::{DecodingKey, EncodingKey, Header};
+use jsonwebtoken::{DecodingKey, EncodingKey, Header, Validation};
 use uuid::Uuid;
 
 struct Claims {
@@ -34,5 +34,12 @@ impl Jwt {
         let token = jsonwebtoken::encode(&Header::default(), &claims, &self.encoding_key)?;
 
         Ok(token)
+    }
+
+    pub fn decode(&self, token: &str) -> Result<Uuid> {
+        let token_data =
+            jsonwebtoken::decode::<Claims>(token, &self.decoding_key, &Validation::default())?;
+
+        Ok(token_data.claims.sub)
     }
 }
