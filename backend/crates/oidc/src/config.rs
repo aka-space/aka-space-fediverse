@@ -8,16 +8,3 @@ pub struct Config {
     pub issuer_url: IssuerUrl,
     pub redirect_url: RedirectUrl,
 }
-
-impl Config {
-    pub fn new(prefix: &str) -> Result<Config, config::ConfigError> {
-        config::Config::builder()
-            .add_source(
-                config::Environment::default()
-                    .try_parsing(true)
-                    .prefix(prefix),
-            )
-            .build()
-            .and_then(|x| x.try_deserialize())
-    }
-}

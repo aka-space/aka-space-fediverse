@@ -4,7 +4,6 @@ version = "0.1.0"
 edition = "2024"
 
 [dependencies]
-config = { version = "0.15.18", default-features = false }
 jsonwebtoken = "10.0.0"
 serde = { version = "1.0.228", features = ["derive"] }
 uuid = { version = "1.18.1", features = ["v4", "fast-rng"] }
