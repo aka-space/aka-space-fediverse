@@ -1,8 +1,10 @@
 use std::{marker::PhantomData, str::FromStr};
 
 use anyhow::Result;
+use futures::{Stream, StreamExt};
 use lapin::{
     Connection, Consumer, ExchangeKind,
+    message::Delivery,
     options::{BasicConsumeOptions, ExchangeDeclareOptions, QueueBindOptions, QueueDeclareOptions},
     types::FieldTable,
 };
@@ -73,5 +75,43 @@ impl<E: FromStr + AsRef<str>, T> Receiver<E, T> {
             inner,
             _phantom: Default::default(),
         })
+    }
+
+    fn deserialize(delivery: &Delivery) -> Result<T> {
+        let body = std::str::from_utf8(&delivery.data)?;
+
+        let data: T = serde_json::from_str(body)?;
+
+        Ok(data)
+    }
+
+    async fn handle_delivery(delivery: lapin::Result<Delivery>) -> Result<T> {
+        let delivery = delivery?;
+
+        let data = match Self::deserialize(&delivery) {
+            Ok(d) => d,
+            Err(error) => {
+                delivery
+                    .nack(lapin::options::BasicNackOptions {
+                        requeue: false,
+                        ..Default::default()
+                    })
+                    .await?;
+
+                return Err(error);
+            }
+        };
+
+        Ok(data)
+    }
+
+    pub async fn next(&mut self) -> Option<Result<T>> {
+        let delivery = self.inner.next().await?;
+
+        Some(Self::handle_delivery(delivery).await)
+    }
+
+    pub fn stream(self) -> impl Stream<Item = Result<T>> {
+        self.inner.then(Self::handle_delivery)
     }
 }
