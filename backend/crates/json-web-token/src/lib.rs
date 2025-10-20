@@ -1,8 +1,12 @@
-mod claims;
+use anyhow::Result;
+use chrono::Local;
+use jsonwebtoken::{DecodingKey, EncodingKey, Header};
+use uuid::Uuid;
 
-use jsonwebtoken::{DecodingKey, EncodingKey};
-
-pub use claims::Claims;
+struct Claims {
+    pub sub: Uuid,
+    pub exp: u64,
+}
 
 pub struct Jwt {
     pub encoding_key: EncodingKey,
@@ -17,5 +21,18 @@ impl Jwt {
             decoding_key: DecodingKey::from_secret(secret),
             expired_in,
         }
+    }
+
+    pub fn encode(&self, id: Uuid) -> Result<String> {
+        let now = Local::now().timestamp() as u64;
+
+        let claims = Claims {
+            sub: id,
+            exp: now + self.expired_in,
+        };
+
+        let token = jsonwebtoken::encode(&Header::default(), &claims, &self.encoding_key)?;
+
+        Ok(token)
     }
 }
