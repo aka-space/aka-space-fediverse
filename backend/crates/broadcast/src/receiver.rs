@@ -8,13 +8,14 @@ use lapin::{
     options::{BasicConsumeOptions, ExchangeDeclareOptions, QueueBindOptions, QueueDeclareOptions},
     types::FieldTable,
 };
+use serde::Deserialize;
 
-pub struct Receiver<E: FromStr + AsRef<str>, T> {
+pub struct Receiver<E: FromStr + AsRef<str>, T: for<'de> Deserialize<'de>> {
     pub inner: Consumer,
     _phantom: PhantomData<(E, T)>,
 }
 
-impl<E: FromStr + AsRef<str>, T> Receiver<E, T> {
+impl<E: FromStr + AsRef<str>, T: for<'de> Deserialize<'de>> Receiver<E, T> {
     pub async fn new(
         exchange: String,
         tag: String,
