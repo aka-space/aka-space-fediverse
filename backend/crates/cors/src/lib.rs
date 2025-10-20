@@ -1,17 +1,14 @@
-mod config;
 mod header;
 mod method;
 
 use axum::http::{HeaderValue, header::InvalidHeaderValue};
 use tower_http::cors::CorsLayer;
 
-pub use crate::config::Config;
 use crate::{header::ALLOW_HEADERS, method::ALLOW_METHODS};
 
-pub fn new(config: Config) -> Result<CorsLayer, InvalidHeaderValue> {
-    let origin = config
-        .origin
-        .into_iter()
+pub fn new(origin: &[String]) -> Result<CorsLayer, InvalidHeaderValue> {
+    let origin = origin
+        .iter()
         .map(|x| x.parse::<HeaderValue>())
         .collect::<Result<Vec<_>, _>>()?;
 

@@ -1,10 +1,8 @@
 mod claims;
-mod config;
 
 use jsonwebtoken::{DecodingKey, EncodingKey};
 
 pub use claims::Claims;
-pub use config::Config;
 
 pub struct Jwt {
     pub encoding_key: EncodingKey,
@@ -13,11 +11,11 @@ pub struct Jwt {
 }
 
 impl Jwt {
-    pub fn new(config: Config) -> Self {
+    pub fn new(secret: &[u8], expired_in: u64) -> Self {
         Self {
-            encoding_key: EncodingKey::from_secret(config.secret.as_bytes()),
-            decoding_key: DecodingKey::from_secret(config.secret.as_bytes()),
-            expired_in: config.expired_in,
+            encoding_key: EncodingKey::from_secret(secret),
+            decoding_key: DecodingKey::from_secret(secret),
+            expired_in,
         }
     }
 }
