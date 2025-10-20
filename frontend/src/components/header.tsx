@@ -2,7 +2,7 @@
 import { Bell, CirclePlus, Search, UserPlus } from 'lucide-react';
 import Image from 'next/image';
 import { useRouter } from 'next/navigation';
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { Input } from './ui/input';
 import { UserMenu } from './user-menu';
 import { Button } from './ui/button';
@@ -14,8 +14,24 @@ type HeaderProps = {
 
 export default function Header({ isLogged, showInput }: HeaderProps) {
     const router = useRouter();
+
+    const [isScrolled, setIsScrolled] = useState(false);
+
+    useEffect(() => {
+        const handleScroll = () => setIsScrolled(window.scrollY > 10);
+        window.addEventListener('scroll', handleScroll);
+        return () => window.removeEventListener('scroll', handleScroll);
+    }, []);
+
     return (
-        <header className="flex items-center justify-between px-4 py-2 bg-white shadow-md shadow-gray-200">
+        <header
+            className={`flex fixed top-0 w-full items-center justify-between px-4 py-2 transition-all duration-300 z-50
+        ${
+            isScrolled
+                ? 'backdrop-blur-md bg-white/50 shadow-md shadow-gray-100'
+                : 'bg-white shadow-md shadow-gray-200'
+        }`}
+        >
             {/* Logo */}
             <div
                 onClick={() => {
