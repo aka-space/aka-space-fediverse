@@ -1,3 +1,4 @@
+pub mod queue;
 mod receiver;
 mod sender;
 
