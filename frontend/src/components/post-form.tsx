@@ -1,7 +1,8 @@
-import React, { useState } from 'react';
+import React from 'react';
 import { Input } from './ui/input';
 import { Button } from './ui/button';
 import { Textarea } from './ui/textarea';
+import { FileUpload } from './ui/file-upload';
 import { BookImage } from 'lucide-react';
 
 interface PostFormProps {
@@ -73,35 +74,33 @@ const PostForm = ({ postData, handleChange, handleSubmit }: PostFormProps) => {
                             />
                         </div>
                         <div className="flex items-center gap-6 mt-6 mb-10">
-                            <Button
-                                variant="default"
-                                size="sm"
-                                className="px-6"
-                            >
-                                <span className="flex items-center p-1">
-                                    <BookImage className="mr-2 h-4 w-4" />
-                                    Add Image
-                                </span>
-                            </Button>
+                            <div className="flex-1 ml-3">
+                                <FileUpload  />
+                            </div>
 
-                            <div className="flex-1" />
+                            <div className="flex-2" />
 
-                            <Button
-                                variant="rounded"
-                                size="sm"
-                                className="px-6 rounded-2xl"
-                                disabled
-                            >
-                                Save as draft
-                            </Button>
-                            <Button
-                                type="submit"
-                                className="px-6 rounded-2xl"
-                                variant="default"
-                                size="sm"
-                            >
-                                Post
-                            </Button>
+                            <div className="flex-2">
+                                <Button
+                                    variant="rounded"
+                                    size="lg"
+                                    className="px-8 rounded-2xl"
+                                    disabled
+                                >
+                                    Save as draft
+                                </Button>
+                            </div>
+
+                            <div className='flex-2'>
+                                <Button
+                                    type="submit"
+                                    className="px-8 rounded-2xl"
+                                    variant="default"
+                                    size="lg"
+                                >
+                                    Post
+                                </Button>
+                            </div>
                         </div>
                     </form>
                 </div>
