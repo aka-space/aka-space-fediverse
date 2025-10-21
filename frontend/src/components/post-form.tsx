@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useRef } from 'react';
 import { Input } from './ui/input';
 import { Button } from './ui/button';
 import { Textarea } from './ui/textarea';
@@ -18,6 +18,37 @@ interface PostFormProps {
 }
 
 const PostForm = ({ postData, handleChange, handleSubmit }: PostFormProps) => {
+    const contentRef = useRef<HTMLTextAreaElement>(null);
+
+    const handleAddImage = (imageUrl: string) => {
+        if (!contentRef.current) return;
+        const textarea = contentRef.current;
+        const start = textarea.selectionStart;
+        const end = textarea.selectionEnd;
+        const before = postData.content.slice(0, start);
+        const after = postData.content.slice(end);
+        const markdown = `![image](${imageUrl})`;
+        const newContent = before + markdown + after;
+
+        handleChange({
+            target: {
+                name: 'content',
+                value: newContent,
+            },
+        } as React.ChangeEvent<HTMLTextAreaElement>);
+
+        setTimeout(() => {
+            textarea.focus();
+            textarea.selectionStart = textarea.selectionEnd =
+                start + markdown.length;
+        }, 0);
+    };
+
+    const handleFileUpload = (files: File[]) => {
+        const uploadedImageUrl = URL.createObjectURL(files[0]);
+        handleAddImage(uploadedImageUrl);
+    };
+
     return (
         <div className="mmax-w-4xl mx-auto mt-8 p-4 bg-transparent">
             <div className="bg-gray-50 dark:bg-neutral-900 border border-gray-300 dark:border-neutral-700 rounded-lg shadow-sm shadow-gray-200 dark:shadow-neutral-800">
@@ -66,6 +97,7 @@ const PostForm = ({ postData, handleChange, handleSubmit }: PostFormProps) => {
                                 Content
                             </label>
                             <Textarea
+                                ref={contentRef}
                                 id="content"
                                 name="content"
                                 value={postData.content}
@@ -74,27 +106,27 @@ const PostForm = ({ postData, handleChange, handleSubmit }: PostFormProps) => {
                             />
                         </div>
                         <div className="flex items-center gap-6 mt-6 mb-10">
-                            <div className="flex-1 ml-3">
-                                <FileUpload  />
+                            <div className="flex-3 ml-10">
+                                <FileUpload onChange={handleFileUpload} />
                             </div>
 
-                            <div className="flex-2" />
+                            <div className="flex-1" />
 
-                            <div className="flex-2">
+                            <div className="flex-1">
                                 <Button
                                     variant="rounded"
                                     size="lg"
-                                    className="px-8 rounded-2xl"
+                                    className="px-6 rounded-2xl"
                                     disabled
                                 >
                                     Save as draft
                                 </Button>
                             </div>
 
-                            <div className='flex-2'>
+                            <div className="flex-1">
                                 <Button
                                     type="submit"
-                                    className="px-8 rounded-2xl"
+                                    className="px-6 rounded-2xl"
                                     variant="default"
                                     size="lg"
                                 >
