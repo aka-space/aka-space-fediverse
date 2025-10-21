@@ -2,14 +2,21 @@ import * as React from 'react';
 
 import { cn } from '@/lib/utils';
 
-function Card({ className, ...props }: React.ComponentProps<'div'>) {
+type CardProps = React.ComponentProps<'div'> & {
+    variant?: 'default' | 'auth';
+};
+
+function Card({ className, variant = 'default', ...props }: CardProps) {
+    const baseClass =
+        'bg-card text-card-foreground flex flex-col gap-6 rounded-xl border py-6 shadow-sm';
+    const variantClass: Record<NonNullable<CardProps['variant']>, string> = {
+        default: 'bg-card',
+        auth: 'bg-gradient-to-bl from-black/35 to-white/30 backdrop-brightness-50 text-card-foreground flex flex-col gap-6 rounded-xl border-none py-10 shadow-[0_0_50px_rgba(0,0,0,0.7)]',
+    };
     return (
         <div
             data-slot="card"
-            className={cn(
-                'bg-card text-card-foreground flex flex-col gap-6 rounded-xl border py-6 shadow-sm',
-                className,
-            )}
+            className={cn(baseClass, variantClass[variant], className)}
             {...props}
         />
     );
