@@ -5,5 +5,5 @@ members = [
     "crates/cors",
     "crates/json-web-token",
     "crates/oidc",
-    "services/auth"
+    "services/account"
 ]
