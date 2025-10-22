@@ -277,9 +277,11 @@ version = "0.1.0"
 dependencies = [
  "axum",
  "bon",
+ "broadcast",
  "config",
  "cors",
  "json-web-token",
+ "lapin",
  "serde",
  "serde_with",
  "thiserror 2.0.17",

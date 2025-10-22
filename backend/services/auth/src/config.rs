@@ -28,7 +28,7 @@ const fn default_bcrypt_salt() -> [u8; 16] {
     [0; 16]
 }
 
-fn default_rabbitmq_url() -> String {
+fn default_amqp_url() -> String {
     "amqp://127.0.0.1:5672/%2f".to_string()
 }
 
@@ -56,8 +56,8 @@ pub struct Config {
 
     pub database_url: String,
 
-    #[serde(default = "default_rabbitmq_url")]
-    pub rabbitmq_url: String,
+    #[serde(default = "default_amqp_url")]
+    pub amqp_url: String,
 }
 
 pub static CONFIG: LazyLock<Config> = LazyLock::new(|| {

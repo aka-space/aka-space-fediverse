@@ -6,9 +6,11 @@ edition = "2024"
 [dependencies]
 axum = "0.8.6"
 bon = "3.8.1"
+broadcast = { version = "0.1.0", path = "../../crates/broadcast" }
 config = { version = "0.15.18", default-features = false }
 cors = { version = "0.1.0", path = "../../crates/cors" }
 json-web-token = { version = "0.1.0", path = "../../crates/json-web-token" }
+lapin = "3.7.1"
 serde = { version = "1.0.228", features = ["derive"] }
 serde_with = "3.15.1"
 thiserror = "2.0.17"
