@@ -1,16 +1,18 @@
 'use client';
 import { Bell, CirclePlus, Search, UserPlus } from 'lucide-react';
 import Image from 'next/image';
-import { useRouter } from 'next/navigation';
+import { usePathname, useRouter } from 'next/navigation';
 import React, { useEffect, useState } from 'react';
 import { Input } from './ui/input';
 import { UserMenu } from './user-menu';
 import { Button } from './ui/button';
-import { HeaderProps } from '@/types';
 import { useAuthStore } from '@/store/useAuthStore';
 
-export default function Header({ showInput }: HeaderProps) {
+export default function Header() {
     const router = useRouter();
+    const pathname = usePathname();
+
+    const hideSearch = pathname === '/login' || pathname === '/register';
     const { authUser } = useAuthStore();
 
     const [isLogged, setIsLogged] = useState<boolean>(false);
@@ -49,7 +51,7 @@ export default function Header({ showInput }: HeaderProps) {
                 <Image src="/logo.png" alt="Logo" width={38} height={38} />
                 <span className="font-bold text-xl">AKA</span>
             </div>
-            {showInput && (
+            {!hideSearch && (
                 <div>
                     <div className="flex w-xl">
                         <div className="relative w-full pr-5 ">
