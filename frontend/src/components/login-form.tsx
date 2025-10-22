@@ -73,9 +73,11 @@ export function LoginForm({
                                         }}
                                     />
                                 </div>
-                                <span className="text-right text-sm text-white hover:underline italic cursor-pointer">
-                                    Forgot password?
-                                </span>
+                                <div className="flex justify-end">
+                                    <span className="text-sm text-white hover:underline italic cursor-pointer">
+                                        Forgot password?
+                                    </span>
+                                </div>
                                 <Button
                                     variant="light"
                                     size="slg"

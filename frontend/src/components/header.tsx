@@ -14,7 +14,7 @@ export default function Header() {
 
     const hideSearch = pathname === '/login' || pathname === '/register';
     const { authUser } = useAuthStore();
-
+    const [active, setActive] = useState<string>('');
     const [isLogged, setIsLogged] = useState<boolean>(false);
     const [isScrolled, setIsScrolled] = useState(false);
 
@@ -67,9 +67,10 @@ export default function Header() {
             {isLogged === false ? (
                 <ul className="flex items-center gap-5">
                     <Button
-                        variant="dark"
+                        variant={active === 'register' ? 'dark' : 'light'}
                         size="lg"
                         onClick={() => {
+                            setActive('register');
                             router.push('/register');
                         }}
                     >
@@ -77,9 +78,10 @@ export default function Header() {
                         Register
                     </Button>
                     <Button
-                        variant="light"
+                        variant={active === 'login' ? 'dark' : 'light'}
                         size="lg"
                         onClick={() => {
+                            setActive('login');
                             router.push('/login');
                         }}
                     >
