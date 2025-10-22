@@ -5,11 +5,19 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { useRouter } from 'next/navigation';
 import { Lock, User } from 'lucide-react';
+import { User as user } from '@/types';
 
 export function LoginForm({
     className,
+    data,
+    setData,
+    onSubmit,
     ...props
-}: React.ComponentProps<'div'>) {
+}: React.ComponentProps<'div'> & {
+    data?: user;
+    setData?: (d: user) => void;
+    onSubmit?: React.FormEventHandler<HTMLFormElement>;
+}) {
     const route = useRouter();
     return (
         <div className={cn('flex flex-col gap-6', className)} {...props}>
@@ -20,17 +28,28 @@ export function LoginForm({
                     </CardTitle>
                 </CardHeader>
                 <CardContent>
-                    <form>
+                    <form onSubmit={onSubmit}>
                         <div className="grid gap-6">
                             <div className="grid gap-6 text-white">
                                 <div className="grid gap-3 relative">
                                     <User className="absolute left-3 top-1/2 -translate-y-1/2 text-white w-4 h-4" />
                                     <Input
-                                        id="username"
+                                        id="email"
                                         type="text"
-                                        placeholder="Username"
+                                        placeholder="Email"
                                         required
+                                        value={data?.email}
                                         className="pl-10 placeholder:text-gray-350"
+                                        onChange={(e) => {
+                                            setData?.({
+                                                ...(data ?? {
+                                                    username: '',
+                                                    email: '',
+                                                    password: '',
+                                                }),
+                                                email: e.currentTarget.value,
+                                            });
+                                        }}
                                     />
                                 </div>
                                 <div className="grid gap-3 relative">
@@ -39,8 +58,19 @@ export function LoginForm({
                                         id="password"
                                         type="password"
                                         placeholder="Password"
+                                        value={data?.password}
                                         required
                                         className="pl-10 placeholder:text-gray-350"
+                                        onChange={(e) => {
+                                            setData?.({
+                                                ...(data ?? {
+                                                    username: '',
+                                                    email: '',
+                                                    password: '',
+                                                }),
+                                                password: e.currentTarget.value,
+                                            });
+                                        }}
                                     />
                                 </div>
                                 <span className="text-right text-sm text-white hover:underline italic cursor-pointer">

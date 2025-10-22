@@ -6,16 +6,23 @@ import React, { useEffect, useState } from 'react';
 import { Input } from './ui/input';
 import { UserMenu } from './user-menu';
 import { Button } from './ui/button';
+import { HeaderProps } from '@/types';
+import { useAuthStore } from '@/store/useAuthStore';
 
-type HeaderProps = {
-    isLogged: boolean;
-    showInput: boolean;
-};
-
-export default function Header({ isLogged, showInput }: HeaderProps) {
+export default function Header({ showInput }: HeaderProps) {
     const router = useRouter();
+    const { authUser } = useAuthStore();
 
+    const [isLogged, setIsLogged] = useState<boolean>(false);
     const [isScrolled, setIsScrolled] = useState(false);
+
+    useEffect(() => {
+        if (authUser) {
+            setIsLogged(true);
+            return;
+        }
+        setIsLogged(false);
+    }, [authUser]);
 
     useEffect(() => {
         const handleScroll = () => setIsScrolled(window.scrollY > 10);

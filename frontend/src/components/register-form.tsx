@@ -5,11 +5,26 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { useRouter } from 'next/navigation';
 import { Lock, Mail, User } from 'lucide-react';
-
+interface formData {
+    username: string;
+    email: string;
+    password: string;
+}
 export function RegisterForm({
     className,
+    data,
+    setData,
+    onSubmit,
+    confirm,
+    setConfirm,
     ...props
-}: React.ComponentProps<'div'>) {
+}: React.ComponentProps<'div'> & {
+    data?: formData;
+    setData?: (d: formData) => void;
+    onSubmit?: React.FormEventHandler<HTMLFormElement>;
+    confirm?: string;
+    setConfirm?: (v: string) => void;
+}) {
     const route = useRouter();
     return (
         <div className={cn('flex flex-col gap-6 ', className)} {...props}>
@@ -20,7 +35,7 @@ export function RegisterForm({
                     </CardTitle>
                 </CardHeader>
                 <CardContent>
-                    <form>
+                    <form onSubmit={onSubmit}>
                         <div className="grid gap-6">
                             <div className="grid gap-6 text-white">
                                 <div className="grid gap-3 relative">
@@ -29,8 +44,19 @@ export function RegisterForm({
                                         id="username"
                                         type="text"
                                         placeholder="Username"
+                                        value={data?.username}
                                         required
                                         className="pl-10 placeholder:text-gray-350"
+                                        onChange={(e) =>
+                                            setData?.({
+                                                ...(data ?? {
+                                                    username: '',
+                                                    email: '',
+                                                    password: '',
+                                                }),
+                                                username: e.currentTarget.value,
+                                            })
+                                        }
                                     />
                                 </div>
                                 <div className="grid gap-3 relative">
@@ -39,8 +65,19 @@ export function RegisterForm({
                                         id="email"
                                         type="email"
                                         placeholder="Email"
+                                        value={data?.email}
                                         required
                                         className="pl-10 placeholder:text-gray-350"
+                                        onChange={(e) =>
+                                            setData?.({
+                                                ...(data ?? {
+                                                    username: '',
+                                                    email: '',
+                                                    password: '',
+                                                }),
+                                                email: e.currentTarget.value,
+                                            })
+                                        }
                                     />
                                 </div>
                                 <div className="grid gap-3 relative">
@@ -49,8 +86,19 @@ export function RegisterForm({
                                         id="password"
                                         type="password"
                                         placeholder="Password"
+                                        value={data?.password}
                                         required
                                         className="pl-10 placeholder:text-gray-350"
+                                        onChange={(e) =>
+                                            setData?.({
+                                                ...(data ?? {
+                                                    username: '',
+                                                    email: '',
+                                                    password: '',
+                                                }),
+                                                password: e.currentTarget.value,
+                                            })
+                                        }
                                     />
                                 </div>
                                 <div className="grid gap-3 relative">
@@ -59,8 +107,12 @@ export function RegisterForm({
                                         id="confirm-password"
                                         type="password"
                                         placeholder="Confirm password"
+                                        value={confirm}
                                         required
                                         className="pl-10 placeholder:text-gray-350"
+                                        onChange={(e) =>
+                                            setConfirm?.(e.currentTarget.value)
+                                        }
                                     />
                                 </div>
                                 <Button

@@ -14,8 +14,15 @@ import {
     DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
 import { UserIcon } from 'lucide-react';
+import { useAuthStore } from '@/store/useAuthStore';
 
 export function UserMenu() {
+    const { logout } = useAuthStore();
+
+    const handleLogout = () => {
+        logout();
+    };
+
     return (
         <DropdownMenu>
             <DropdownMenuTrigger asChild>
@@ -69,7 +76,7 @@ export function UserMenu() {
                 <DropdownMenuItem>Support</DropdownMenuItem>
                 <DropdownMenuItem disabled>API</DropdownMenuItem>
                 <DropdownMenuSeparator />
-                <DropdownMenuItem>
+                <DropdownMenuItem onClick={handleLogout}>
                     Log out
                     <DropdownMenuShortcut>⇧⌘Q</DropdownMenuShortcut>
                 </DropdownMenuItem>
