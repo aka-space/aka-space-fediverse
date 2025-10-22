@@ -46,22 +46,20 @@ export default function Header() {
                 onClick={() => {
                     router.push('/');
                 }}
-                className="flex items-center"
+                className="flex items-center cursor-pointer"
             >
                 <Image src="/logo.png" alt="Logo" width={38} height={38} />
                 <span className="font-bold text-xl">AKA</span>
             </div>
             {!hideSearch && (
-                <div>
-                    <div className="flex w-xl">
-                        <div className="relative w-full pr-5 ">
-                            <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" />
-                            <Input
-                                type="text"
-                                placeholder="Search..."
-                                className="pl-12 bg-gray-100 border-0 w-full rounded-full text-2xl"
-                            />
-                        </div>
+                <div className="absolute left-1/2 transform -translate-x-1/2">
+                    <div className="relative w-2xl">
+                        <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" />
+                        <Input
+                            type="text"
+                            placeholder="Search..."
+                            className="pl-12 bg-gray-100 border-0 w-full rounded-full text-2xl"
+                        />
                     </div>
                 </div>
             )}
@@ -90,12 +88,16 @@ export default function Header() {
                 </ul>
             ) : (
                 <div className="flex items-center gap-7">
-                    <Button variant="rounded" size="default">
+                    <Button
+                        variant="rounded"
+                        size="default"
+                        className=" cursor-pointer"
+                    >
                         <CirclePlus className="size-3" />
                         Create
                     </Button>
 
-                    <Bell size={23} className="text-gray-400" />
+                    <Bell size={23} className="text-gray-400 cursor-pointer" />
 
                     <UserMenu />
                 </div>
