@@ -4,6 +4,7 @@ import { PostsFilter } from '@/components/posts-filter';
 import { PostCard } from '@/components/post-card';
 import { Spinner } from '@/components/ui/spinner';
 import { useQuery } from '@tanstack/react-query';
+import { useGetPosts } from '@/hooks/use-get-posts';
 
 type Post = {
     id: number;
@@ -23,18 +24,7 @@ type Post = {
 const api = 'https://68765855814c0dfa653bba48.mockapi.io/mockTest';
 
 export default function Home() {
-    const { data: posts, isPending: loading } = useQuery({
-        queryKey: ['posts'],
-        queryFn: async () => {
-            const response = await fetch(api, {
-                method: 'GET',
-            });
-            if (!response.ok) {
-                throw new Error('Network response was not ok');
-            }
-            return response.json();
-        },
-    });
+    const { data: posts, isPending: loading } = useGetPosts(api);
 
     return (
         <div className="w-[calc[100%-42rem] flex justify-center mb-6">
