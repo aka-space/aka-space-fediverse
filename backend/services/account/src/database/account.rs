@@ -1,9 +1,10 @@
+use serde::Serialize;
 use sqlx::PgExecutor;
 use uuid::Uuid;
 
-#[derive(sqlx::Type)]
+#[derive(Debug, PartialEq, Eq, sqlx::Type, Serialize)]
 #[sqlx(rename_all = "snake_case")]
-#[derive(Debug, PartialEq, Eq)]
+#[serde(rename_all = "snake_case")]
 pub enum Role {
     Member,
     Admin,
@@ -21,17 +22,24 @@ pub struct Account {
     pub role: Role,
 }
 
+#[derive(Debug, Serialize)]
+pub struct MinimalAccount {
+    pub id: Uuid,
+    pub role: Role,
+}
+
 pub async fn create(
     email: &str,
     username: &str,
     password: Option<&str>,
     executor: impl PgExecutor<'_>,
-) -> sqlx::Result<Uuid> {
-    sqlx::query_scalar!(
+) -> sqlx::Result<MinimalAccount> {
+    sqlx::query_as!(
+        MinimalAccount,
         r#"
             INSERT INTO account.accounts(email, username, password)
             VALUES($1, $2, COALESCE($3, substr(md5(random()::text), 1, 25)))
-            RETURNING id
+            RETURNING id, role as "role: Role"
         "#,
         email,
         username,
