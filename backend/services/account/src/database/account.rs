@@ -1,6 +1,12 @@
-use chrono::{DateTime, Utc};
 use sqlx::PgExecutor;
 use uuid::Uuid;
+
+#[derive(sqlx::Type)]
+#[sqlx(rename_all = "snake_case")]
+pub enum Role {
+    Member,
+    Admin,
+}
 
 // TODO: remove allow dead code
 #[allow(dead_code)]
@@ -10,9 +16,7 @@ pub struct Account {
     pub email: String,
     pub username: String,
     pub password: String,
-
-    pub created_at: DateTime<Utc>,
-    pub updated_at: DateTime<Utc>,
+    pub role: Role,
 }
 
 pub async fn create(
@@ -39,7 +43,12 @@ pub async fn get(id: Uuid, executor: impl PgExecutor<'_>) -> sqlx::Result<Option
     sqlx::query_as!(
         Account,
         r#"
-            SELECT *
+            SELECT
+                id,
+                email,
+                username,
+                password,
+                role as "role: Role"
             FROM account.accounts
             WHERE id = $1
             LIMIT 1
@@ -57,7 +66,12 @@ pub async fn get_by_email(
     sqlx::query_as!(
         Account,
         r#"
-            SELECT *
+            SELECT
+                id,
+                email,
+                username,
+                password,
+                role as "role: Role"
             FROM account.accounts
             WHERE email = $1
             LIMIT 1
