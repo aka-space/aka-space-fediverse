@@ -3,6 +3,7 @@ use uuid::Uuid;
 
 #[derive(sqlx::Type)]
 #[sqlx(rename_all = "snake_case")]
+#[derive(Debug, PartialEq, Eq)]
 pub enum Role {
     Member,
     Admin,
@@ -10,6 +11,7 @@ pub enum Role {
 
 // TODO: remove allow dead code
 #[allow(dead_code)]
+#[derive(Debug)]
 pub struct Account {
     pub id: Uuid,
 
@@ -80,4 +82,19 @@ pub async fn get_by_email(
     )
     .fetch_optional(executor)
     .await
+}
+
+pub async fn delete(id: Uuid, executor: impl PgExecutor<'_>) -> sqlx::Result<()> {
+    sqlx::query!(
+        r#"
+            UPDATE account.accounts
+            SET is_active = false
+            WHERE id = $1
+        "#,
+        id
+    )
+    .execute(executor)
+    .await?;
+
+    Ok(())
 }

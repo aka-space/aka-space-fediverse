@@ -78,7 +78,7 @@ pub async fn register(
         .send(&Event::Create, &Data { id })
         .await
     {
-        tracing::error!(?error, ?id, "Failed to send created account to queue");
+        tracing::error!(?error, ?id, "Failed to send create account event to queue");
     }
 
     let token = match state.jwt.encode(id) {
