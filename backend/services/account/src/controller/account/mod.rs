@@ -1,5 +1,5 @@
-mod info;
 mod delete;
+mod info;
 mod util;
 
 use std::sync::Arc;
@@ -8,8 +8,8 @@ use axum::{Router, routing};
 
 use crate::state::ApiState;
 
-pub use info::*;
 pub use delete::*;
+pub use info::*;
 
 pub fn build() -> Router<Arc<ApiState>> {
     Router::new()
