@@ -1,14 +1,18 @@
+pub mod account;
+pub mod auth;
 mod ping;
 
 use std::sync::Arc;
 
 use axum::{Router, routing};
-pub use ping::*;
 
 use super::state::ApiState;
 
-pub fn build() -> Router<Arc<ApiState>> {
-    let router = Router::new().route("/", routing::get(ping));
+pub use ping::*;
 
-    router
+pub fn build() -> Router<Arc<ApiState>> {
+    Router::new()
+        .route("/", routing::get(ping))
+        .merge(auth::build())
+        .merge(account::build())
 }

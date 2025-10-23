@@ -2,6 +2,8 @@ use chrono::{DateTime, Utc};
 use sqlx::PgExecutor;
 use uuid::Uuid;
 
+// TODO: remove allow dead code
+#[allow(dead_code)]
 pub struct Account {
     pub id: Uuid,
 
@@ -33,30 +35,35 @@ pub async fn create(
     .await
 }
 
-pub async fn get(id: Uuid, executor: impl PgExecutor<'_>) -> sqlx::Result<Account> {
+pub async fn get(id: Uuid, executor: impl PgExecutor<'_>) -> sqlx::Result<Option<Account>> {
     sqlx::query_as!(
         Account,
         r#"
             SELECT *
             FROM account.accounts
             WHERE id = $1
+            LIMIT 1
         "#,
         id
     )
-    .fetch_one(executor)
+    .fetch_optional(executor)
     .await
 }
 
-pub async fn get_by_email(email: &str, executor: impl PgExecutor<'_>) -> sqlx::Result<Account> {
+pub async fn get_by_email(
+    email: &str,
+    executor: impl PgExecutor<'_>,
+) -> sqlx::Result<Option<Account>> {
     sqlx::query_as!(
         Account,
         r#"
             SELECT *
             FROM account.accounts
             WHERE email = $1
+            LIMIT 1
         "#,
         email
     )
-    .fetch_one(executor)
+    .fetch_optional(executor)
     .await
 }

@@ -41,3 +41,12 @@ impl Error {
             .build()
     }
 }
+
+impl From<validator::ValidationErrors> for Error {
+    fn from(error: validator::ValidationErrors) -> Self {
+        Error::builder()
+            .status(StatusCode::BAD_REQUEST)
+            .message(error.to_string()) // TODO: return better error
+            .build()
+    }
+}

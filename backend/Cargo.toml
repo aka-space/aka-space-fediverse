@@ -1,7 +1,7 @@
 [workspace]
 resolver = "3"
 members = [
-    "crates/broadcast",
+    "crates/broadcast", "crates/cookie",
     "crates/cors",
     "crates/json-web-token",
     "crates/oidc",

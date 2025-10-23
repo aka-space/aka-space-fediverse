@@ -28,6 +28,12 @@ impl Modify for SecurityAddon {
 #[openapi(
     paths(
         controller::ping,
+
+        controller::auth::register,
+        controller::auth::login,
+        controller::auth::logout,
+
+        controller::account::info
     ),
     components(schemas(
         ErrorResponse,
