@@ -1,12 +1,14 @@
 CREATE EXTENSION IF NOT EXISTS "uuid-ossp";
 
-CREATE TABLE IF NOT EXITST accounts(
+CREATE SCHEMA IF NOT EXISTS account;
+
+CREATE TABLE IF NOT EXISTS account.accounts(
     id uuid PRIMARY KEY DEFAULT uuid_generate_v4(),
 
     email varchar(128) UNIQUE NOT NULL,
-    name varchar(64),
+    username varchar(128) UNIQUE NOT NULL,
     password varchar(72) NOT NULL,
 
     created_at timestamptz NOT NULL DEFAULT now(),
-    updated_at timestamptz NOT NULL DEFAULT now(),
+    updated_at timestamptz NOT NULL DEFAULT now()
 );
