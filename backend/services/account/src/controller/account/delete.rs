@@ -5,7 +5,7 @@ use axum::{
     http::StatusCode,
 };
 use axum_extra::extract::CookieJar;
-use broadcast::queue::account::{Data, Event};
+use broadcast::queue::account::Event;
 use uuid::Uuid;
 
 use crate::{
@@ -34,11 +34,7 @@ pub async fn delete(
         return Err(Error::internal());
     }
 
-    if let Err(error) = state
-        .account_sender
-        .send(&Event::Create, &Data { id })
-        .await
-    {
+    if let Err(error) = state.account_sender.send(&Event::Create, &id).await {
         tracing::error!(?error, ?id, "Failed to send delete account event to queue");
     }
 
