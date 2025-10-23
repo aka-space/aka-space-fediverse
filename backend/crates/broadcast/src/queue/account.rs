@@ -1,6 +1,4 @@
-use serde::{Deserialize, Serialize};
 use strum::{AsRefStr, EnumString};
-use uuid::Uuid;
 
 pub const EXCHANGE: &str = "account";
 
@@ -9,9 +7,4 @@ pub const EXCHANGE: &str = "account";
 pub enum Event {
     Create,
     Delete,
-}
-
-#[derive(Serialize, Deserialize)]
-pub struct Data {
-    pub id: Uuid,
 }

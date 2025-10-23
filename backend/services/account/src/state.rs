@@ -10,7 +10,7 @@ use crate::config::CONFIG;
 pub struct ApiState {
     pub database_pool: PgPool,
     pub jwt: Jwt,
-    pub account_sender: Sender<account::Event, account::Data>,
+    pub account_sender: Sender<account::Event>,
 }
 
 impl ApiState {

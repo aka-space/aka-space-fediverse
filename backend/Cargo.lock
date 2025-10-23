@@ -582,7 +582,6 @@ dependencies = [
  "serde",
  "serde_json",
  "strum",
- "uuid",
 ]
 
 [[package]]

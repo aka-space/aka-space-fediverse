@@ -10,12 +10,12 @@ use lapin::{
 };
 use serde::Deserialize;
 
-pub struct Receiver<E: FromStr + AsRef<str>, T: for<'de> Deserialize<'de>> {
+pub struct Receiver<E: FromStr + AsRef<str>> {
     pub inner: Consumer,
-    _phantom: PhantomData<(E, T)>,
+    _phantom: PhantomData<E>,
 }
 
-impl<E: FromStr + AsRef<str>, T: for<'de> Deserialize<'de>> Receiver<E, T> {
+impl<E: FromStr + AsRef<str>> Receiver<E> {
     pub async fn new(
         exchange: String,
         tag: String,
@@ -78,7 +78,7 @@ impl<E: FromStr + AsRef<str>, T: for<'de> Deserialize<'de>> Receiver<E, T> {
         })
     }
 
-    fn deserialize(delivery: &Delivery) -> Result<T> {
+    fn deserialize<T: for<'de> Deserialize<'de>>(delivery: &Delivery) -> Result<T> {
         let body = std::str::from_utf8(&delivery.data)?;
 
         let data: T = serde_json::from_str(body)?;
@@ -86,7 +86,9 @@ impl<E: FromStr + AsRef<str>, T: for<'de> Deserialize<'de>> Receiver<E, T> {
         Ok(data)
     }
 
-    async fn handle_delivery(delivery: lapin::Result<Delivery>) -> Result<T> {
+    async fn handle_delivery<T: for<'de> Deserialize<'de>>(
+        delivery: lapin::Result<Delivery>,
+    ) -> Result<T> {
         let delivery = delivery?;
 
         let data = match Self::deserialize(&delivery) {
@@ -106,13 +108,13 @@ impl<E: FromStr + AsRef<str>, T: for<'de> Deserialize<'de>> Receiver<E, T> {
         Ok(data)
     }
 
-    pub async fn next(&mut self) -> Option<Result<T>> {
+    pub async fn next<T: for<'de> Deserialize<'de>>(&mut self) -> Option<Result<T>> {
         let delivery = self.inner.next().await?;
 
         Some(Self::handle_delivery(delivery).await)
     }
 
-    pub fn stream(self) -> impl Stream<Item = Result<T>> {
+    pub fn stream<T: for<'de> Deserialize<'de>>(self) -> impl Stream<Item = Result<T>> {
         self.inner.then(Self::handle_delivery)
     }
 }

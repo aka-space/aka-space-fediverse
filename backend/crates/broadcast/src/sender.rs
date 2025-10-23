@@ -8,13 +8,13 @@ use lapin::{
 };
 use serde::Serialize;
 
-pub struct Sender<E: AsRef<str>, T: Serialize> {
+pub struct Sender<E: AsRef<str>> {
     pub channel: Channel,
     pub exchange: String,
-    _phantom: PhantomData<(E, T)>,
+    _phantom: PhantomData<E>,
 }
 
-impl<E: AsRef<str>, T: Serialize> Sender<E, T> {
+impl<E: AsRef<str>> Sender<E> {
     pub async fn new(exchange: String, connection: &Connection) -> Result<Self> {
         let channel = connection.create_channel().await?;
         channel
@@ -36,7 +36,7 @@ impl<E: AsRef<str>, T: Serialize> Sender<E, T> {
         })
     }
 
-    pub async fn send(&self, event: &E, data: &T) -> Result<()> {
+    pub async fn send<T: Serialize>(&self, event: &E, data: &T) -> Result<()> {
         let serialized = serde_json::to_vec(data)?;
 
         self.channel
@@ -47,8 +47,9 @@ impl<E: AsRef<str>, T: Serialize> Sender<E, T> {
                 &serialized,
                 BasicProperties::default().with_delivery_mode(2),
             )
+            .await?
             .await?;
 
-        todo!()
+        Ok(())
     }
 }
