@@ -2,6 +2,7 @@ use std::sync::Arc;
 
 use axum::{Json, extract::State, http::StatusCode};
 use axum_extra::extract::CookieJar;
+use broadcast::queue::account::{Data, Event};
 use serde::Deserialize;
 use utoipa::ToSchema;
 use validator::Validate;
@@ -71,6 +72,14 @@ pub async fn register(
                 .build());
         }
     };
+
+    if let Err(error) = state
+        .account_sender
+        .send(&Event::Create, &Data { id })
+        .await
+    {
+        tracing::error!(?error, ?id, "Failed to send created account to queue");
+    }
 
     let token = match state.jwt.encode(id) {
         Ok(token) => token,
