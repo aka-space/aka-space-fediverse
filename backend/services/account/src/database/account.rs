@@ -50,7 +50,7 @@ pub async fn get(id: Uuid, executor: impl PgExecutor<'_>) -> sqlx::Result<Option
                 password,
                 role as "role: Role"
             FROM account.accounts
-            WHERE id = $1
+            WHERE id = $1 AND is_active = true
             LIMIT 1
         "#,
         id
@@ -73,7 +73,7 @@ pub async fn get_by_email(
                 password,
                 role as "role: Role"
             FROM account.accounts
-            WHERE email = $1
+            WHERE email = $1 and is_active = true
             LIMIT 1
         "#,
         email

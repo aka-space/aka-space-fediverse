@@ -15,6 +15,8 @@ CREATE TABLE IF NOT EXISTS account.accounts(
     password varchar(72) NOT NULL,
     role account.role NOT NULL DEFAULT 'member'::account.role,
 
+    is_active boolean NOT NULL DEFAULT true,
+
     created_at timestamptz NOT NULL DEFAULT now(),
     updated_at timestamptz NOT NULL DEFAULT now()
 );
