@@ -14,7 +14,12 @@ pub struct Info {
     pub username: String,
 }
 
-#[utoipa::path(post, tag = "Account", path = "/account/info")]
+#[utoipa::path(
+    post,
+    tag = "Account",
+    path = "/account/info",
+    security(("jwt_token" = []))
+)]
 pub async fn info(State(state): State<Arc<ApiState>>, jar: CookieJar) -> Result<Json<Info>> {
     let account = util::get_account(state.clone(), jar).await?;
 

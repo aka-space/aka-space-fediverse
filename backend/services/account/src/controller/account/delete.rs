@@ -15,7 +15,16 @@ use crate::{
     state::ApiState,
 };
 
-#[utoipa::path(delete, tag = "Account", path = "/account/{id}")]
+#[utoipa::path(
+    delete,
+    tag = "Account",
+    path = "/account/{id}",
+    operation_id = "account::delete",
+    params(
+        ("id" = Uuid, Path, description = "The UUID of the account")
+    ),
+    security(("jwt_token" = []))
+)]
 pub async fn delete(
     State(state): State<Arc<ApiState>>,
     jar: CookieJar,

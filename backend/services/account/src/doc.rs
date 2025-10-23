@@ -33,7 +33,8 @@ impl Modify for SecurityAddon {
         controller::auth::login,
         controller::auth::logout,
 
-        controller::account::info
+        controller::account::info,
+        controller::account::delete
     ),
     components(schemas(
         ErrorResponse,

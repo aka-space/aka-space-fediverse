@@ -3,7 +3,12 @@ use axum_extra::extract::CookieJar;
 
 use crate::error::{Error, Result};
 
-#[utoipa::path(post, tag = "Auth", path = "/auth/logout")]
+#[utoipa::path(
+    post,
+    tag = "Auth",
+    path = "/auth/logout",
+    security(("jwt_token" = []))
+)]
 pub async fn logout(jar: CookieJar) -> Result<CookieJar> {
     match cookie::remove(cookie::TOKEN_KEY, jar) {
         Some(jar) => Ok(jar),
