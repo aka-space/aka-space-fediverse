@@ -1,4 +1,4 @@
-import { useQuery } from "@tanstack/react-query";
+import { useQuery } from '@tanstack/react-query';
 
 export const useGetPosts = (api: string) => {
     return useQuery({
@@ -13,4 +13,4 @@ export const useGetPosts = (api: string) => {
             return response.json();
         },
     });
-}
+};
