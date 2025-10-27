@@ -31,7 +31,7 @@ const CreatePostForm = () => {
         console.log('Post Data:', postData);
     };
     return (
-        <div className="w-full px-6 mt-10">
+        <div className="w-full px-6">
             <div className="max-w-4xl mx-auto w-full">
                 <PostForm
                     postData={postData}
