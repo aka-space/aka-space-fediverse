@@ -39,7 +39,7 @@ const PostForm = ({ postData, handleChange, handleSubmit }: PostFormProps) => {
                                 value={postData.title}
                                 onChange={handleChange}
                                 className="w-full border border-gray-200 bg-white dark:bg-neutral-800 dark:border-neutral-700 rounded-sm"
-                                placeholder='Enter your Title...'
+                                placeholder="Enter your Title..."
                                 required
                             />
                         </div>
@@ -71,7 +71,9 @@ const PostForm = ({ postData, handleChange, handleSubmit }: PostFormProps) => {
                                 onChange={(value) =>
                                     handleChange({
                                         target: { name: 'content', value },
-                                    } as unknown as React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>)
+                                    } as unknown as React.ChangeEvent<
+                                        HTMLInputElement | HTMLTextAreaElement
+                                    >)
                                 }
                                 className="w-full min-h-60"
                                 editorContentClassName="p-5"
