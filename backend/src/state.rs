@@ -1,15 +1,16 @@
-use std::sync::Arc;
+use std::{collections::HashMap, sync::Arc};
 
 use sqlx::PgPool;
 
 use crate::{
-    config::CONFIG,
-    service::auth::{JwtService, TokenService},
+    config::{CONFIG, Provider},
+    service::auth::{JwtService, OAuth2Service, TokenService},
 };
 
 pub struct ApiState {
     pub database: PgPool,
     pub token_service: TokenService,
+    pub oauth2_services: HashMap<Provider, OAuth2Service>,
 }
 
 impl ApiState {
@@ -22,9 +23,16 @@ impl ApiState {
             refresh_tokens: Default::default(),
         };
 
+        let mut oauth2_services = HashMap::new();
+        for (provider, config) in CONFIG.oauth2.clone() {
+            let service = OAuth2Service::new(config).await;
+            oauth2_services.insert(provider, service);
+        }
+
         Arc::new(Self {
             database,
             token_service,
+            oauth2_services,
         })
     }
 }
