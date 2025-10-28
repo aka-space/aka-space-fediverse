@@ -11,7 +11,7 @@ function Card({ className, variant = 'default', ...props }: CardProps) {
         'bg-card text-card-foreground flex flex-col gap-6 rounded-xl border py-6 shadow-sm';
     const variantClass: Record<NonNullable<CardProps['variant']>, string> = {
         default: 'bg-card',
-        auth: 'bg-gradient-to-bl from-black/35 to-white/30 backdrop-brightness-50 text-card-foreground flex flex-col gap-6 rounded-xl border-none py-10 shadow-[0_0_50px_rgba(0,0,0,0.7)]',
+        auth: 'bg-gradient-to-b from-black/85 to-white/10 backdrop-brightness-50 text-card-foreground flex flex-col gap-6 rounded-xl border-none py-10 shadow-[0_0_30px_rgba(0,0,0,0.5)]',
     };
     return (
         <div
