@@ -98,14 +98,8 @@ pub async fn login(
         }
     }
 
-    let (access, refresh) = match state.token_service.encode(account.id) {
-        Ok(token) => token,
-        Err(error) => {
-            tracing::error!(?error, "Failed to create token");
+    let (access, refresh) = state.token_service.encode(account.id)?;
 
-            return Err(Error::internal());
-        }
-    };
     tracing::info!(access, ?refresh, ?account.id, "Token created");
 
     Ok((jar.add(refresh), access))

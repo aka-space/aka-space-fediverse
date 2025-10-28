@@ -1,7 +1,9 @@
+use axum::http::StatusCode;
 use chrono::Local;
 use jsonwebtoken::{DecodingKey, EncodingKey, Header, Validation};
 use uuid::Uuid;
 
+use crate::error::{Error, Result};
 use crate::service::auth::Claims;
 
 #[derive(Debug)]
@@ -20,7 +22,7 @@ impl JwtService {
         }
     }
 
-    pub fn encode(&self, id: Uuid) -> jsonwebtoken::errors::Result<String> {
+    pub fn encode(&self, id: Uuid) -> Result<String> {
         let now = Local::now().timestamp() as u64;
 
         let claims = Claims {
@@ -33,14 +35,14 @@ impl JwtService {
             Err(error) => {
                 tracing::error!(?error, "Failed to generate token");
 
-                return Err(error);
+                return Err(Error::internal());
             }
         };
 
         Ok(token)
     }
 
-    pub fn decode(&self, token: &str) -> jsonwebtoken::errors::Result<Uuid> {
+    pub fn decode(&self, token: &str) -> Result<Uuid> {
         let token =
             match jsonwebtoken::decode::<Claims>(token, &self.decoding_key, &Validation::default())
             {
@@ -48,7 +50,10 @@ impl JwtService {
                 Err(error) => {
                     tracing::error!(token, ?error, "Failed to decode token");
 
-                    return Err(error);
+                    return Err(Error::builder()
+                        .status(StatusCode::UNAUTHORIZED)
+                        .message("Invalid token".to_string())
+                        .build());
                 }
             };
 

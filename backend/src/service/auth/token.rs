@@ -6,6 +6,7 @@ use uuid::Uuid;
 
 use crate::{
     config::{REFRESH_COOKIE, REFRESH_ENDPOINT},
+    error::Result,
     service::auth::JwtService,
 };
 
@@ -16,7 +17,7 @@ pub struct TokenService {
 }
 
 impl TokenService {
-    pub fn encode(&self, id: Uuid) -> jsonwebtoken::errors::Result<(String, Cookie<'static>)> {
+    pub fn encode(&self, id: Uuid) -> Result<(String, Cookie<'static>)> {
         let access_token = self.access.encode(id)?;
         let refresh_token = self.refresh.encode(id)?;
 
