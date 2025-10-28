@@ -65,3 +65,11 @@ networks:
   network:
     name: aka-network
     external: true
+
+volumes:
+  database:
+    name: aka-database
+    external: true
+  cloudbeaver:
+    name: aka-cloudbeaver
+    external: true
