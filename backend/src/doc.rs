@@ -38,7 +38,8 @@ impl Modify for SecurityAddon {
         controller::auth::login,
         controller::auth::me,
         controller::auth::refresh,
-        controller::auth::logout
+        controller::auth::logout,
+        controller::auth::oauth2::start
     ),
     components(schemas(
         Error,

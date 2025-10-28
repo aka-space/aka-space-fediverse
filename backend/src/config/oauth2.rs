@@ -2,6 +2,8 @@ use openidconnect::{ClientId, ClientSecret, IssuerUrl, RedirectUrl};
 use serde::Deserialize;
 use utoipa::ToSchema;
 
+pub const OAUTH2_TEMPORARY: &str = "oauth2";
+
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Hash, Deserialize, ToSchema)]
 #[serde(rename_all = "snake_case")]
 pub enum Provider {
