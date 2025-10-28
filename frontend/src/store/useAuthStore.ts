@@ -1,13 +1,13 @@
 import { axiosInstance } from '@/lib/axios';
-import { User } from '@/types';
+import { UserLogin, UserRegister } from '@/types';
 import { create } from 'zustand';
 
 interface AuthState {
-    authUser: User | null;
+    authUser: UserRegister | null;
     isLoggingIn: boolean;
     isRegisting: boolean;
-    register: (data: User) => Promise<boolean | undefined>;
-    login: (data: User) => Promise<boolean | undefined>;
+    register: (data: UserRegister) => Promise<boolean | undefined>;
+    login: (data: UserLogin) => Promise<boolean | undefined>;
     logout: () => void;
 }
 
@@ -16,7 +16,7 @@ export const useAuthStore = create<AuthState>((set) => ({
     isLoggingIn: false,
     isRegisting: false,
 
-    register: async (data: User) => {
+    register: async (data: UserRegister) => {
         set({ isRegisting: true });
         try {
             const res = await axiosInstance.post('/authAka', data);
@@ -32,12 +32,12 @@ export const useAuthStore = create<AuthState>((set) => ({
         }
     },
 
-    login: async (data: User) => {
+    login: async (data: UserLogin) => {
         set({ isLoggingIn: true });
         try {
             const res = await axiosInstance.get('/authAka');
             const user = res.data.filter(
-                (a: User) => a.email.toString() === data.email,
+                (a: UserLogin) => a.email.toString() === data.email,
             );
 
             if (user[0].password === data.password) {
