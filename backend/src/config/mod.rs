@@ -2,6 +2,7 @@ mod bcrypt;
 mod cors;
 mod jwt;
 mod oauth2;
+mod redis;
 
 use std::{collections::HashMap, sync::LazyLock};
 
@@ -16,12 +17,19 @@ const fn default_port() -> u16 {
     3000
 }
 
+fn default_redis_url() -> String {
+    "redis://127.0.0.1/".to_string()
+}
+
 #[derive(Debug, Deserialize)]
 pub struct Config {
     #[serde(default = "default_port")]
     pub port: u16,
 
     pub database_url: String,
+
+    #[serde(default = "default_redis_url")]
+    pub redis_url: String,
 
     #[serde(default)]
     pub bcrypt: BcryptConfig,
