@@ -1,29 +1,23 @@
 'use client';
 
 import { LoginForm } from '@/components/login-form';
+import { LoginFormData } from '@/schemas/auth-schema';
 import { useAuthStore } from '@/store/useAuthStore';
-import { User } from '@/types';
 import { useRouter } from 'next/navigation';
-import { FormEvent, useState } from 'react';
 
 export default function LoginPage() {
     const route = useRouter();
-    const [formData, setFormData] = useState<User>({
-        username: '',
-        email: '',
-        password: '',
-    });
     const { login } = useAuthStore();
-    const handleSubmit = async (
-        e: FormEvent<HTMLFormElement | HTMLDivElement>,
-    ) => {
-        e.preventDefault();
-        console.log('Form Login send: ', formData);
+
+    const handleSubmit = async (data: LoginFormData): Promise<void> => {
+        console.log('Form Login send: ', data);
         try {
-            const res = await login(formData);
+            const res = await login(data);
             if (res) {
                 route.push('/');
                 console.log('Log in successfully');
+            } else {
+                console.log('Invalid email or password.');
             }
         } catch (error) {
             console.log('Login ERROR', error);
@@ -33,11 +27,7 @@ export default function LoginPage() {
     return (
         <div className="flex min-h-svh flex-col items-center justify-center gap-6 p-6 md:p-10">
             <div className="flex w-full max-w-[460px] flex-col gap-6">
-                <LoginForm
-                    data={formData}
-                    setData={setFormData}
-                    onSubmit={handleSubmit}
-                />
+                <LoginForm onSubmit={handleSubmit} />
             </div>
         </div>
     );

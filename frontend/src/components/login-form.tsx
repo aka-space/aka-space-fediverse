@@ -5,20 +5,27 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { useRouter } from 'next/navigation';
 import { Lock, User } from 'lucide-react';
-import { User as user } from '@/types';
 import Image from 'next/image';
+import { zodResolver } from '@hookform/resolvers/zod';
+import { LoginFormData, loginSchema } from '@/schemas/auth-schema';
+import { Controller, useForm } from 'react-hook-form';
+import { Field, FieldError, FieldGroup } from '@/components/ui/field';
 
 export function LoginForm({
     className,
-    data,
-    setData,
     onSubmit,
     ...props
-}: React.ComponentProps<'div'> & {
-    data?: user;
-    setData?: (d: user) => void;
-    onSubmit?: React.FormEventHandler<HTMLFormElement>;
+}: Omit<React.ComponentProps<'div'>, 'onSubmit'> & {
+    onSubmit: (data: LoginFormData) => void;
 }) {
+    const form = useForm<LoginFormData>({
+        resolver: zodResolver(loginSchema),
+        defaultValues: {
+            email: '',
+            password: '',
+        },
+    });
+
     const route = useRouter();
     return (
         <div className={cn('flex flex-col gap-6', className)} {...props}>
@@ -29,105 +36,130 @@ export function LoginForm({
                     </CardTitle>
                 </CardHeader>
                 <CardContent>
-                    <form onSubmit={onSubmit}>
-                        <div className="grid gap-6">
-                            <div className="grid gap-6 text-white">
-                                <div className="grid gap-3 relative">
-                                    <User className="absolute left-3 top-1/2 -translate-y-1/2 text-white w-4 h-4" />
-                                    <Input
-                                        id="email"
-                                        type="text"
-                                        placeholder="Email"
-                                        required
-                                        value={data?.email}
-                                        className="pl-10 placeholder:text-gray-350"
-                                        onChange={(e) => {
-                                            setData?.({
-                                                ...(data ?? {
-                                                    username: '',
-                                                    email: '',
-                                                    password: '',
-                                                }),
-                                                email: e.currentTarget.value,
-                                            });
+                    <form onSubmit={form.handleSubmit(onSubmit)}>
+                        <FieldGroup>
+                            <div className="grid gap-6">
+                                <div className="grid gap-6 text-white">
+                                    <Controller
+                                        name="email"
+                                        control={form.control}
+                                        render={({ field, fieldState }) => (
+                                            <Field
+                                                data-invalid={
+                                                    fieldState.invalid
+                                                }
+                                            >
+                                                <div className="grid gap-3 relative">
+                                                    <User className="absolute left-3 top-1/2 -translate-y-1/2 text-white w-4 h-4" />
+                                                    <Input
+                                                        {...field}
+                                                        aria-invalid={
+                                                            fieldState.invalid
+                                                        }
+                                                        placeholder="Username"
+                                                        autoComplete="username"
+                                                        className="pl-10 placeholder:text-gray-350 selection:bg-white selection:text-black"
+                                                    />
+                                                </div>
+                                                {fieldState.invalid && (
+                                                    <FieldError
+                                                        errors={[
+                                                            fieldState.error,
+                                                        ]}
+                                                    />
+                                                )}
+                                            </Field>
+                                        )}
+                                    />
+                                    <div className="grid gap-3 relative">
+                                        <Controller
+                                            name="password"
+                                            control={form.control}
+                                            render={({ field, fieldState }) => (
+                                                <Field
+                                                    data-invalid={
+                                                        fieldState.invalid
+                                                    }
+                                                >
+                                                    <div className="grid gap-3 relative">
+                                                        <Lock className="absolute left-3 top-1/2 -translate-y-1/2 text-white w-4 h-4" />
+                                                        <Input
+                                                            {...field}
+                                                            aria-invalid={
+                                                                fieldState.invalid
+                                                            }
+                                                            placeholder="Password"
+                                                            autoComplete="current-password"
+                                                            type="password"
+                                                            className="pl-10 placeholder:text-gray-350 selection:bg-white selection:text-black"
+                                                        />
+                                                    </div>
+                                                    {fieldState.invalid && (
+                                                        <FieldError
+                                                            errors={[
+                                                                fieldState.error,
+                                                            ]}
+                                                        />
+                                                    )}
+                                                </Field>
+                                            )}
+                                        />
+                                    </div>
+                                    <div className="flex justify-end">
+                                        <span className="text-sm text-white hover:underline italic cursor-pointer">
+                                            Forgot password?
+                                        </span>
+                                    </div>
+
+                                    <Button
+                                        variant="light"
+                                        size="slg"
+                                        type="submit"
+                                    >
+                                        Login
+                                    </Button>
+                                </div>
+                                <div>
+                                    <div className="flex items-center gap-2">
+                                        <div className="flex-1 h-px bg-gray-300"></div>
+                                        <span className="text-sm text-gray-200">
+                                            Or continue with
+                                        </span>
+                                        <div className="flex-1 h-px bg-gray-300"></div>
+                                    </div>
+                                    <div className="flex gap-5 justify-center pt-2">
+                                        <Image
+                                            className="rounded-full w-11 cursor-pointer"
+                                            src="/logo-google.jpg"
+                                            alt="Login With GG"
+                                            width={35}
+                                            height={35}
+                                        />
+
+                                        <Image
+                                            className="rounded-full w-11 cursor-pointer"
+                                            src="/logo-github.jpg"
+                                            alt="Login With GG"
+                                            width={35}
+                                            height={35}
+                                        />
+                                    </div>
+                                </div>
+
+                                <div className="text-center text-sm text-white">
+                                    Don&apos;t have an account?{' '}
+                                    <a
+                                        href="#"
+                                        className="hover:underline font-semibold"
+                                        onClick={() => {
+                                            route.push('/register');
                                         }}
-                                    />
-                                </div>
-                                <div className="grid gap-3 relative">
-                                    <Lock className="absolute left-3 top-1/2 -translate-y-1/2 text-white w-4 h-4" />
-                                    <Input
-                                        id="password"
-                                        type="password"
-                                        placeholder="Password"
-                                        value={data?.password}
-                                        required
-                                        className="pl-10 placeholder:text-gray-350"
-                                        onChange={(e) => {
-                                            setData?.({
-                                                ...(data ?? {
-                                                    username: '',
-                                                    email: '',
-                                                    password: '',
-                                                }),
-                                                password: e.currentTarget.value,
-                                            });
-                                        }}
-                                    />
-                                </div>
-                                <div className="flex justify-end">
-                                    <span className="text-sm text-white hover:underline italic cursor-pointer">
-                                        Forgot password?
-                                    </span>
-                                </div>
-
-                                <Button
-                                    variant="light"
-                                    size="slg"
-                                    type="submit"
-                                >
-                                    Login
-                                </Button>
-                            </div>
-                            <div>
-                                <div className="flex items-center gap-2">
-                                    <div className="flex-1 h-px bg-gray-300"></div>
-                                    <span className="text-sm text-gray-200">
-                                        Or continue with
-                                    </span>
-                                    <div className="flex-1 h-px bg-gray-300"></div>
-                                </div>
-                                <div className="flex gap-5 justify-center pt-2">
-                                    <Image
-                                        className="rounded-full w-11 cursor-pointer"
-                                        src="/logo-google.jpg"
-                                        alt="Login With GG"
-                                        width={35}
-                                        height={35}
-                                    />
-
-                                    <Image
-                                        className="rounded-full w-11 cursor-pointer"
-                                        src="/logo-github.jpg"
-                                        alt="Login With GG"
-                                        width={35}
-                                        height={35}
-                                    />
+                                    >
+                                        Register
+                                    </a>
                                 </div>
                             </div>
-
-                            <div className="text-center text-sm text-white">
-                                Don&apos;t have an account?{' '}
-                                <a
-                                    href="#"
-                                    className="hover:underline font-semibold"
-                                    onClick={() => {
-                                        route.push('/register');
-                                    }}
-                                >
-                                    Register
-                                </a>
-                            </div>
-                        </div>
+                        </FieldGroup>
                     </form>
                 </CardContent>
             </Card>
