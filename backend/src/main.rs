@@ -5,6 +5,7 @@ mod error;
 mod middleware;
 mod service;
 mod state;
+mod database;
 
 use std::net::SocketAddr;
 
@@ -17,14 +18,12 @@ use crate::{config::CONFIG, state::ApiState};
 async fn build_app() -> Router {
     let state = ApiState::new().await;
 
-    let app = Router::new()
+    Router::new()
         .merge(controller::build())
         .merge(doc::build())
         .layer(TraceLayer::new_for_http())
         .layer(middleware::cors(&CONFIG.cors.origin))
-        .with_state(state);
-
-    app
+        .with_state(state)
 }
 
 #[tokio::main]

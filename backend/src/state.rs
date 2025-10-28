@@ -19,6 +19,7 @@ impl ApiState {
         let token_service = TokenService {
             access: JwtService::new(&CONFIG.jwt.secret, CONFIG.jwt.expired_in),
             refresh: JwtService::new(&CONFIG.jwt.refresh_secret, CONFIG.jwt.refresh_expired_in),
+            refresh_tokens: Default::default(),
         };
 
         Arc::new(Self {

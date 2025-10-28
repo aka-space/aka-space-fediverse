@@ -7,7 +7,7 @@ use utoipa::{
 };
 use utoipa_swagger_ui::SwaggerUi;
 
-use crate::error::ErrorResponse;
+use crate::error::Error;
 
 use super::{controller, state::ApiState};
 
@@ -33,9 +33,13 @@ impl Modify for SecurityAddon {
 #[openapi(
     paths(
         controller::ping,
+
+        controller::auth::login,
+        controller::auth::register,
+        controller::auth::logout
     ),
     components(schemas(
-        ErrorResponse,
+        Error,
     )),
     modifiers(&SecurityAddon),
 )]
