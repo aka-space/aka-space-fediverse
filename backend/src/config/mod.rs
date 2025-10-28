@@ -1,14 +1,16 @@
 mod bcrypt;
 mod cors;
 mod jwt;
+mod oauth2;
 
-use std::sync::LazyLock;
+use std::{collections::HashMap, sync::LazyLock};
 
 use serde::Deserialize;
 
 pub use bcrypt::*;
 pub use cors::*;
 pub use jwt::*;
+pub use oauth2::*;
 
 const fn default_port() -> u16 {
     3000
@@ -29,6 +31,8 @@ pub struct Config {
 
     #[serde(default)]
     pub jwt: JwtConfig,
+
+    pub oauth2: HashMap<Provider, OAuth2Config>,
 }
 
 pub static CONFIG: LazyLock<Config> = LazyLock::new(|| {
