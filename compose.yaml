@@ -36,14 +36,7 @@ services:
     container_name: aka-backend
     environment:
       DATABASE_URL: postgres://${PG_USER}:${PG_PASS}@database/${PG_DB}
-
       CORS__ORIGIN: ${CORS_ORIGIN}
-
-      BCRYPT__COST: ${BCRYPT_COST}
-      BCRYPT__SALT: ${BCRYPT_SALT}
-
-      JWT__SECRET: ${JWT_SECRET}
-      JWT__REFRESH_SECRET: ${JWT_REFRESH_SECRET}
     image: ${REGISTRY}/backend:latest
     restart: always
     depends_on:
