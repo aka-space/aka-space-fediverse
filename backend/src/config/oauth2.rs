@@ -9,10 +9,20 @@ pub enum Provider {
     Microsoft,
 }
 
+const fn default_scope() -> String {
+    String::new()
+}
+
 #[derive(Debug, Clone, Deserialize)]
 pub struct OAuth2Config {
     pub client_id: ClientId,
+
     pub client_secret: ClientSecret,
+
     pub issuer_url: IssuerUrl,
+
     pub redirect_url: RedirectUrl,
+
+    #[serde(default = "default_scope")]
+    pub scope: String,
 }
