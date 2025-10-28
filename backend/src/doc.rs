@@ -34,8 +34,9 @@ impl Modify for SecurityAddon {
     paths(
         controller::ping,
 
-        controller::auth::login,
         controller::auth::register,
+        controller::auth::login,
+        controller::auth::me,
         controller::auth::logout
     ),
     components(schemas(

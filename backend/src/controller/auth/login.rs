@@ -7,19 +7,17 @@ use utoipa::ToSchema;
 use validator::Validate;
 
 use crate::{
-    database::account,
+    database,
     error::{Error, Result},
     state::ApiState,
 };
 
 #[derive(Deserialize, ToSchema, Validate)]
-#[schema(
-    as = auth::login::Request,
-    example = json!({
-        "email": "user@example.com",
-        "password": "12345678"
-    })
-)]
+#[schema(example = json!({
+    "email": "user@example.com",
+    "password": "12345678"
+}))]
+#[schema(as = auth::login::Request)]
 pub struct Request {
     #[validate(email)]
     pub email: String,
@@ -61,7 +59,7 @@ pub async fn login(
 ) -> Result<(CookieJar, String)> {
     request.validate()?;
 
-    let account = match account::get_by_email(&request.email, &state.database).await {
+    let account = match database::account::get_by_email(&request.email, &state.database).await {
         Ok(Some(account)) => account,
         Ok(None) => {
             tracing::warn!(email = request.email, "No account with given email",);

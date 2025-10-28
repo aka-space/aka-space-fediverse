@@ -8,20 +8,18 @@ use validator::Validate;
 
 use crate::{
     config::CONFIG,
-    database::account,
+    database,
     error::{Error, Result},
     state::ApiState,
 };
 
 #[derive(Deserialize, ToSchema, Validate)]
-#[schema(
-    as = auth::register::Request,
-    example = json!({
-        "email": "user@example.com",
-        "username": "user",
-        "password": "12345678"
-    })
-)]
+#[schema(example = json!({
+    "email": "user@example.com",
+    "username": "user",
+    "password": "12345678"
+}))]
+#[schema(as = auth::register::Request)]
 pub struct Request {
     #[validate(email)]
     pub email: String,
@@ -79,7 +77,7 @@ pub async fn register(
             }
         };
 
-    let id = match account::create(
+    let id = match database::account::create(
         &request.email,
         &request.username,
         Some(&hashed_password),

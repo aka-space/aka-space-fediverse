@@ -11,7 +11,10 @@ pub type Result<T> = std::result::Result<T, Error>;
 pub struct Error {
     #[serde(skip)]
     pub status: StatusCode,
+
     pub message: Option<String>,
+
+    #[schema(value_type = Object)]
     pub detail: Option<Value>,
 }
 

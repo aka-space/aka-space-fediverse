@@ -84,18 +84,3 @@ pub async fn get_by_email(
     .fetch_optional(executor)
     .await
 }
-
-pub async fn delete(id: Uuid, executor: impl PgExecutor<'_>) -> sqlx::Result<()> {
-    sqlx::query!(
-        r#"
-            UPDATE accounts
-            SET is_active = false
-            WHERE id = $1
-        "#,
-        id
-    )
-    .execute(executor)
-    .await?;
-
-    Ok(())
-}
