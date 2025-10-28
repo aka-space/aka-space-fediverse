@@ -4,9 +4,51 @@ services:
     image: ${REGISTRY}/frontend:latest
     restart: always
     networks:
-      - aka-network
+      - network
     profiles:
       - frontend
+      - deploy
+  database:
+    container_name: aka-database
+    image: postgres:latest
+    restart: always
+    environment:
+      POSTGRES_USER: ${PG_USER}
+      POSTGRES_PASSWORD: ${PG_PASS}
+      POSTGRES_DB: ${PG_DB}
+    volumes:
+      - database:/var/lib/postgresql/data
+    networks:
+      - network
+
+  cloudbeaver:
+    image: dbeaver/cloudbeaver:latest
+    container_name: aka-cloudbeaver
+    restart: always
+    depends_on:
+      - database
+    volumes:
+      - cloudbeaver:/opt/cloudbeaver/workspace
+    networks:
+      - network
+
+  backend:
+    container_name: aka-backend
+    environment:
+      DATABASE_URL: postgres://${PG_USER}:${PG_PASS}@database/${PG_DB}
+      CORS__ORIGIN: ${CORS_ORIGIN}
+      BCRYPT__COST: ${BCRYPT_COST}
+      BCRYPT__SALT: ${BCRYPT_SALT}
+      JWT__SECRET: ${JWT_SECRET}
+      JWT__REFRESH_SECRET: ${JWT_REFRESH_SECRET}
+    image: ${REGISTRY}/backend:latest
+    restart: always
+    depends_on:
+      - database
+    networks:
+      - network
+    profiles:
+      - backend
       - deploy
 
   cloudflare-tunnel:
@@ -17,8 +59,9 @@ services:
     environment:
       - TUNNEL_TOKEN=${CLOUDFLARE_TUNNEL_TOKEN}
     networks:
-      - aka-network
+      - network
 
 networks:
-  aka-network:
+  network:
+    name: aka-network
     external: true

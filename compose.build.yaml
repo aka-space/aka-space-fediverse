@@ -1,4 +1,16 @@
 services:
+  backend:
+    image: ${REGISTRY}/backend:latest
+    build:
+      context: backend
+      dockerfile: Dockerfile
+      cache_from:
+        - type=local,src=/tmp/.buildx-cache
+      cache_to:
+        - type=local,dest=/tmp/.buildx-cache,mode=max
+    profiles:
+      - backend
+      - build
   frontend:
     image: ${REGISTRY}/frontend:latest
     build:
