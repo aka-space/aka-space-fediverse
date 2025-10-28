@@ -36,8 +36,7 @@ pub static CONFIG: LazyLock<Config> = LazyLock::new(|| {
         .add_source(
             ::config::Environment::default()
                 .try_parsing(true)
-                .separator("__")
-                .list_separator(","),
+                .separator("__"),
         )
         .build()
         .unwrap()

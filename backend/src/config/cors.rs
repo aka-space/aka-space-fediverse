@@ -25,14 +25,14 @@ pub const ALLOW_HEADERS: [HeaderName; 7] = [
     ACCESS_CONTROL_ALLOW_HEADERS,
 ];
 
-fn default_origin() -> Vec<String> {
-    vec!["localhost:3000".to_string()]
+fn default_origin() -> String {
+    "localhost:3000".to_string()
 }
 
 #[derive(Debug, Deserialize)]
 pub struct CorsConfig {
     #[serde(default = "default_origin")]
-    pub origin: Vec<String>,
+    pub origin: String,
 }
 
 impl Default for CorsConfig {
