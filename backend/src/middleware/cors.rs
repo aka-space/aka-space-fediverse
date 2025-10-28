@@ -3,9 +3,9 @@ use tower_http::cors::CorsLayer;
 
 use crate::config::{ALLOW_HEADERS, ALLOW_METHODS};
 
-pub fn cors(origin: &[String]) -> CorsLayer {
+pub fn cors(origin: &str) -> CorsLayer {
     let allow_origins: Vec<_> = origin
-        .iter()
+        .split(',')
         .map(|origin| origin.parse::<HeaderValue>().unwrap())
         .collect();
 
