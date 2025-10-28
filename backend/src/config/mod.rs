@@ -2,7 +2,6 @@ mod bcrypt;
 mod cors;
 mod jwt;
 mod oauth2;
-mod redis;
 
 use std::{collections::HashMap, sync::LazyLock};
 
