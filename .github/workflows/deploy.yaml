@@ -76,6 +76,10 @@ jobs:
       REGISTRY: ghcr.io/${{ github.repository }}
       CLOUDFLARE_TUNNEL_TOKEN: ${{ secrets.CLOUDFLARE_TUNNEL_TOKEN }}
       CORS_ORIGIN: ${{ secrets.CORS_ORIGIN }}
+      BCRYPT_COST: ${{ secrets.BCRYPT_COST }}
+      BCRYPT_SALT: ${{ secrets.BCRYPT_SALT }}
+      JWT_SECRET: ${{ secrets.JWT_SECRET }}
+      JWT_REFRESH_SECRET: ${{ secrets.JWT_REFRESH_SECRET }}
     steps:
       - name: Checkout Develop
         uses: actions/checkout@v3
