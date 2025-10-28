@@ -2,6 +2,7 @@ mod login;
 mod logout;
 mod register;
 mod me;
+mod refresh;
 
 use std::sync::Arc;
 
@@ -13,11 +14,13 @@ pub use login::*;
 pub use logout::*;
 pub use register::*;
 pub use me::*;
+pub use refresh::*;
 
 pub fn build() -> Router<Arc<ApiState>> {
     Router::new()
         .route("/auth/register", routing::post(register))
         .route("/auth/login", routing::post(login))
         .route("/auth/me", routing::get(me))
+        .route("/auth/refresh", routing::post(refresh))
         .route("/auth/logout", routing::post(logout))
 }
