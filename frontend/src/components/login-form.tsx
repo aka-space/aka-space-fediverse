@@ -6,6 +6,7 @@ import { Input } from '@/components/ui/input';
 import { useRouter } from 'next/navigation';
 import { Lock, User } from 'lucide-react';
 import { User as user } from '@/types';
+import Image from 'next/image';
 
 export function LoginForm({
     className,
@@ -78,6 +79,7 @@ export function LoginForm({
                                         Forgot password?
                                     </span>
                                 </div>
+
                                 <Button
                                     variant="light"
                                     size="slg"
@@ -86,6 +88,33 @@ export function LoginForm({
                                     Login
                                 </Button>
                             </div>
+                            <div>
+                                <div className="flex items-center gap-2">
+                                    <div className="flex-1 h-px bg-gray-300"></div>
+                                    <span className="text-sm text-gray-200">
+                                        Or continue with
+                                    </span>
+                                    <div className="flex-1 h-px bg-gray-300"></div>
+                                </div>
+                                <div className="flex gap-5 justify-center pt-2">
+                                    <Image
+                                        className="rounded-full w-11 cursor-pointer"
+                                        src="/logo-google.jpg"
+                                        alt="Login With GG"
+                                        width={35}
+                                        height={35}
+                                    />
+
+                                    <Image
+                                        className="rounded-full w-11 cursor-pointer"
+                                        src="/logo-github.jpg"
+                                        alt="Login With GG"
+                                        width={35}
+                                        height={35}
+                                    />
+                                </div>
+                            </div>
+
                             <div className="text-center text-sm text-white">
                                 Don&apos;t have an account?{' '}
                                 <a
