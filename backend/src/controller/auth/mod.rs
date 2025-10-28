@@ -1,8 +1,8 @@
 mod login;
 mod logout;
-mod register;
 mod me;
 mod refresh;
+mod register;
 
 use std::sync::Arc;
 
@@ -12,9 +12,9 @@ use crate::state::ApiState;
 
 pub use login::*;
 pub use logout::*;
-pub use register::*;
 pub use me::*;
 pub use refresh::*;
+pub use register::*;
 
 pub fn build() -> Router<Arc<ApiState>> {
     Router::new()

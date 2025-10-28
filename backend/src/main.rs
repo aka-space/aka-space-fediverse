@@ -1,11 +1,11 @@
 mod config;
 mod controller;
+mod database;
 mod doc;
 mod error;
 mod middleware;
 mod service;
 mod state;
-mod database;
 
 use std::net::SocketAddr;
 
