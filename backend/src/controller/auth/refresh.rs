@@ -57,6 +57,9 @@ pub async fn refresh(
             .message("Invalid refresh token".into())
             .build());
     };
+    if let Some(mut tokens) = token_service.refresh_tokens.get_mut(&id) {
+        tokens.remove(token);
+    }
 
     let (access, refresh) = state.token_service.encode(id)?;
 

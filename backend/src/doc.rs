@@ -37,6 +37,7 @@ impl Modify for SecurityAddon {
         controller::auth::register,
         controller::auth::login,
         controller::auth::me,
+        controller::auth::refresh,
         controller::auth::logout
     ),
     components(schemas(
