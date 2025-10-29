@@ -9,6 +9,7 @@ import { RegisterFormData, registerSchema } from '@/schemas/auth-schema';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { Controller, useForm } from 'react-hook-form';
 import { Field, FieldError, FieldGroup } from './ui/field';
+import Image from 'next/image';
 
 export function RegisterForm({
     className,
@@ -181,6 +182,34 @@ export function RegisterForm({
                                         Register
                                     </Button>
                                 </div>
+                                
+                                <div>
+                                    <div className="flex items-center gap-2">
+                                        <div className="flex-1 h-px bg-gray-300"></div>
+                                        <span className="text-sm text-gray-200">
+                                            Or continue with
+                                        </span>
+                                        <div className="flex-1 h-px bg-gray-300"></div>
+                                    </div>
+                                    <div className="flex gap-5 justify-center pt-2">
+                                        <Image
+                                            className="rounded-full w-11 cursor-pointer"
+                                            src="/logo-google.jpg"
+                                            alt="Login With GG"
+                                            width={35}
+                                            height={35}
+                                        />
+
+                                        <Image
+                                            className="rounded-full w-11 cursor-pointer"
+                                            src="/logo-github.jpg"
+                                            alt="Login With GG"
+                                            width={35}
+                                            height={35}
+                                        />
+                                    </div>
+                                </div>
+
                                 <div className="text-center text-sm text-white">
                                     Already have an account?{' '}
                                     <a
