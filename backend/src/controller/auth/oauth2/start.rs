@@ -10,7 +10,7 @@ use axum_extra::extract::{
 };
 
 use crate::{
-    config::{Provider, OAUTH2_TEMPORARY, REDIS_SESSION_PREFIX},
+    config::{OAUTH2_TEMPORARY, Provider, REDIS_SESSION_PREFIX},
     error::{Error, Result},
     state::ApiState,
 };
