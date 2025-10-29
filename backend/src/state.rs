@@ -1,16 +1,18 @@
 use std::{collections::HashMap, sync::Arc};
 
-use redis::aio::MultiplexedConnection;
 use sqlx::PgPool;
 
 use crate::{
     config::{CONFIG, Provider},
-    service::auth::{JwtService, OAuth2Service, TokenService},
+    service::{
+        auth::{JwtService, OAuth2Service, TokenService},
+        redis::RedisService,
+    },
 };
 
 pub struct ApiState {
     pub database: PgPool,
-    pub redis_connection: MultiplexedConnection,
+    pub redis_service: RedisService,
     pub token_service: TokenService,
     pub oauth2_services: HashMap<Provider, OAuth2Service>,
 }
@@ -24,6 +26,9 @@ impl ApiState {
             .get_multiplexed_async_connection()
             .await
             .unwrap();
+        let redis_service = RedisService {
+            connection: redis_connection,
+        };
 
         let token_service = TokenService {
             access: JwtService::new(&CONFIG.jwt.secret, CONFIG.jwt.expired_in),
@@ -39,7 +44,7 @@ impl ApiState {
 
         Arc::new(Self {
             database,
-            redis_connection,
+            redis_service,
             token_service,
             oauth2_services,
         })
