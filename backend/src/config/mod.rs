@@ -2,7 +2,7 @@ mod bcrypt;
 mod cors;
 mod jwt;
 mod oauth2;
-mod session;
+mod redis;
 
 use std::{collections::HashMap, sync::LazyLock};
 
@@ -12,7 +12,7 @@ pub use bcrypt::*;
 pub use cors::*;
 pub use jwt::*;
 pub use oauth2::*;
-pub use session::*;
+pub use redis::*;
 
 const fn default_port() -> u16 {
     3000
