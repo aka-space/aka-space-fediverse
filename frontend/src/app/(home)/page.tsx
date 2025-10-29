@@ -27,7 +27,7 @@ export default function Home() {
     const { data: posts, isPending: loading } = useGetPosts(api);
 
     return (
-        <div className="w-[calc[100%-42rem] flex justify-center mb-6">
+        <div className="w-full flex justify-center mb-6 px-4">
             <div className="flex flex-col gap-6 max-w-4xl w-full">
                 <div className="space-y-8">
                     <PostsFilter />
