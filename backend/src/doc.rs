@@ -7,7 +7,7 @@ use utoipa::{
 };
 use utoipa_swagger_ui::SwaggerUi;
 
-use crate::error::Error;
+use crate::{config::Provider, error::Error};
 
 use super::{controller, state::ApiState};
 
@@ -42,6 +42,7 @@ impl Modify for SecurityAddon {
         controller::auth::oauth2::start
     ),
     components(schemas(
+        Provider,
         Error,
     )),
     modifiers(&SecurityAddon),

@@ -10,8 +10,8 @@ use axum_extra::extract::{
 };
 
 use crate::{
-    config::{OAUTH2_TEMPORARY, Provider, REDIS_SESSION_PREFIX},
-    error::Result,
+    config::{Provider, OAUTH2_TEMPORARY, REDIS_SESSION_PREFIX},
+    error::{Error, Result},
     state::ApiState,
 };
 
@@ -20,8 +20,27 @@ use crate::{
     tag = "Auth",
     path = "/oauth2/{provider}",
     params(
-        ("provider" = Provider, description = "OAuth2 Provider"),
+        ("provider" = Provider, description = "OAuth2 Provider (path parameter)"),
     ),
+    responses(
+        (
+            status = 302,
+            description = "Redirects user to provider authorization URL; sets temporary session cookie via Set-Cookie header.",
+            headers(
+                ("Set-Cookie" = String)
+            )
+        ),
+        (
+            status = 400,
+            description = "Bad request (invalid provider or parameters)",
+            body = Error
+        ),
+        (
+            status = 500,
+            description = "Internal server error",
+            body = Error
+        )
+    )
 )]
 pub async fn start(
     State(state): State<Arc<ApiState>>,
