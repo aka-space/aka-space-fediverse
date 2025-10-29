@@ -52,13 +52,13 @@ export default function Header() {
                 <span className="font-bold text-xl">AKA</span>
             </div>
             {!hideSearch && (
-                <div className="absolute left-1/2 transform -translate-x-1/2">
-                    <div className="relative w-2xl">
+                <div className="absolute left-1/2 transform -translate-x-1/2 sm:w-1/4 md:w-1/3 lg:w-1/2 xl:w-2/5">
+                    <div className="relative">
                         <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" />
                         <Input
                             type="text"
                             placeholder="Search..."
-                            className="pl-12 bg-gray-100 border-0 w-full rounded-full text-2xl"
+                            className="pl-12 bg-gray-100 border-0 w-full rounded-full text-base sm:text-lg md:text-xl"
                         />
                     </div>
                 </div>
