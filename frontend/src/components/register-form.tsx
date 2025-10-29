@@ -182,7 +182,7 @@ export function RegisterForm({
                                         Register
                                     </Button>
                                 </div>
-                                
+
                                 <div>
                                     <div className="flex items-center gap-2">
                                         <div className="flex-1 h-px bg-gray-300"></div>
