@@ -113,8 +113,8 @@ export function LoginForm({
 
                                     <Button
                                         variant="light"
-                                        size="slg"
                                         type="submit"
+                                        className="h-10"
                                     >
                                         Login
                                     </Button>

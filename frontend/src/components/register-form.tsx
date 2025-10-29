@@ -175,8 +175,8 @@ export function RegisterForm({
                                     </div>
                                     <Button
                                         type="submit"
-                                        size="slg"
                                         variant="light"
+                                        className="h-10"
                                     >
                                         Register
                                     </Button>
