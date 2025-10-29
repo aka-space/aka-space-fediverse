@@ -3,13 +3,14 @@ use std::sync::Arc;
 use axum::{
     extract::{Path, Query, State},
     http::StatusCode,
+    response::Redirect,
 };
 use axum_extra::extract::CookieJar;
 use openidconnect::{AuthorizationCode, CsrfToken, Nonce};
 use serde::Deserialize;
 
 use crate::{
-    config::{OAUTH2_TEMPORARY, Provider},
+    config::{CONFIG, OAUTH2_TEMPORARY, Provider},
     database,
     error::{Error, Result},
     state::ApiState,
@@ -26,7 +27,7 @@ pub async fn authorized(
     jar: CookieJar,
     Path(provider): Path<Provider>,
     Query(query): Query<AuthRequest>,
-) -> Result<(CookieJar, String)> {
+) -> Result<(CookieJar, Redirect)> {
     let Some(cookie) = jar.get(OAUTH2_TEMPORARY) else {
         tracing::warn!("No cookie found");
 
@@ -85,5 +86,5 @@ pub async fn authorized(
 
     tracing::info!(access, ?refresh, ?id, "Token created");
 
-    Ok((jar.add(refresh), access))
+    Ok((jar.add(refresh), Redirect::to(&CONFIG.frontend_url)))
 }

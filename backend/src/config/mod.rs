@@ -22,6 +22,10 @@ fn default_redis_url() -> String {
     "redis://127.0.0.1/".to_string()
 }
 
+fn default_frontend_url() -> String {
+    "http://localhost:3000".to_string()
+}
+
 #[derive(Debug, Deserialize)]
 pub struct Config {
     #[serde(default = "default_port")]
@@ -31,6 +35,9 @@ pub struct Config {
 
     #[serde(default = "default_redis_url")]
     pub redis_url: String,
+
+    #[serde(default = "default_frontend_url")]
+    pub frontend_url: String,
 
     #[serde(default)]
     pub bcrypt: BcryptConfig,
