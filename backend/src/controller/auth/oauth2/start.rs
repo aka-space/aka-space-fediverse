@@ -11,7 +11,7 @@ use axum_extra::extract::{
 
 use crate::{
     config::{OAUTH2_TEMPORARY, Provider, REDIS_SESSION_PREFIX},
-    error::{Error, Result},
+    error::Result,
     state::ApiState,
 };
 
