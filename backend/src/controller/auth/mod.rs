@@ -1,6 +1,7 @@
 mod login;
 mod logout;
 mod me;
+pub mod oauth2;
 mod refresh;
 mod register;
 
@@ -23,4 +24,9 @@ pub fn build() -> Router<Arc<ApiState>> {
         .route("/auth/me", routing::get(me))
         .route("/auth/refresh", routing::post(refresh))
         .route("/auth/logout", routing::post(logout))
+        .route("/oauth2/{provider}", routing::get(oauth2::start))
+        .route(
+            "/oauth2/{provider}/authorized",
+            routing::get(oauth2::authorized),
+        )
 }

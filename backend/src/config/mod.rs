@@ -1,17 +1,29 @@
 mod bcrypt;
 mod cors;
 mod jwt;
+mod oauth2;
+mod redis;
 
-use std::sync::LazyLock;
+use std::{collections::HashMap, sync::LazyLock};
 
 use serde::Deserialize;
 
 pub use bcrypt::*;
 pub use cors::*;
 pub use jwt::*;
+pub use oauth2::*;
+pub use redis::*;
 
 const fn default_port() -> u16 {
     3000
+}
+
+fn default_redis_url() -> String {
+    "redis://127.0.0.1/".to_string()
+}
+
+fn default_frontend_url() -> String {
+    "http://localhost:3000".to_string()
 }
 
 #[derive(Debug, Deserialize)]
@@ -21,6 +33,12 @@ pub struct Config {
 
     pub database_url: String,
 
+    #[serde(default = "default_redis_url")]
+    pub redis_url: String,
+
+    #[serde(default = "default_frontend_url")]
+    pub frontend_url: String,
+
     #[serde(default)]
     pub bcrypt: BcryptConfig,
 
@@ -29,6 +47,8 @@ pub struct Config {
 
     #[serde(default)]
     pub jwt: JwtConfig,
+
+    pub oauth2: HashMap<Provider, OAuth2Config>,
 }
 
 pub static CONFIG: LazyLock<Config> = LazyLock::new(|| {

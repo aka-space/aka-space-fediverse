@@ -48,6 +48,9 @@ jobs:
           components: clippy, rustfmt
 
       - uses: Swatinem/rust-cache@v2
+        with:
+          workspaces: |
+            backend
 
       - name: Check Clippy
         run: cargo clippy --all-features --workspace -- -D warnings

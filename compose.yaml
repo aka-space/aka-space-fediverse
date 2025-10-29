@@ -41,6 +41,11 @@ services:
       BCRYPT__SALT: ${BCRYPT_SALT}
       JWT__SECRET: ${JWT_SECRET}
       JWT__REFRESH_SECRET: ${JWT_REFRESH_SECRET}
+      OAUTH2__GOOGLE__CLIENT_ID: ${GOOGLE_CLIENT_ID}
+      OAUTH2__GOOGLE__CLIENT_SECRET: ${GOOGLE_CLIENT_SECRET}
+      OAUTH2__GOOGLE__ISSUER_URL: "https://accounts.google.com"
+      OAUTH2__GOOGLE__REDIRECT_URL: "http://localhost:3000/oauth2/google/authorized"
+      OAUTH2__GOOGLE__SCOPES: "email,profile"
     image: ${REGISTRY}/backend:latest
     restart: always
     depends_on:
