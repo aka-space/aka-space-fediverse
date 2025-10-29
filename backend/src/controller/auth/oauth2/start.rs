@@ -18,7 +18,7 @@ use crate::{
 #[utoipa::path(
     get,
     tag = "Auth",
-    path = "/oauth2/{provider}/start",
+    path = "/oauth2/{provider}",
     params(
         ("provider" = Provider, description = "OAuth2 Provider"),
     ),
