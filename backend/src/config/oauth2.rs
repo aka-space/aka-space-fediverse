@@ -8,7 +8,7 @@ pub const OAUTH2_TEMPORARY: &str = "oauth2";
 #[serde(rename_all = "snake_case")]
 pub enum Provider {
     Google,
-    Microsoft,
+    Github,
 }
 
 #[derive(Debug, Clone, Deserialize)]
