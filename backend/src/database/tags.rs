@@ -7,7 +7,7 @@ pub async fn get_all(executor: impl PgExecutor<'_>) -> sqlx::Result<Vec<String>>
         .await
 }
 
-pub async fn get_by_post_id(
+pub async fn get_by_post(
     post_id: Uuid,
     executor: impl PgExecutor<'_>,
 ) -> sqlx::Result<Vec<String>> {
