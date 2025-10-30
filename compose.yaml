@@ -34,7 +34,7 @@ services:
       - network
 
   valkey:
-    container_name: blood-donation-system-valkey
+    container_name: aka-valkey
     image: bitnami/valkey:latest
     environment:
       - VALKEY_PASSWORD=${REDIS_PASSWORD}
