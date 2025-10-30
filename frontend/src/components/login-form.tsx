@@ -10,6 +10,7 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import { LoginFormData, loginSchema } from '@/schemas/auth-schema';
 import { Controller, useForm } from 'react-hook-form';
 import { Field, FieldError, FieldGroup } from '@/components/ui/field';
+import { useAuthStore } from '@/store/useAuthStore';
 
 export function LoginForm({
     className,
@@ -25,8 +26,13 @@ export function LoginForm({
             password: '',
         },
     });
-
+    const { loginWithGG } = useAuthStore();
     const route = useRouter();
+
+    const handleLoginWithGG = () => {
+        loginWithGG();
+    };
+
     return (
         <div className={cn('flex flex-col gap-6', className)} {...props}>
             <Card variant="auth">
@@ -134,6 +140,7 @@ export function LoginForm({
                                             alt="Login With GG"
                                             width={35}
                                             height={35}
+                                            onClick={handleLoginWithGG}
                                         />
 
                                         <Image
