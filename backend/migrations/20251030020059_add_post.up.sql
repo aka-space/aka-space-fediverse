@@ -2,7 +2,7 @@ CREATE TABLE IF NOT EXISTS posts(
     id uuid PRIMARY KEY DEFAULT uuid_generate_v4(),
 
     author_id uuid NOT NULL REFERENCES accounts(id),
-    title text NOT NULL,
+    title text UNIQUE NOT NULL,
     content text NOT NULL,
     view int NOT NULL DEFAULT 0,
 
