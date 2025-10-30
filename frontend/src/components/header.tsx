@@ -15,16 +15,11 @@ export default function Header() {
     const hideSearch = pathname === '/login' || pathname === '/register';
     const { authUser } = useAuthStore();
     const [active, setActive] = useState<string>('');
-    const [isLogged, setIsLogged] = useState<boolean>(false);
     const [isScrolled, setIsScrolled] = useState(false);
 
     useEffect(() => {
-        if (authUser) {
-            setIsLogged(true);
-            return;
-        }
-        setIsLogged(false);
-    }, [authUser]);
+        useAuthStore.getState().initAuth();
+    }, []);
 
     useEffect(() => {
         const handleScroll = () => setIsScrolled(window.scrollY > 10);
@@ -64,7 +59,7 @@ export default function Header() {
                 </div>
             )}
             {/* Menu */}
-            {isLogged === false ? (
+            {!authUser ? (
                 <ul className="flex items-center gap-5">
                     <Button
                         variant={active === 'register' ? 'dark' : 'light'}
