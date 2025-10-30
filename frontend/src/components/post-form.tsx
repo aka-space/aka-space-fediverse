@@ -1,22 +1,37 @@
-import React, { useRef } from 'react';
+import React, { useRef, useState } from 'react';
 import { Input } from './ui/input';
 import { Button } from './ui/button';
 import { Textarea } from './ui/textarea';
 import { MinimalTiptapEditor } from './ui/minimal-tiptap';
 
-interface PostFormProps {
-    postData: {
-        title: string;
-        overview: string;
-        content: string;
-    };
-    handleChange: (
-        e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>,
-    ) => void;
-    handleSubmit: (e: React.FormEvent) => void;
+interface PostForm {
+    title: string;
+    overview: string;
+    content: string;
 }
 
-const PostForm = ({ postData, handleChange, handleSubmit }: PostFormProps) => {
+const PostForm = () => {
+    const [postData, setPostData] = useState<PostForm>({
+        title: '',
+        overview: '',
+        content: '',
+    });
+
+    const handleChange = (
+        e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>,
+    ) => {
+        const { name, value } = e.target;
+        setPostData((prevData) => ({
+            ...prevData,
+            [name]: value,
+        }));
+    };
+
+    const handleSubmit = (e: React.FormEvent) => {
+        e.preventDefault();
+
+        console.log('Post Data:', postData);
+    };
     return (
         <div className="min-h-screen flex items-center justify-center p-4 bg-transparent">
             <div className="bg-gray-50 dark:bg-neutral-900 border border-gray-300 dark:border-neutral-700 rounded-lg shadow-sm shadow-gray-200 dark:shadow-neutral-800">
