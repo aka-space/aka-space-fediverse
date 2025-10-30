@@ -1,6 +1,5 @@
 use serde::Deserialize;
 
-pub const REFRESH_ENDPOINT: &str = "/auth/refresh";
 pub const REFRESH_COOKIE: &str = "refresh";
 
 fn default_secret() -> String {

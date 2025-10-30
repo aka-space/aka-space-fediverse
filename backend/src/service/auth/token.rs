@@ -4,11 +4,9 @@ use axum_extra::extract::cookie::{Cookie, SameSite};
 use dashmap::DashMap;
 use uuid::Uuid;
 
-use crate::{
-    config::{REFRESH_COOKIE, REFRESH_ENDPOINT},
-    error::Result,
-    service::auth::JwtService,
-};
+use crate::{config::REFRESH_COOKIE, error::Result, service::auth::JwtService};
+
+const AUTH_ENDPOINT: &str = "/auth";
 
 pub struct TokenService {
     pub access: JwtService,
@@ -31,7 +29,7 @@ impl TokenService {
         // refresh_cookie.set_secure(true);
         cookie.set_same_site(SameSite::None);
         // refresh_cookie.set_http_only(true);
-        cookie.set_path(REFRESH_ENDPOINT);
+        cookie.set_path(AUTH_ENDPOINT);
 
         Ok((access_token, cookie))
     }
