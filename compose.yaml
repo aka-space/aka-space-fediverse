@@ -8,6 +8,7 @@ services:
     profiles:
       - frontend
       - deploy
+
   database:
     container_name: aka-database
     image: postgres:latest
@@ -29,6 +30,14 @@ services:
       - database
     volumes:
       - cloudbeaver:/opt/cloudbeaver/workspace
+    networks:
+      - network
+
+  valkey:
+    container_name: blood-donation-system-valkey
+    image: bitnami/valkey:latest
+    environment:
+      - VALKEY_PASSWORD=${VALKEY_PASSWORD}
     networks:
       - network
 

@@ -78,6 +78,7 @@ jobs:
       PG_USER: ${{ secrets.PG_USER }}
       PG_PASS: ${{ secrets.PG_PASS }}
       PG_DB: ${{ secrets.PG_DB }}
+      VALKEY_PASSWORD: ${{ secrets.VALKEY_PASSWORD }}
       CORS_ORIGIN: ${{ secrets.CORS_ORIGIN }}
       BCRYPT_COST: ${{ secrets.BCRYPT_COST }}
       BCRYPT_SALT: ${{ secrets.BCRYPT_SALT }}
