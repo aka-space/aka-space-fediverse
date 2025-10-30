@@ -4,11 +4,7 @@ use axum_extra::extract::cookie::{Cookie, SameSite};
 use dashmap::DashMap;
 use uuid::Uuid;
 
-use crate::{
-    config::{REFRESH_COOKIE, REFRESH_ENDPOINT},
-    error::Result,
-    service::auth::JwtService,
-};
+use crate::{config::REFRESH_COOKIE, error::Result, service::auth::JwtService};
 
 const AUTH_ENDPOINT: &str = "/auth";
 
