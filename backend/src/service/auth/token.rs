@@ -10,6 +10,8 @@ use crate::{
     service::auth::JwtService,
 };
 
+const AUTH_ENDPOINT: &str = "/auth";
+
 pub struct TokenService {
     pub access: JwtService,
     pub refresh: JwtService,
@@ -31,7 +33,7 @@ impl TokenService {
         // refresh_cookie.set_secure(true);
         cookie.set_same_site(SameSite::None);
         // refresh_cookie.set_http_only(true);
-        cookie.set_path(REFRESH_ENDPOINT);
+        cookie.set_path(AUTH_ENDPOINT);
 
         Ok((access_token, cookie))
     }
