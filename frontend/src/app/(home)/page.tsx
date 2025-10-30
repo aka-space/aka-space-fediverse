@@ -3,7 +3,6 @@
 import { PostsFilter } from '@/components/posts-filter';
 import { PostCard } from '@/components/post-card';
 import { Spinner } from '@/components/ui/spinner';
-import { useQuery } from '@tanstack/react-query';
 import { useGetPosts } from '@/hooks/use-get-posts';
 
 type Post = {
