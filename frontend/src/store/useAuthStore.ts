@@ -27,7 +27,7 @@ export const useAuthStore = create<AuthState>((set, get) => ({
             const res = await axiosInstance.post('/auth/register', data);
             if (res) {
                 localStorage.setItem('accessToken', res.data);
-                set({ isLoggingIn: true });
+                get().getUser();
                 return true;
             }
         } catch (error) {
@@ -44,11 +44,14 @@ export const useAuthStore = create<AuthState>((set, get) => ({
             const res = await axiosInstance.post('/auth/login', data);
             if (res) {
                 localStorage.setItem('accessToken', res.data);
+                get().getUser();
                 return true;
             }
         } catch (error) {
             console.log('error when login: ', error);
             set({ authUser: null, isLoggingIn: false });
+        } finally {
+            set({ isLoggingIn: false });
         }
     },
 
@@ -59,19 +62,20 @@ export const useAuthStore = create<AuthState>((set, get) => ({
         } catch (error) {
             console.log('error when login with google: ', error);
             set({ authUser: null });
+        } finally {
+            set({ isLoggingIn: false });
         }
     },
 
     refreshAccessToken: async () => {
         try {
-            const res = await axiosInstance.post<{ accessToken: string }>(
+            const res = await axiosInstance.post(
                 '/auth/refresh',
                 {},
                 { withCredentials: true },
             );
-            const newToken = res.data.accessToken;
+            const newToken = res.data;
             localStorage.setItem('accessToken', newToken);
-            set({ accessToken: newToken });
             return newToken;
         } catch (error) {
             console.error('Failed to refresh token:', error);
@@ -86,7 +90,7 @@ export const useAuthStore = create<AuthState>((set, get) => ({
             if (token) {
                 await axiosInstance.post('/auth/logout');
                 localStorage.removeItem('accessToken');
-                set({ authUser: null, isLoggingIn: false });
+                set({ authUser: null });
                 console.log('Logout successful. Refresh cookie removed.');
             }
         } catch (err) {
@@ -113,7 +117,6 @@ export const useAuthStore = create<AuthState>((set, get) => ({
         if (!token) return;
         try {
             get().getUser();
-            set({ isLoggingIn: true });
         } catch (err) {
             console.error('initAuth error:', err);
             localStorage.removeItem('accessToken');
