@@ -53,14 +53,12 @@ export default function ChatPopup() {
         setInput('');
 
         if (!navigator.onLine) {
-            setHistory((prev) => [
-                ...prev,
-                {
-                    id: Date.now(),
-                    role: 'model',
-                    text: 'No internet connection!',
-                },
-            ]);
+            const offlineMessage: ChatMessage = {
+                id: Date.now(),
+                role: 'model',
+                text: 'No internet connection!',
+            };
+            setHistory((prev) => [...prev, offlineMessage]);
             return;
         }
 
