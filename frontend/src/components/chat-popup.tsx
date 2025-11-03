@@ -41,6 +41,7 @@ export default function ChatPopup() {
         }
     }, [isOpen, history.length]);
 
+    //check Internet
     const handleSend = () => {
         if (!input.trim()) return;
         const userMessage: ChatMessage = {
@@ -50,6 +51,18 @@ export default function ChatPopup() {
         };
         setHistory((prev) => [...prev, userMessage]);
         setInput('');
+
+        if (!navigator.onLine) {
+            setHistory((prev) => [
+                ...prev,
+                {
+                    id: Date.now(),
+                    role: 'model',
+                    text: 'No internet connection!',
+                },
+            ]);
+            return;
+        }
 
         try {
             setTransition(async () => {
@@ -61,13 +74,19 @@ export default function ChatPopup() {
                     const chatMessage: ChatMessage = {
                         id: Date.now(),
                         role: 'model',
-                        text: resMessage ?? '',
+                        text: resMessage ?? 'No response from server',
                     };
                     setHistory((prev) => [...prev, chatMessage]);
                 }
             });
         } catch (error) {
-            console.log('error when handle chatbot:', error);
+            console.log('error when setTransition', error);
+            const chatMessage: ChatMessage = {
+                id: Date.now(),
+                role: 'model',
+                text: 'Please try again!',
+            };
+            setHistory((prev) => [...prev, chatMessage]);
         }
     };
 
@@ -109,9 +128,9 @@ export default function ChatPopup() {
                     </div>
 
                     <div className="flex-1 p-4 overflow-y-auto">
-                        {history.map((m) => (
+                        {history.map((m, idx) => (
                             <div
-                                key={m.id}
+                                key={idx}
                                 className={`mb-3 flex ${
                                     m.role === 'user'
                                         ? 'justify-end pl-15'
