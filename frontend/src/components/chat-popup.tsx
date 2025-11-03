@@ -1,21 +1,25 @@
 'use client';
 
-import { useState, useEffect, useRef } from 'react';
+import { useState, useEffect, useRef, useTransition } from 'react';
 import { MessageCircle, Minus, SendHorizontal } from 'lucide-react';
 import { Button } from './ui/button';
 import Image from 'next/image';
+import { sendMessage } from '@/providers/action';
+import ReactMarkdown from 'react-markdown';
+import remarkGfm from 'remark-gfm';
 
-interface Message {
+export type ChatMessage = {
     id: number;
     text: string;
-    sender: 'user' | 'bot';
-}
+    role: 'user' | 'model';
+};
 
 export default function ChatPopup() {
     const [showIcon, setShowIcon] = useState(true);
     const [isOpen, setIsOpen] = useState(false);
-    const [messages, setMessages] = useState<Message[]>([]);
+    const [history, setHistory] = useState<ChatMessage[]>([]);
     const [input, setInput] = useState('');
+    const [isModelThinking, setTransition] = useTransition();
 
     const bottomRef = useRef<HTMLDivElement>(null); //Ref scroll down
 
@@ -24,25 +28,47 @@ export default function ChatPopup() {
         if (bottomRef.current) {
             bottomRef.current.scrollIntoView({ behavior: 'smooth' });
         }
-    }, [messages]);
+    }, [history]);
+
+    useEffect(() => {
+        if (isOpen && history.length === 0) {
+            const welcomeMessage: ChatMessage = {
+                id: Date.now(),
+                text: 'Hello, how can I help you today?',
+                role: 'model',
+            };
+            setHistory([welcomeMessage]);
+        }
+    }, [isOpen, history.length]);
 
     const handleSend = () => {
         if (!input.trim()) return;
-        const newMsg: Message = { id: Date.now(), text: input, sender: 'user' };
-        setMessages((prev) => [...prev, newMsg]);
+        const userMessage: ChatMessage = {
+            id: Date.now(),
+            text: input,
+            role: 'user',
+        };
+        setHistory((prev) => [...prev, userMessage]);
         setInput('');
 
-        //fake bot reply
-        setTimeout(() => {
-            setMessages((prev) => [
-                ...prev,
-                {
-                    id: Date.now() + 1,
-                    text: 'Hello, how can I help?',
-                    sender: 'bot',
-                },
-            ]);
-        }, 600);
+        try {
+            setTransition(async () => {
+                const resMessage = await sendMessage(input, [
+                    ...history,
+                    userMessage,
+                ]);
+                if (resMessage) {
+                    const chatMessage: ChatMessage = {
+                        id: Date.now(),
+                        role: 'model',
+                        text: resMessage ?? '',
+                    };
+                    setHistory((prev) => [...prev, chatMessage]);
+                }
+            });
+        } catch (error) {
+            console.log('error when handle chatbot:', error);
+        }
     };
 
     return (
@@ -54,27 +80,27 @@ export default function ChatPopup() {
                         setIsOpen(!isOpen);
                         setShowIcon(false);
                     }}
-                    className="fixed bottom-6 right-6 bg-gray-600 text-white p-3 hover:bg-gray-700 transition"
+                    className="fixed bottom-6 right-6 bg-gray-600 text-white p-3 hover:bg-gray-700 transition cursor-pointer"
                 >
                     <MessageCircle />
                 </Button>
             )}
 
             {isOpen && (
-                <div className="fixed bottom-7 right-6 w-80 h-[460px] bg-white rounded-lg shadow-2xl flex flex-col overflow-hidden">
-                    <div className="flex justify-between items-center bg-gray-300 text-black p-1 text-xs">
-                        <div className="flex gap-0.5">
+                <div className="fixed bottom-7 right-6 w-95 h-150 bg-white rounded-lg shadow-2xl flex flex-col overflow-hidden">
+                    <div className="flex justify-between items-center bg-gray-400 text-black p-2.5 text-xs">
+                        <div className="flex gap-1 items-center font-semibold">
                             <Image
                                 src="/logo.png"
                                 alt="Logo"
-                                width={15}
-                                height={15}
+                                width={23}
+                                height={23}
                                 className="rounded-full"
                             />
                             AKA
                         </div>
                         <Minus
-                            className="bg-gray-200 p-2 rounded-sm hover:bg-gray-100"
+                            className="bg-white p-2 rounded-sm hover:bg-gray-100 cursor-pointer"
                             onClick={() => {
                                 setIsOpen(!isOpen);
                                 setShowIcon(true);
@@ -82,24 +108,30 @@ export default function ChatPopup() {
                         />
                     </div>
 
-                    <div className="flex-1 p-3 overflow-y-auto">
-                        {messages.map((m) => (
+                    <div className="flex-1 p-4 overflow-y-auto">
+                        {history.map((m) => (
                             <div
                                 key={m.id}
-                                className={`mb-2 flex ${
-                                    m.sender === 'user'
-                                        ? 'justify-end'
-                                        : 'justify-start'
+                                className={`mb-3 flex ${
+                                    m.role === 'user'
+                                        ? 'justify-end pl-15'
+                                        : 'justify-start pr-15'
                                 }`}
                             >
                                 <div
                                     className={`px-3 py-0.5 rounded-2xl ${
-                                        m.sender === 'user'
+                                        m.role === 'user'
                                             ? 'bg-gray-700 text-white'
                                             : 'bg-gray-200 text-gray-800'
                                     }`}
                                 >
-                                    {m.text}
+                                    <div className="prose prose-sm dark:prose-invert">
+                                        <ReactMarkdown
+                                            remarkPlugins={[remarkGfm]}
+                                        >
+                                            {m.text}
+                                        </ReactMarkdown>
+                                    </div>
                                 </div>
                             </div>
                         ))}
@@ -107,18 +139,29 @@ export default function ChatPopup() {
                         <div ref={bottomRef} />
                     </div>
 
-                    <div className="flex border p-0.5 m-1 rounded-lg">
+                    <div className="flex border p-1 m-2 rounded-lg">
                         <input
                             type="text"
-                            value={input}
+                            value={isModelThinking ? 'Thinking...' : input}
                             onChange={(e) => setInput(e.target.value)}
                             onKeyDown={(e) => e.key === 'Enter' && handleSend()}
                             placeholder="Type a message..."
-                            className="flex-1 p-1 outline-none text-sm"
+                            disabled={isModelThinking}
+                            className={`flex-1 p-1 outline-none text-sm ${
+                                isModelThinking
+                                    ? 'text-gray-400 italic animate-blink'
+                                    : ''
+                            }`}
                         />
                         <button
+                            className={`rounded-md text-white px-2.5 transition cursor-pointer ${
+                                isModelThinking
+                                    ? 'bg-gray-500 cursor-not-allowed'
+                                    : 'bg-gray-400 hover:bg-gray-500'
+                            }`}
                             onClick={handleSend}
-                            className="bg-gray-300 rounded-lg text-white px-2.5 hover:bg-gray-200"
+                            disabled={isModelThinking || !input.trim()}
+                            type="submit"
                         >
                             <SendHorizontal size={13} />
                         </button>
