@@ -3,6 +3,7 @@ import { Geist, Geist_Mono } from 'next/font/google';
 import './globals.css';
 import Header from '@/components/header';
 import QueryProviders from '@/providers/query';
+import ChatPopup from '@/components/chat-popup';
 
 const geistSans = Geist({
     variable: '--font-geist-sans',
@@ -32,6 +33,7 @@ export default function RootLayout({
                 <QueryProviders>
                     <Header isLogged={true} showInput={true} />
                     {children}
+                    <ChatPopup />
                 </QueryProviders>
             </body>
         </html>
