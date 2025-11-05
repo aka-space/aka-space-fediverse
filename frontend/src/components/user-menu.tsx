@@ -19,10 +19,6 @@ import { useAuthStore } from '@/store/useAuthStore';
 export function UserMenu() {
     const { logout } = useAuthStore();
 
-    const handleLogout = () => {
-        logout();
-    };
-
     return (
         <DropdownMenu>
             <DropdownMenuTrigger asChild>
@@ -76,7 +72,7 @@ export function UserMenu() {
                 <DropdownMenuItem>Support</DropdownMenuItem>
                 <DropdownMenuItem disabled>API</DropdownMenuItem>
                 <DropdownMenuSeparator />
-                <DropdownMenuItem onClick={handleLogout}>
+                <DropdownMenuItem onClick={logout}>
                     Log out
                     <DropdownMenuShortcut>⇧⌘Q</DropdownMenuShortcut>
                 </DropdownMenuItem>
