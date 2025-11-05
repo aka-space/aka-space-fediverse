@@ -4,7 +4,7 @@ import { RegisterForm } from '@/components/register-form';
 import { RegisterFormData } from '@/schemas/auth';
 import { useAuthStore } from '@/store/useAuthStore';
 import { useRouter } from 'next/navigation';
-import { toast } from 'react-toastify';
+import { toast } from 'sonner';
 
 export default function RegisterPage() {
     const route = useRouter();

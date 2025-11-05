@@ -4,7 +4,7 @@ import { LoginForm } from '@/components/login-form';
 import { LoginFormData } from '@/schemas/auth';
 import { useAuthStore } from '@/store/useAuthStore';
 import { useRouter } from 'next/navigation';
-import { toast } from 'react-toastify';
+import { toast } from 'sonner';
 
 export default function LoginPage() {
     const route = useRouter();

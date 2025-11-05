@@ -1,6 +1,6 @@
 import { axiosInstance } from '@/lib/axios';
 import { UserLogin, UserRegister } from '@/types';
-import { toast } from 'react-toastify';
+import { toast } from 'sonner';
 import { create } from 'zustand';
 
 interface AuthState {
