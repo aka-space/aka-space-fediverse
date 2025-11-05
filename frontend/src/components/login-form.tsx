@@ -7,7 +7,7 @@ import { useRouter } from 'next/navigation';
 import { Lock, User } from 'lucide-react';
 import Image from 'next/image';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { LoginFormData, loginSchema } from '@/schemas/auth-schema';
+import { LoginFormData, loginSchema } from '@/schemas/auth';
 import { Controller, useForm } from 'react-hook-form';
 import { Field, FieldError, FieldGroup } from '@/components/ui/field';
 import { useAuthStore } from '@/store/useAuthStore';

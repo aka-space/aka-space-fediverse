@@ -5,7 +5,7 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { useRouter } from 'next/navigation';
 import { Lock, Mail, User } from 'lucide-react';
-import { RegisterFormData, registerSchema } from '@/schemas/auth-schema';
+import { RegisterFormData, registerSchema } from '@/schemas/auth';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { Controller, useForm } from 'react-hook-form';
 import { Field, FieldError, FieldGroup } from './ui/field';
@@ -177,7 +177,7 @@ export function RegisterForm({
                                     <Button
                                         type="submit"
                                         variant="light"
-                                        className="h-10"
+                                        className="h-10 mt-5"
                                     >
                                         Register
                                     </Button>
