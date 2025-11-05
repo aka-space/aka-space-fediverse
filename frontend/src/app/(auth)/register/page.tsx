@@ -1,9 +1,10 @@
 'use client';
 
 import { RegisterForm } from '@/components/register-form';
-import { RegisterFormData } from '@/schemas/auth-schema';
+import { RegisterFormData } from '@/schemas/auth';
 import { useAuthStore } from '@/store/useAuthStore';
 import { useRouter } from 'next/navigation';
+import { toast } from 'react-toastify';
 
 export default function RegisterPage() {
     const route = useRouter();
@@ -14,11 +15,11 @@ export default function RegisterPage() {
         if (data.confirmPassword.match(data.password)) {
             const res = await register(data);
             if (res) {
+                toast.success('Register successfully');
                 route.push('/');
-                console.log('Register successfully!');
             }
         } else {
-            console.log('ERROR!');
+            toast.error('Register failed');
         }
     };
 

@@ -1,5 +1,6 @@
 import { axiosInstance } from '@/lib/axios';
 import { UserLogin, UserRegister } from '@/types';
+import { toast } from 'react-toastify';
 import { create } from 'zustand';
 
 interface AuthState {
@@ -31,7 +32,7 @@ export const useAuthStore = create<AuthState>((set, get) => ({
                 return true;
             }
         } catch (error) {
-            console.log('error when register: ', error);
+            console.log('Register ERROR: ', error);
             set({ authUser: null });
         } finally {
             set({ isRegisting: false });
@@ -48,7 +49,7 @@ export const useAuthStore = create<AuthState>((set, get) => ({
                 return true;
             }
         } catch (error) {
-            console.log('error when login: ', error);
+            console.log('Login ERROR: ', error);
             set({ authUser: null, isLoggingIn: false });
         } finally {
             set({ isLoggingIn: false });
@@ -59,8 +60,16 @@ export const useAuthStore = create<AuthState>((set, get) => ({
         set({ isLoggingIn: true });
         try {
             await axiosInstance.get('/oauth2/google');
+            toast.success('Login successfully');
         } catch (error) {
-            console.log('error when login with google: ', error);
+            const message =
+                error instanceof Error &&
+                error.message.includes('popup_closed_by_user')
+                    ? 'Google login was cancelled.'
+                    : 'Google login failed. Please try again.';
+
+            toast.error(message);
+            console.log('Google login ERROR: ', error);
             set({ authUser: null });
         } finally {
             set({ isLoggingIn: false });
@@ -78,7 +87,7 @@ export const useAuthStore = create<AuthState>((set, get) => ({
             localStorage.setItem('accessToken', newToken);
             return newToken;
         } catch (error) {
-            console.error('Failed to refresh token:', error);
+            console.error('Refresh access token ERROR:', error);
             set({ authUser: null, accessToken: null });
             return null;
         }
@@ -91,10 +100,11 @@ export const useAuthStore = create<AuthState>((set, get) => ({
                 await axiosInstance.post('/auth/logout');
                 localStorage.removeItem('accessToken');
                 set({ authUser: null });
-                console.log('Logout successful. Refresh cookie removed.');
+                toast.success('Logout successfully');
             }
         } catch (err) {
-            console.log('Error during logout:', err);
+            toast.error('Logout failed. Please try again.');
+            console.log('Logout ERROR: ', err);
         }
     },
 
@@ -108,7 +118,7 @@ export const useAuthStore = create<AuthState>((set, get) => ({
             });
             set({ authUser: userRes.data });
         } catch (error) {
-            console.log('Get user error:', error);
+            console.log('Get user ERROR:', error);
         }
     },
 
@@ -118,7 +128,7 @@ export const useAuthStore = create<AuthState>((set, get) => ({
         try {
             get().getUser();
         } catch (err) {
-            console.error('initAuth error:', err);
+            console.error('initAuth ERROR:', err);
             localStorage.removeItem('accessToken');
         }
     },

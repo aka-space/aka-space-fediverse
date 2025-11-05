@@ -1,26 +1,31 @@
 'use client';
 
 import { LoginForm } from '@/components/login-form';
-import { LoginFormData } from '@/schemas/auth-schema';
+import { LoginFormData } from '@/schemas/auth';
 import { useAuthStore } from '@/store/useAuthStore';
 import { useRouter } from 'next/navigation';
+import { toast } from 'react-toastify';
 
 export default function LoginPage() {
     const route = useRouter();
     const { login } = useAuthStore();
 
     const handleSubmit = async (data: LoginFormData): Promise<void> => {
-        console.log('Form Login send: ', data);
         try {
             const res = await login(data);
             if (res) {
+                toast.success('Login successfully');
                 route.push('/');
-                console.log('Log in successfully');
             } else {
-                console.log('Invalid email or password.');
+                toast.error('Invalid email or password');
             }
         } catch (error) {
-            console.log('Login ERROR', error);
+            const message =
+                error instanceof Error && error.message.includes('401')
+                    ? 'Invalid email or password.'
+                    : 'Login failed. Please try again';
+
+            toast.error(message);
         }
     };
 
