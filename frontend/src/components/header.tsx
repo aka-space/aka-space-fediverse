@@ -81,7 +81,13 @@ export default function Header({ isLogged, showInput }: HeaderProps) {
                 </ul>
             ) : (
                 <div className="flex items-center gap-7">
-                    <Button variant="rounded" size="default">
+                    <Button
+                        variant="rounded"
+                        size="default"
+                        onClick={() => {
+                            router.push('/post/create');
+                        }}
+                    >
                         <CirclePlus className="size-3" />
                         Create
                     </Button>
