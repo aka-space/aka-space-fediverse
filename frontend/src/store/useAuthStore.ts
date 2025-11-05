@@ -32,6 +32,12 @@ export const useAuthStore = create<AuthState>((set, get) => ({
                 return true;
             }
         } catch (error) {
+            const message =
+                error instanceof Error && error.message.includes('400')
+                    ? 'Email already exists'
+                    : 'Register failed. Please try again.';
+
+            toast.error(message);
             console.log('Register ERROR: ', error);
             set({ authUser: null });
         } finally {

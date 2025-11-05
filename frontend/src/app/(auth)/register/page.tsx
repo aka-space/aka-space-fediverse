@@ -17,15 +17,21 @@ export default function RegisterPage() {
 
     const handleSubmit = async (data: RegisterFormData): Promise<void> => {
         setLoading(true);
-        if (data.confirmPassword.match(data.password)) {
-            const res = await register(data);
-            if (res) {
-                setLoading(false);
-                toast.success('Register successfully');
-                route.push('/');
+        try {
+            if (data.confirmPassword.match(data.password)) {
+                const res = await register(data);
+                if (res) {
+                    setLoading(false);
+                    toast.success('Register successfully');
+                    route.push('/');
+                }
+            } else {
+                toast.error('Register failed');
             }
-        } else {
-            toast.error('Register failed');
+        } catch (error) {
+            console.log('Register failed: ', error);
+        } finally {
+            setLoading(false);
         }
     };
     if (loading) return <Loading />;

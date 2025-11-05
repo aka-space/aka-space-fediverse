@@ -58,8 +58,8 @@ export function LoginForm({
                                                         aria-invalid={
                                                             fieldState.invalid
                                                         }
-                                                        placeholder="Username"
-                                                        autoComplete="username"
+                                                        placeholder="Email"
+                                                        autoComplete="email"
                                                         className="pl-10 placeholder:text-gray-350 selection:bg-white selection:text-black"
                                                     />
                                                 </div>
