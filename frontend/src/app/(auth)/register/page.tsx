@@ -8,13 +8,11 @@ import { useRouter } from 'next/navigation';
 export default function RegisterPage() {
     const route = useRouter();
 
-    const { register } = useAuthStore() as {
-        register?: (data?: RegisterFormData) => Promise<void>;
-    };
+    const { register } = useAuthStore();
 
     const handleSubmit = async (data: RegisterFormData): Promise<void> => {
         if (data.confirmPassword.match(data.password)) {
-            const res = await register?.(data);
+            const res = await register(data);
             if (res) {
                 route.push('/');
                 console.log('Register successfully!');
