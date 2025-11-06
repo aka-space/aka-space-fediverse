@@ -74,7 +74,11 @@ export const ToolbarSection: React.FC<ToolbarSectionProps> = ({
             <DropdownMenuItem
                 key={action.label}
                 onClick={() => action.action(editor)}
-                disabled={!action.canExecute(editor)}
+                disabled={
+                    !action.canExecute(editor) ||
+                    !editor.view ||
+                    !editor.view.dom
+                }
                 className={cn(
                     'flex flex-row items-center justify-between gap-4',
                     {

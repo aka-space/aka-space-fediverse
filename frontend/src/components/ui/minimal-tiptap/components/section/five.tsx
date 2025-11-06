@@ -26,8 +26,16 @@ const formatActions: InsertElement[] = [
         icon: <CodeIcon className="size-5" />,
         action: (editor) => editor.chain().focus().toggleCodeBlock().run(),
         isActive: (editor) => editor.isActive('codeBlock'),
-        canExecute: (editor) =>
-            editor.can().chain().focus().toggleCodeBlock().run(),
+        canExecute: (editor) => {
+            try {
+                return (
+                    editor?.can()?.chain()?.focus()?.toggleCodeBlock()?.run() ||
+                    false
+                );
+            } catch {
+                return false;
+            }
+        },
         shortcuts: ['mod', 'alt', 'C'],
     },
     {
@@ -36,8 +44,20 @@ const formatActions: InsertElement[] = [
         icon: <QuoteIcon className="size-5" />,
         action: (editor) => editor.chain().focus().toggleBlockquote().run(),
         isActive: (editor) => editor.isActive('blockquote'),
-        canExecute: (editor) =>
-            editor.can().chain().focus().toggleBlockquote().run(),
+        canExecute: (editor) => {
+            try {
+                return (
+                    editor
+                        ?.can()
+                        ?.chain()
+                        ?.focus()
+                        ?.toggleBlockquote()
+                        ?.run() || false
+                );
+            } catch {
+                return false;
+            }
+        },
         shortcuts: ['mod', 'shift', 'B'],
     },
     {
@@ -46,8 +66,20 @@ const formatActions: InsertElement[] = [
         icon: <DividerHorizontalIcon className="size-5" />,
         action: (editor) => editor.chain().focus().setHorizontalRule().run(),
         isActive: () => false,
-        canExecute: (editor) =>
-            editor.can().chain().focus().setHorizontalRule().run(),
+        canExecute: (editor) => {
+            try {
+                return (
+                    editor
+                        ?.can()
+                        ?.chain()
+                        ?.focus()
+                        ?.setHorizontalRule()
+                        ?.run() || false
+                );
+            } catch {
+                return false;
+            }
+        },
         shortcuts: ['mod', 'alt', '-'],
     },
 ];
