@@ -12,6 +12,7 @@ import { Heart, MessageCircle, MoreHorizontal } from 'lucide-react';
 import { Post } from '@/types';
 import { useRouter } from 'next/navigation';
 import { formatTimeAgo } from '@/lib/formatDate';
+import { useUpdatePost } from '@/hooks/use-update-post';
 
 interface PostCardProps {
     post: Post;
@@ -22,6 +23,14 @@ export function PostCard({ post }: PostCardProps) {
 
     const handleNavigate = (id: string) => {
         route.push(`/post/${id}`);
+    };
+
+    const { mutate: likePost } = useUpdatePost();
+
+    const handleLikePost = (e: React.MouseEvent) => {
+        e.stopPropagation();
+        likePost({ ...post, likes: post.likes + 1 });
+        post.likes += 1;
     };
 
     return (
@@ -98,14 +107,17 @@ export function PostCard({ post }: PostCardProps) {
                     </div>
 
                     <div className="flex items-center gap-6 text-sm text-gray-500">
-                        <div className="flex items-center gap-1 cursor-pointer hover:underline">
+                        <button
+                            className="flex items-center gap-1 hover:text-red-700 transition-colors"
+                            onClick={handleLikePost}
+                        >
                             <Heart className="h-4 w-4" />
                             <span>{post.likes}</span>
-                        </div>
-                        <div className="flex items-center gap-1 cursor-pointer hover:underline">
+                        </button>
+                        <button className="flex items-center gap-1 hover:text-blue-500 transition-colors">
                             <MessageCircle className="h-4 w-4" />
                             <span>{post.comments}</span>
-                        </div>
+                        </button>
                     </div>
                 </div>
             </CardContent>
