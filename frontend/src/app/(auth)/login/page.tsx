@@ -1,6 +1,5 @@
 'use client';
 
-import Loading from '@/components/loading';
 import { LoginForm } from '@/components/login-form';
 import { LoginFormData } from '@/schemas/auth';
 import { useAuthStore } from '@/store/useAuthStore';
@@ -34,11 +33,11 @@ export default function LoginPage() {
             setLoading(false);
         }
     };
-    if (loading) return <Loading />;
+
     return (
         <div className="flex min-h-svh flex-col items-center justify-center gap-6 p-6 md:p-10">
             <div className="flex w-full max-w-[460px] flex-col gap-6">
-                <LoginForm onSubmit={handleSubmit} />
+                <LoginForm onSubmit={handleSubmit} loading={loading} />
             </div>
         </div>
     );

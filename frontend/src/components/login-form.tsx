@@ -11,13 +11,16 @@ import { LoginFormData, loginSchema } from '@/schemas/auth';
 import { Controller, useForm } from 'react-hook-form';
 import { Field, FieldError, FieldGroup } from '@/components/ui/field';
 import { useAuthStore } from '@/store/useAuthStore';
+import { Spinner } from './ui/spinner';
 
 export function LoginForm({
     className,
     onSubmit,
+    loading,
     ...props
 }: Omit<React.ComponentProps<'div'>, 'onSubmit'> & {
     onSubmit: (data: LoginFormData) => void;
+    loading: boolean
 }) {
     const form = useForm<LoginFormData>({
         resolver: zodResolver(loginSchema),
@@ -118,7 +121,7 @@ export function LoginForm({
                                         type="submit"
                                         className="h-10"
                                     >
-                                        Login
+                                        {loading ? <Spinner className='h-4 w-4' /> : 'Login'}
                                     </Button>
                                 </div>
                                 <div>

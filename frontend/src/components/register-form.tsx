@@ -10,13 +10,16 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import { Controller, useForm } from 'react-hook-form';
 import { Field, FieldError, FieldGroup } from './ui/field';
 import Image from 'next/image';
+import { Spinner } from './ui/spinner';
 
 export function RegisterForm({
     className,
     onSubmit,
+    loading,
     ...props
 }: Omit<React.ComponentProps<'div'>, 'onSubmit'> & {
     onSubmit: (data: RegisterFormData) => void;
+    loading: boolean;
 }) {
     const form = useForm<RegisterFormData>({
         resolver: zodResolver(registerSchema),
@@ -179,7 +182,11 @@ export function RegisterForm({
                                         variant="light"
                                         className="h-10 mt-5"
                                     >
-                                        Register
+                                        {loading ? (
+                                            <Spinner className="h-4 w-4" />
+                                        ) : (
+                                            'Register'
+                                        )}
                                     </Button>
                                 </div>
 
