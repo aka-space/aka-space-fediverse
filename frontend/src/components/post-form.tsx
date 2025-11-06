@@ -16,13 +16,19 @@ import {
     DropdownMenuItem,
     DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
-import { FileText } from 'lucide-react';
+import { FileText, Trash2 } from 'lucide-react';
 import { InputWithTags } from './ui/input-with-tags';
 
 const PostForm = () => {
     const router = useRouter();
-    const { postData, setPostData, saveToDraft, drafts, loadDraft } =
-        useCreatePostStore();
+    const {
+        postData,
+        setPostData,
+        saveToDraft,
+        drafts,
+        loadDraft,
+        deleteDraft,
+    } = useCreatePostStore();
     const [showDrafts, setShowDrafts] = useState(false);
     const [editorKey, setEditorKey] = useState(0);
 
@@ -66,6 +72,7 @@ const PostForm = () => {
 
     const handleSaveDraft = () => {
         saveToDraft();
+        setEditorKey((prev) => prev + 1);
         toast.success('Saved to drafts!');
     };
 
@@ -74,6 +81,12 @@ const PostForm = () => {
         setEditorKey((prev) => prev + 1);
         toast.success('Draft loaded!');
         setShowDrafts(false);
+    };
+
+    const handleDeleteDraft = (index: number, e: React.MouseEvent) => {
+        e.stopPropagation();
+        deleteDraft(index);
+        toast.success('Draft deleted!');
     };
 
     return (
@@ -110,15 +123,27 @@ const PostForm = () => {
                                             onClick={() =>
                                                 handleLoadDraft(index)
                                             }
-                                            className="flex flex-col items-start gap-1 cursor-pointer"
+                                            className="flex flex-row items-center justify-between gap-2 cursor-pointer"
                                         >
-                                            <div className="font-medium truncate w-full">
-                                                {draft.title || 'Untitled'}
+                                            <div className="flex flex-col items-start gap-1 flex-1 min-w-0">
+                                                <div className="font-medium truncate w-full">
+                                                    {draft.title || 'Untitled'}
+                                                </div>
+                                                <div className="text-xs text-muted-foreground truncate w-full">
+                                                    {draft.overview ||
+                                                        'No overview'}
+                                                </div>
                                             </div>
-                                            <div className="text-xs text-muted-foreground truncate w-full">
-                                                {draft.overview ||
-                                                    'No overview'}
-                                            </div>
+                                            <Button
+                                                variant="ghost"
+                                                size="icon"
+                                                className="h-8 w-8 shrink-0 hover:bg-red-400 hover:text-destructive-foreground"
+                                                onClick={(e) =>
+                                                    handleDeleteDraft(index, e)
+                                                }
+                                            >
+                                                <Trash2 className="h-4 w-4" />
+                                            </Button>
                                         </DropdownMenuItem>
                                     ))}
                                 </DropdownMenuContent>
@@ -177,13 +202,15 @@ const PostForm = () => {
                                     key={editorKey}
                                     value={postData.content}
                                     onChange={handleEditorChange}
-                                    className="w-full min-h-60"
+                                    className="w-full h-72"
                                     editorContentClassName="p-5"
                                     output="html"
                                     placeholder="Enter your Content..."
                                     autofocus={true}
                                     editable={!createPost.isPending}
                                     editorClassName="focus:outline-hidden"
+                                    immediatelyRender={true}
+                                    shouldRerenderOnTransaction={false}
                                 />
                             </div>
                         </div>

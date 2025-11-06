@@ -1,6 +1,7 @@
 import { PostDataForCreate } from '@/types';
 import { create } from 'zustand';
 import { persist } from 'zustand/middleware';
+import { useAuthStore } from './useAuthStore';
 
 interface PostState {
     postData: PostDataForCreate;
@@ -10,13 +11,14 @@ interface PostState {
     resetPostData: () => void;
     saveToDraft: () => void;
     loadDraft: (index: number) => void;
+    deleteDraft: (index: number) => void;
 }
 
 const initialState: PostDataForCreate = {
     title: '',
     author: {
-        name: 'test',
-        avatar: '/test-avatar.png',
+        name: useAuthStore.getState().authUser?.username || 'testuser',
+        avatar: `/${useAuthStore.getState().authUser?.username}`,
     },
     overview: '',
     content: '',
@@ -49,6 +51,11 @@ export const useCreatePostStore = create<PostState>()(
             loadDraft: (index) =>
                 set((state) => ({
                     postData: state.drafts[index],
+                })),
+
+            deleteDraft: (index) =>
+                set((state) => ({
+                    drafts: state.drafts.filter((_, i) => i !== index),
                 })),
         }),
         {
