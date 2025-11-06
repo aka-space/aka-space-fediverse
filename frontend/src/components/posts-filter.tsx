@@ -2,15 +2,17 @@
 
 import { useState } from 'react';
 import { Button } from './ui/button';
-import { Flame, TrendingUp, Clock, CheckCircle } from 'lucide-react';
+import { Flame, TrendingUp, Clock } from 'lucide-react';
 const filters = [
     { id: 'new', label: 'New', icon: Clock },
-    { id: 'top', label: 'Top', icon: TrendingUp },
     { id: 'hot', label: 'Hot', icon: Flame },
-    { id: 'closed', label: 'Closed', icon: CheckCircle },
 ];
 
-export function PostsFilter() {
+export function PostsFilter({
+    setFilter,
+}: {
+    setFilter: (filter: string) => void;
+}) {
     const [activeFilter, setActiveFilter] = useState<string>('new');
 
     return (
@@ -29,7 +31,10 @@ export function PostsFilter() {
                             key={filter.id}
                             variant={isActive ? 'default' : 'secondary'}
                             size="sm"
-                            onClick={() => setActiveFilter(filter.id)}
+                            onClick={() => {
+                                setActiveFilter(filter.id);
+                                setFilter(filter.id);
+                            }}
                             className="gap-2 rounded-3xl"
                         >
                             <Icon className="h-4 w-4" />
