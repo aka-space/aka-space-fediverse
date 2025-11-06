@@ -20,7 +20,7 @@ export function LoginForm({
     ...props
 }: Omit<React.ComponentProps<'div'>, 'onSubmit'> & {
     onSubmit: (data: LoginFormData) => void;
-    loading: boolean
+    loading: boolean;
 }) {
     const form = useForm<LoginFormData>({
         resolver: zodResolver(loginSchema),
@@ -121,7 +121,11 @@ export function LoginForm({
                                         type="submit"
                                         className="h-10"
                                     >
-                                        {loading ? <Spinner className='h-4 w-4' /> : 'Login'}
+                                        {loading ? (
+                                            <Spinner className="h-4 w-4" />
+                                        ) : (
+                                            'Login'
+                                        )}
                                     </Button>
                                 </div>
                                 <div>
