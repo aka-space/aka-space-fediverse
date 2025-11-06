@@ -3,7 +3,7 @@ import { cn } from '@/lib/utils';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
-import { useRouter } from 'next/navigation';
+import { redirect, useRouter } from 'next/navigation';
 import { Lock, User } from 'lucide-react';
 import Image from 'next/image';
 import { zodResolver } from '@hookform/resolvers/zod';
@@ -143,7 +143,11 @@ export function LoginForm({
                                             alt="Login With GG"
                                             width={35}
                                             height={35}
-                                            onClick={loginWithGG}
+                                            onClick={() =>
+                                                redirect(
+                                                    `${process.env.NEXT_PUBLIC_API_URL}/oauth2/google`,
+                                                )
+                                            }
                                         />
 
                                         <Image
