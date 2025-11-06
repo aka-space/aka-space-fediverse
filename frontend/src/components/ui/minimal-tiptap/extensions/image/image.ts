@@ -202,6 +202,7 @@ export const Image = TiptapImage.extend<CustomImageOptions>({
             copyLink: undefined,
             inline: false,
             allowBase64: false,
+            resize: false,
             HTMLAttributes: {},
         };
     },
