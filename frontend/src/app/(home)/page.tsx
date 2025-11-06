@@ -35,17 +35,17 @@ export default function Home() {
                 <div className="space-y-8">
                     <PostsFilter setFilter={setFilter} />
 
-                    {!posts && !loading && <NoPost />}
-
-                    {sortedPosts.map((post: Post) => (
-                        <PostCard key={post.id} post={post} />
-                    ))}
-
                     {loading && (
                         <div className="flex justify-center py-4">
                             <Spinner />
                         </div>
                     )}
+
+                    {!posts && !loading && <NoPost />}
+
+                    {sortedPosts.map((post: Post) => (
+                        <PostCard key={post.id} post={post} />
+                    ))}
                 </div>
             </div>
         </div>

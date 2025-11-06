@@ -22,6 +22,7 @@ export default function DetailPostPage() {
                             <Spinner />
                         </div>
                     )}
+
                     {!post && !loading && <NoPost />}
 
                     {post && <DetailPostCard post={post as Post} />}
