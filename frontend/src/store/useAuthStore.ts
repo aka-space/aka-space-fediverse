@@ -129,8 +129,6 @@ export const useAuthStore = create<AuthState>((set, get) => ({
     },
 
     initAuth: async () => {
-        const token = localStorage.getItem('accessToken');
-        if (!token) return;
         try {
             get().getUser();
         } catch (err) {
