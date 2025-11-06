@@ -120,3 +120,47 @@
         @apply bg-background text-foreground;
     }
 }
+
+.post-content pre.block-node {
+    background-color: #ccc;
+    color: #111827;
+    padding: 1rem;
+    border-radius: 0.5rem;
+    overflow-x: auto;
+    margin: 1rem 0;
+    border: 1px solid #374151;
+}
+
+.dark .post-content pre.block-node {
+    background-color: #0d0d0d;
+    border-color: #1f2937;
+}
+
+.post-content pre.block-node code {
+    background: transparent;
+    color: inherit;
+    padding: 0;
+    font-size: 0.875rem;
+    font-family: 'Fira Code', 'Consolas', 'Monaco', monospace;
+    line-height: 1.7;
+    display: block;
+    white-space: pre;
+}
+
+.post-content .text-node {
+    margin: 0.75rem 0;
+    line-height: 1.6;
+}
+
+.post-content a.link {
+    color: #2563eb;
+    text-decoration: none;
+}
+
+.post-content a.link:hover {
+    text-decoration: underline;
+}
+
+.dark .post-content a.link {
+    color: #60a5fa;
+}
