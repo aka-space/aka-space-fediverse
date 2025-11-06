@@ -12,7 +12,6 @@ import { useParams } from 'next/navigation';
 export default function DetailPostPage() {
     const { id } = useParams();
     const { data: post, isPending: loading } = useGetDetailPost(id as string);
-    console.log(post);
 
     return (
         <div className="w-full flex justify-center mb-6 px-4">
