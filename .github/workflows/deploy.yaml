@@ -12,6 +12,7 @@ jobs:
       packages: write
     env:
       REGISTRY: ghcr.io/${{ github.repository }}
+      API_URL: ${{ secrets.API_URL }}
     steps:
       - uses: actions/checkout@v3
 
