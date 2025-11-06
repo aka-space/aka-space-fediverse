@@ -40,7 +40,7 @@ export type PostDataForCreate = {
     likes: number;
     comments: number;
     shares: number;
-}
+};
 export type UserLogin = {
     email: string;
     password: string;

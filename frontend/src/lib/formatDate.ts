@@ -32,4 +32,4 @@ export const formatTime = (dateString: string) => {
         (now.getTime() - postDate.getTime()) / (1000 * 60),
     );
     return timeInMinutes;
-}
+};

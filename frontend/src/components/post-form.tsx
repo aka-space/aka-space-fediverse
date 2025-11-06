@@ -195,7 +195,7 @@ const PostForm = () => {
                             >
                                 Tags (comma separated)
                             </label>
-                            <InputWithTags className='mt-3' />
+                            <InputWithTags className="mt-3" />
                         </div>
 
                         <div className="flex items-center justify-end gap-4 mt-6 mb-10">

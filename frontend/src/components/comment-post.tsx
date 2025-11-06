@@ -14,20 +14,27 @@ interface CommentPostProps {
 
 const CommentPost = ({ postId }: CommentPostProps) => {
     const postComments = commentsData.filter(
-        (comment: Comment) => comment.postId === postId
+        (comment: Comment) => comment.postId === postId,
     );
 
     const topLevelComments = postComments.filter(
-        (comment: Comment) => comment.commentId === null
+        (comment: Comment) => comment.commentId === null,
     );
 
     const getReplies = (commentId: string) => {
         return postComments.filter(
-            (comment: Comment) => comment.commentId === commentId
+            (comment: Comment) => comment.commentId === commentId,
         );
     };
 
-    const CommentItem = ({ comment, isReply = false }: { comment: Comment; isReply?: boolean; isLast?: boolean }) => {
+    const CommentItem = ({
+        comment,
+        isReply = false,
+    }: {
+        comment: Comment;
+        isReply?: boolean;
+        isLast?: boolean;
+    }) => {
         const replies = getReplies(comment.id);
 
         return (
@@ -41,18 +48,21 @@ const CommentPost = ({ postId }: CommentPostProps) => {
                 <div className="flex gap-3 py-4">
                     <div className="relative">
                         <Avatar className="h-10 w-10 relative z-10 cursor-pointer">
-                            <AvatarImage src={comment.author.avatar} alt={comment.author.name} />
+                            <AvatarImage
+                                src={comment.author.avatar}
+                                alt={comment.author.name}
+                            />
                             <AvatarFallback>
                                 {comment.author.name.charAt(0).toUpperCase()}
                             </AvatarFallback>
                         </Avatar>
-                        
+
                         {replies.length > 0 && !isReply && (
-                            <div 
-                                className="absolute left-[20px] w-[2px] bg-gray-300 dark:bg-neutral-600" 
+                            <div
+                                className="absolute left-[20px] w-[2px] bg-gray-300 dark:bg-neutral-600"
                                 style={{
                                     top: '40px',
-                                    height: `calc(100% - 120px + ${(replies.length - 1) * 100}px)`
+                                    height: `calc(100% - 120px + ${(replies.length - 1) * 100}px)`,
                                 }}
                             ></div>
                         )}
@@ -96,10 +106,10 @@ const CommentPost = ({ postId }: CommentPostProps) => {
                         {replies.length > 0 && (
                             <div className="mt-2 relative">
                                 {replies.map((reply, index) => (
-                                    <CommentItem 
-                                        key={reply.id} 
-                                        comment={reply} 
-                                        isReply={true} 
+                                    <CommentItem
+                                        key={reply.id}
+                                        comment={reply}
+                                        isReply={true}
                                         isLast={index === replies.length - 1}
                                     />
                                 ))}
@@ -130,9 +140,12 @@ const CommentPost = ({ postId }: CommentPostProps) => {
             </div>
 
             <div className="divide-y divide-gray-200 dark:divide-neutral-700">
-                {topLevelComments.slice().reverse().map((comment) => (
-                    <CommentItem key={comment.id} comment={comment} />
-                ))}
+                {topLevelComments
+                    .slice()
+                    .reverse()
+                    .map((comment) => (
+                        <CommentItem key={comment.id} comment={comment} />
+                    ))}
             </div>
         </div>
     );

@@ -18,8 +18,9 @@ export default function Home() {
         const postsCopy = [...posts];
 
         if (filter === 'new') {
-            return postsCopy.sort((a: Post, b: Post) => 
-                formatTime(a.createdAt) - formatTime(b.createdAt)
+            return postsCopy.sort(
+                (a: Post, b: Post) =>
+                    formatTime(a.createdAt) - formatTime(b.createdAt),
             );
         } else if (filter === 'hot') {
             return postsCopy.sort((a: Post, b: Post) => b.likes - a.likes);

@@ -13,4 +13,4 @@ export function NoPost() {
             </p>
         </div>
     );
-};
+}

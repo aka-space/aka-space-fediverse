@@ -50,27 +50,31 @@ export function PostCard({ post }: PostCardProps) {
 
                     <DropdownMenu>
                         <DropdownMenuTrigger asChild>
-                            <Button variant="ghost" size="sm" className="h-8 w-8 p-0 cursor-pointer">
+                            <Button
+                                variant="ghost"
+                                size="sm"
+                                className="h-8 w-8 p-0 cursor-pointer"
+                            >
                                 <MoreHorizontal className="h-4 w-4 text-gray-500" />
                             </Button>
                         </DropdownMenuTrigger>
-                        <DropdownMenuContent align="end" className="w-48 border border-gray-200 dark:border-neutral-700">
-                            <DropdownMenuItem>
-                                Save post
-                            </DropdownMenuItem>
-                            <DropdownMenuItem>
-                                Hide post
-                            </DropdownMenuItem>
-                            <DropdownMenuItem>
-                                Report
-                            </DropdownMenuItem>
+                        <DropdownMenuContent
+                            align="end"
+                            className="w-48 border border-gray-200 dark:border-neutral-700"
+                        >
+                            <DropdownMenuItem>Save post</DropdownMenuItem>
+                            <DropdownMenuItem>Hide post</DropdownMenuItem>
+                            <DropdownMenuItem>Report</DropdownMenuItem>
                         </DropdownMenuContent>
                     </DropdownMenu>
                 </div>
             </CardHeader>
 
             <CardContent className="pt-0 space-y-4">
-                <div onClick={() => handleNavigate(post.id)} className="cursor-pointer">
+                <div
+                    onClick={() => handleNavigate(post.id)}
+                    className="cursor-pointer"
+                >
                     <h3 className="text-lg font-semibold text-gray-900 mb-2 line-clamp-2">
                         {post.title}
                     </h3>

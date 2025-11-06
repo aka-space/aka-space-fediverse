@@ -25,7 +25,7 @@ const Tag = ({ text, onRemove }: Tag) => {
             }}
             className="bg-white py-1.5 rounded-sm text-sm flex items-center gap-0.5 shadow-[0_0_10px_rgba(0,0,0,0.2)] backdrop-blur-sm text-black"
         >
-            <span className='pl-3'>{text}</span>
+            <span className="pl-3">{text}</span>
             <motion.div whileHover={{ scale: 1 }} whileTap={{ scale: 0.9 }}>
                 <Button
                     onClick={onRemove}
@@ -49,21 +49,27 @@ const InputWithTags = ({
     className,
     limit = 10,
 }: InputWithTagsProps) => {
-    const {postData, setPostData} = useCreatePostStore();
+    const { postData, setPostData } = useCreatePostStore();
     const [inputValue, setInputValue] = useState('');
 
     const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
         if (e.key === 'Enter' && inputValue.trim()) {
             e.preventDefault();
             if (!limit || postData.tags.length < limit) {
-                setPostData({ ...postData, tags: [...postData.tags, inputValue.trim()] });
+                setPostData({
+                    ...postData,
+                    tags: [...postData.tags, inputValue.trim()],
+                });
                 setInputValue('');
             }
         }
     };
 
     const removeTag = (indexToRemove: number) => {
-        setPostData({ ...postData, tags: postData.tags.filter((_, index) => index !== indexToRemove) });
+        setPostData({
+            ...postData,
+            tags: postData.tags.filter((_, index) => index !== indexToRemove),
+        });
     };
 
     return (
