@@ -1,0 +1,518 @@
+[
+  {
+    "id": "1",
+    "author": {
+      "name": "Alice Johnson",
+      "avatar": "https://i.pravatar.cc/150?img=1"
+    },
+    "postId": "1",
+    "commentId": null,
+    "comment": "Great post! This really helped me understand the concept better.",
+    "createdAt": "2025-11-02T10:30:00Z",
+    "likes": 12
+  },
+  {
+    "id": "2",
+    "author": {
+      "name": "Bob Smith",
+      "avatar": "https://i.pravatar.cc/150?img=2"
+    },
+    "postId": "1",
+    "commentId": "1",
+    "comment": "I agree! The explanation was very clear.",
+    "createdAt": "2025-11-02T10:45:00Z",
+    "likes": 5
+  },
+  {
+    "id": "3",
+    "author": {
+      "name": "Carol White",
+      "avatar": "https://i.pravatar.cc/150?img=3"
+    },
+    "postId": "1",
+    "commentId": null,
+    "comment": "Thanks for sharing this valuable information!",
+    "createdAt": "2025-11-02T11:15:00Z",
+    "likes": 8
+  },
+  {
+    "id": "4",
+    "author": {
+      "name": "David Brown",
+      "avatar": "https://i.pravatar.cc/150?img=4"
+    },
+    "postId": "1",
+    "commentId": "3",
+    "comment": "You're welcome! Glad it helped.",
+    "createdAt": "2025-11-02T11:30:00Z",
+    "likes": 3
+  },
+  {
+    "id": "5",
+    "author": {
+      "name": "Emma Davis",
+      "avatar": "https://i.pravatar.cc/150?img=5"
+    },
+    "postId": "1",
+    "commentId": null,
+    "comment": "I have a question about the implementation details. Can you elaborate?",
+    "createdAt": "2025-11-02T12:00:00Z",
+    "likes": 5
+  },
+  {
+    "id": "6",
+    "author": {
+      "name": "Frank Wilson",
+      "avatar": "https://i.pravatar.cc/150?img=6"
+    },
+    "postId": "2",
+    "commentId": null,
+    "comment": "This is exactly what I was looking for. Bookmarked!",
+    "createdAt": "2025-11-02T09:20:00Z",
+    "likes": 15
+  },
+  {
+    "id": "7",
+    "author": {
+      "name": "Grace Lee",
+      "avatar": "https://i.pravatar.cc/150?img=7"
+    },
+    "postId": "2",
+    "commentId": "6",
+    "comment": "Same here! This will be very useful.",
+    "createdAt": "2025-11-02T09:35:00Z",
+    "likes": 7
+  },
+  {
+    "id": "8",
+    "author": {
+      "name": "Henry Taylor",
+      "avatar": "https://i.pravatar.cc/150?img=8"
+    },
+    "postId": "2",
+    "commentId": null,
+    "comment": "Could you provide some examples of real-world use cases?",
+    "createdAt": "2025-11-02T10:45:00Z",
+    "likes": 6
+  },
+  {
+    "id": "9",
+    "author": {
+      "name": "Isabella Martinez",
+      "avatar": "https://i.pravatar.cc/150?img=9"
+    },
+    "postId": "2",
+    "commentId": "8",
+    "comment": "Check the documentation, there are several examples there.",
+    "createdAt": "2025-11-02T11:00:00Z",
+    "likes": 4
+  },
+  {
+    "id": "10",
+    "author": {
+      "name": "Jack Anderson",
+      "avatar": "https://i.pravatar.cc/150?img=10"
+    },
+    "postId": "2",
+    "commentId": null,
+    "comment": "Excellent breakdown of the topic. Very clear and concise.",
+    "createdAt": "2025-11-02T13:30:00Z",
+    "likes": 11
+  },
+  {
+    "id": "11",
+    "author": {
+      "name": "Karen Thomas",
+      "avatar": "https://i.pravatar.cc/150?img=11"
+    },
+    "postId": "3",
+    "commentId": null,
+    "comment": "I disagree with some points, but overall a good read.",
+    "createdAt": "2025-11-02T08:50:00Z",
+    "likes": 4
+  },
+  {
+    "id": "12",
+    "author": {
+      "name": "Liam Jackson",
+      "avatar": "https://i.pravatar.cc/150?img=12"
+    },
+    "postId": "3",
+    "commentId": "11",
+    "comment": "Which points do you disagree with? I'd like to hear your thoughts.",
+    "createdAt": "2025-11-02T09:15:00Z",
+    "likes": 2
+  },
+  {
+    "id": "13",
+    "author": {
+      "name": "Mia Robinson",
+      "avatar": "https://i.pravatar.cc/150?img=13"
+    },
+    "postId": "3",
+    "commentId": null,
+    "comment": "This changed my perspective completely. Thanks!",
+    "createdAt": "2025-11-02T11:20:00Z",
+    "likes": 9
+  },
+  {
+    "id": "14",
+    "author": {
+      "name": "Noah Clark",
+      "avatar": "https://i.pravatar.cc/150?img=14"
+    },
+    "postId": "4",
+    "commentId": null,
+    "comment": "Can you recommend any resources for learning more about this?",
+    "createdAt": "2025-11-02T10:10:00Z",
+    "likes": 7
+  },
+  {
+    "id": "15",
+    "author": {
+      "name": "Olivia Lewis",
+      "avatar": "https://i.pravatar.cc/150?img=15"
+    },
+    "postId": "4",
+    "commentId": "14",
+    "comment": "I recommend checking out the official documentation and MDN.",
+    "createdAt": "2025-11-02T10:30:00Z",
+    "likes": 5
+  },
+  {
+    "id": "16",
+    "author": {
+      "name": "Peter Walker",
+      "avatar": "https://i.pravatar.cc/150?img=16"
+    },
+    "postId": "4",
+    "commentId": null,
+    "comment": "Well explained! Looking forward to more content like this.",
+    "createdAt": "2025-11-02T12:45:00Z",
+    "likes": 13
+  },
+  {
+    "id": "17",
+    "author": {
+      "name": "Quinn Hall",
+      "avatar": "https://i.pravatar.cc/150?img=17"
+    },
+    "postId": "4",
+    "commentId": "16",
+    "comment": "Me too! Please keep posting.",
+    "createdAt": "2025-11-02T13:00:00Z",
+    "likes": 6
+  },
+  {
+    "id": "18",
+    "author": {
+      "name": "Ryan Allen",
+      "avatar": "https://i.pravatar.cc/150?img=18"
+    },
+    "postId": "4",
+    "commentId": null,
+    "comment": "I tried implementing this and it worked perfectly!",
+    "createdAt": "2025-11-02T14:00:00Z",
+    "likes": 10
+  },
+  {
+    "id": "19",
+    "author": {
+      "name": "Sophia Young",
+      "avatar": "https://i.pravatar.cc/150?img=19"
+    },
+    "postId": "5",
+    "commentId": null,
+    "comment": "Great insights! This will definitely improve my workflow.",
+    "createdAt": "2025-11-02T09:30:00Z",
+    "likes": 14
+  },
+  {
+    "id": "20",
+    "author": {
+      "name": "Thomas King",
+      "avatar": "https://i.pravatar.cc/150?img=20"
+    },
+    "postId": "5",
+    "commentId": "19",
+    "comment": "Absolutely! I've already started using these techniques.",
+    "createdAt": "2025-11-02T09:50:00Z",
+    "likes": 8
+  },
+  {
+    "id": "21",
+    "author": {
+      "name": "Uma Wright",
+      "avatar": "https://i.pravatar.cc/150?img=21"
+    },
+    "postId": "5",
+    "commentId": null,
+    "comment": "Thanks for the detailed explanation. Very helpful!",
+    "createdAt": "2025-11-02T11:00:00Z",
+    "likes": 8
+  },
+  {
+    "id": "22",
+    "author": {
+      "name": "Victor Scott",
+      "avatar": "https://i.pravatar.cc/150?img=22"
+    },
+    "postId": "6",
+    "commentId": null,
+    "comment": "This is one of the best articles I've read on this topic.",
+    "createdAt": "2025-11-02T10:20:00Z",
+    "likes": 16
+  },
+  {
+    "id": "23",
+    "author": {
+      "name": "Wendy Green",
+      "avatar": "https://i.pravatar.cc/150?img=23"
+    },
+    "postId": "6",
+    "commentId": "22",
+    "comment": "Totally agree! Very well written.",
+    "createdAt": "2025-11-02T10:45:00Z",
+    "likes": 9
+  },
+  {
+    "id": "24",
+    "author": {
+      "name": "Xavier Adams",
+      "avatar": "https://i.pravatar.cc/150?img=24"
+    },
+    "postId": "6",
+    "commentId": null,
+    "comment": "Could you create a follow-up post with advanced techniques?",
+    "createdAt": "2025-11-02T12:30:00Z",
+    "likes": 9
+  },
+  {
+    "id": "25",
+    "author": {
+      "name": "Yara Baker",
+      "avatar": "https://i.pravatar.cc/150?img=25"
+    },
+    "postId": "6",
+    "commentId": "24",
+    "comment": "Yes, please! That would be awesome.",
+    "createdAt": "2025-11-02T12:50:00Z",
+    "likes": 7
+  },
+  {
+    "id": "26",
+    "author": {
+      "name": "Zack Nelson",
+      "avatar": "https://i.pravatar.cc/150?img=26"
+    },
+    "postId": "6",
+    "commentId": null,
+    "comment": "Excellent work! Shared this with my team.",
+    "createdAt": "2025-11-02T13:15:00Z",
+    "likes": 11
+  },
+  {
+    "id": "27",
+    "author": {
+      "name": "Alice Johnson",
+      "avatar": "https://i.pravatar.cc/150?img=1"
+    },
+    "postId": "7",
+    "commentId": null,
+    "comment": "This clarified a lot of confusion I had. Thank you!",
+    "createdAt": "2025-11-02T09:00:00Z",
+    "likes": 6
+  },
+  {
+    "id": "28",
+    "author": {
+      "name": "Bob Smith",
+      "avatar": "https://i.pravatar.cc/150?img=2"
+    },
+    "postId": "7",
+    "commentId": "27",
+    "comment": "Same here! This was exactly what I needed.",
+    "createdAt": "2025-11-02T09:25:00Z",
+    "likes": 4
+  },
+  {
+    "id": "29",
+    "author": {
+      "name": "Carol White",
+      "avatar": "https://i.pravatar.cc/150?img=3"
+    },
+    "postId": "7",
+    "commentId": null,
+    "comment": "I have some suggestions for improvement. Can we discuss?",
+    "createdAt": "2025-11-02T11:30:00Z",
+    "likes": 5
+  },
+  {
+    "id": "30",
+    "author": {
+      "name": "David Brown",
+      "avatar": "https://i.pravatar.cc/150?img=4"
+    },
+    "postId": "8",
+    "commentId": null,
+    "comment": "Very informative! I learned a lot from this.",
+    "createdAt": "2025-11-02T10:00:00Z",
+    "likes": 12
+  },
+  {
+    "id": "31",
+    "author": {
+      "name": "Emma Davis",
+      "avatar": "https://i.pravatar.cc/150?img=5"
+    },
+    "postId": "8",
+    "commentId": "30",
+    "comment": "Me too! The examples were really helpful.",
+    "createdAt": "2025-11-02T10:20:00Z",
+    "likes": 8
+  },
+  {
+    "id": "32",
+    "author": {
+      "name": "Frank Wilson",
+      "avatar": "https://i.pravatar.cc/150?img=6"
+    },
+    "postId": "8",
+    "commentId": null,
+    "comment": "The examples you provided were really helpful.",
+    "createdAt": "2025-11-02T12:15:00Z",
+    "likes": 10
+  },
+  {
+    "id": "33",
+    "author": {
+      "name": "Grace Lee",
+      "avatar": "https://i.pravatar.cc/150?img=7"
+    },
+    "postId": "8",
+    "commentId": "32",
+    "comment": "Especially the code snippets. Very clear!",
+    "createdAt": "2025-11-02T12:40:00Z",
+    "likes": 6
+  },
+  {
+    "id": "34",
+    "author": {
+      "name": "Henry Taylor",
+      "avatar": "https://i.pravatar.cc/150?img=8"
+    },
+    "postId": "8",
+    "commentId": null,
+    "comment": "Could you explain the third point in more detail?",
+    "createdAt": "2025-11-02T13:45:00Z",
+    "likes": 7
+  },
+  {
+    "id": "35",
+    "author": {
+      "name": "Isabella Martinez",
+      "avatar": "https://i.pravatar.cc/150?img=9"
+    },
+    "postId": "9",
+    "commentId": null,
+    "comment": "This is a game-changer! Thanks for sharing.",
+    "createdAt": "2025-11-02T09:45:00Z",
+    "likes": 15
+  },
+  {
+    "id": "36",
+    "author": {
+      "name": "Jack Anderson",
+      "avatar": "https://i.pravatar.cc/150?img=10"
+    },
+    "postId": "9",
+    "commentId": "35",
+    "comment": "Couldn't agree more! This will save so much time.",
+    "createdAt": "2025-11-02T10:10:00Z",
+    "likes": 10
+  },
+  {
+    "id": "37",
+    "author": {
+      "name": "Karen Thomas",
+      "avatar": "https://i.pravatar.cc/150?img=11"
+    },
+    "postId": "9",
+    "commentId": null,
+    "comment": "I implemented this approach and saw immediate results!",
+    "createdAt": "2025-11-02T11:50:00Z",
+    "likes": 13
+  },
+  {
+    "id": "38",
+    "author": {
+      "name": "Liam Jackson",
+      "avatar": "https://i.pravatar.cc/150?img=12"
+    },
+    "postId": "9",
+    "commentId": "37",
+    "comment": "That's great to hear! What kind of results did you see?",
+    "createdAt": "2025-11-02T12:15:00Z",
+    "likes": 7
+  },
+  {
+    "id": "39",
+    "author": {
+      "name": "Mia Robinson",
+      "avatar": "https://i.pravatar.cc/150?img=13"
+    },
+    "postId": "10",
+    "commentId": null,
+    "comment": "Fantastic article! Keep up the great work.",
+    "createdAt": "2025-11-02T10:40:00Z",
+    "likes": 14
+  },
+  {
+    "id": "40",
+    "author": {
+      "name": "Noah Clark",
+      "avatar": "https://i.pravatar.cc/150?img=14"
+    },
+    "postId": "10",
+    "commentId": "39",
+    "comment": "Yes, looking forward to more posts like this!",
+    "createdAt": "2025-11-02T11:05:00Z",
+    "likes": 9
+  },
+  {
+    "id": "41",
+    "author": {
+      "name": "Olivia Lewis",
+      "avatar": "https://i.pravatar.cc/150?img=15"
+    },
+    "postId": "10",
+    "commentId": null,
+    "comment": "This answered all my questions. Much appreciated!",
+    "createdAt": "2025-11-02T12:50:00Z",
+    "likes": 11
+  },
+  {
+    "id": "42",
+    "author": {
+      "name": "Peter Walker",
+      "avatar": "https://i.pravatar.cc/150?img=16"
+    },
+    "postId": "10",
+    "commentId": "41",
+    "comment": "Mine too! This was very comprehensive.",
+    "createdAt": "2025-11-02T13:20:00Z",
+    "likes": 8
+  },
+  {
+    "id": "43",
+    "author": {
+      "name": "Quinn Hall",
+      "avatar": "https://i.pravatar.cc/150?img=17"
+    },
+    "postId": "10",
+    "commentId": null,
+    "comment": "Looking forward to more posts like this in the future!",
+    "createdAt": "2025-11-02T14:10:00Z",
+    "likes": 9
+  }
+]
