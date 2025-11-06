@@ -1,21 +1,25 @@
 'use client';
 import { Bell, CirclePlus, Search, UserPlus } from 'lucide-react';
 import Image from 'next/image';
-import { useRouter } from 'next/navigation';
+import { usePathname, useRouter } from 'next/navigation';
 import React, { useEffect, useState } from 'react';
 import { Input } from './ui/input';
 import { UserMenu } from './user-menu';
 import { Button } from './ui/button';
+import { useAuthStore } from '@/store/useAuthStore';
 
-type HeaderProps = {
-    isLogged: boolean;
-    showInput: boolean;
-};
-
-export default function Header({ isLogged, showInput }: HeaderProps) {
+export default function Header() {
     const router = useRouter();
+    const pathname = usePathname();
 
+    const hideSearch = pathname === '/login' || pathname === '/register';
+    const { authUser } = useAuthStore();
+    const [active, setActive] = useState<string>('');
     const [isScrolled, setIsScrolled] = useState(false);
+
+    useEffect(() => {
+        useAuthStore.getState().initAuth();
+    }, []);
 
     useEffect(() => {
         const handleScroll = () => setIsScrolled(window.scrollY > 10);
@@ -37,32 +41,31 @@ export default function Header({ isLogged, showInput }: HeaderProps) {
                 onClick={() => {
                     router.push('/');
                 }}
-                className="flex items-center"
+                className="flex items-center cursor-pointer"
             >
                 <Image src="/logo.png" alt="Logo" width={38} height={38} />
                 <span className="font-bold text-xl">AKA</span>
             </div>
-            {showInput && (
-                <div>
-                    <div className="flex w-xl">
-                        <div className="relative w-full pr-5 ">
-                            <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" />
-                            <Input
-                                type="text"
-                                placeholder="Search..."
-                                className="pl-12 bg-gray-100 border-0 w-full rounded-full text-2xl"
-                            />
-                        </div>
+            {!hideSearch && (
+                <div className="absolute left-1/2 transform -translate-x-1/2 sm:w-1/4 md:w-1/3 lg:w-1/2 xl:w-2/5">
+                    <div className="relative">
+                        <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" />
+                        <Input
+                            type="text"
+                            placeholder="Search..."
+                            className="pl-12 bg-gray-100 border-0 w-full rounded-full text-base sm:text-lg md:text-xl"
+                        />
                     </div>
                 </div>
             )}
             {/* Menu */}
-            {isLogged === false ? (
+            {!authUser ? (
                 <ul className="flex items-center gap-5">
                     <Button
-                        variant="dark"
+                        variant={active === 'register' ? 'dark' : 'light'}
                         size="lg"
                         onClick={() => {
+                            setActive('register');
                             router.push('/register');
                         }}
                     >
@@ -70,9 +73,10 @@ export default function Header({ isLogged, showInput }: HeaderProps) {
                         Register
                     </Button>
                     <Button
-                        variant="light"
+                        variant={active === 'login' ? 'dark' : 'light'}
                         size="lg"
                         onClick={() => {
+                            setActive('login');
                             router.push('/login');
                         }}
                     >
@@ -87,12 +91,13 @@ export default function Header({ isLogged, showInput }: HeaderProps) {
                         onClick={() => {
                             router.push('/post/create');
                         }}
+                        className=" cursor-pointer"
                     >
                         <CirclePlus className="size-3" />
                         Create
                     </Button>
 
-                    <Bell size={23} className="text-gray-400" />
+                    <Bell size={23} className="text-gray-400 cursor-pointer" />
 
                     <UserMenu />
                 </div>
