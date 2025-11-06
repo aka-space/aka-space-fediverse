@@ -14,12 +14,15 @@ import {
     DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
 import { UserIcon } from 'lucide-react';
+import { useAuthStore } from '@/store/useAuthStore';
 
 export function UserMenu() {
+    const { logout } = useAuthStore();
+
     return (
         <DropdownMenu>
             <DropdownMenuTrigger asChild>
-                <Button className="w-8 h-8 rounded-full flex items-center justify-center bg-gray-300 text-white">
+                <Button className="w-8 h-8 rounded-full flex items-center justify-center bg-gray-300 text-white cursor-pointer">
                     <UserIcon size={18} />
                 </Button>
             </DropdownMenuTrigger>
@@ -69,7 +72,7 @@ export function UserMenu() {
                 <DropdownMenuItem>Support</DropdownMenuItem>
                 <DropdownMenuItem disabled>API</DropdownMenuItem>
                 <DropdownMenuSeparator />
-                <DropdownMenuItem>
+                <DropdownMenuItem onClick={logout}>
                     Log out
                     <DropdownMenuShortcut>⇧⌘Q</DropdownMenuShortcut>
                 </DropdownMenuItem>
