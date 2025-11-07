@@ -218,6 +218,11 @@ export function RegisterForm({
                                             alt="Login With GG"
                                             width={35}
                                             height={35}
+                                            onClick={() =>
+                                                redirect(
+                                                    `${process.env.NEXT_PUBLIC_API_URL}/oauth2/github`,
+                                                )
+                                            }
                                         />
                                     </div>
                                 </div>

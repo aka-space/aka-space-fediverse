@@ -10,7 +10,6 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import { LoginFormData, loginSchema } from '@/schemas/auth';
 import { Controller, useForm } from 'react-hook-form';
 import { Field, FieldError, FieldGroup } from '@/components/ui/field';
-import { useAuthStore } from '@/store/useAuthStore';
 import { Spinner } from './ui/spinner';
 
 export function LoginForm({
@@ -29,7 +28,6 @@ export function LoginForm({
             password: '',
         },
     });
-    const { loginWithGG } = useAuthStore();
     const route = useRouter();
 
     return (
@@ -156,6 +154,11 @@ export function LoginForm({
                                             alt="Login With GG"
                                             width={35}
                                             height={35}
+                                            onClick={() =>
+                                                redirect(
+                                                    `${process.env.NEXT_PUBLIC_API_URL}/oauth2/github`,
+                                                )
+                                            }
                                         />
                                     </div>
                                 </div>
