@@ -22,7 +22,7 @@ export function UserMenu() {
             </DropdownMenuTrigger>
             <DropdownMenuContent className="w-56" align="start">
                 <DropdownMenuGroup>
-                    <div className="flex items-center gap-2 border-b pb-2 pl-2">
+                    <div className="flex items-center gap-2 border-b pb-2 pl-2 mb-1">
                         <Avatar className="h-9 w-9 rounded-lg  overflow-hidden">
                             <AvatarImage src="/test-avt.jpg" alt="avt" />
                             <AvatarFallback className="rounded-lg">
