@@ -101,9 +101,9 @@ export function ReportModal({
                 <DialogHeader>
                     <DialogTitle>Report Post</DialogTitle>
                     <DialogDescription>
-                        Help us understand why you're reporting this post:
+                        Help us understand why you&apos;re reporting this post:
                         <span className="block mt-3 font-medium text-gray-900 dark:text-gray-100 truncate">
-                            "{postTitle}"
+                            &quot;{postTitle}&quot;
                         </span>
                     </DialogDescription>
                 </DialogHeader>
