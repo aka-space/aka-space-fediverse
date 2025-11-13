@@ -4,77 +4,45 @@ import {
     DropdownMenuContent,
     DropdownMenuGroup,
     DropdownMenuItem,
-    DropdownMenuLabel,
-    DropdownMenuPortal,
-    DropdownMenuSeparator,
-    DropdownMenuShortcut,
-    DropdownMenuSub,
-    DropdownMenuSubContent,
-    DropdownMenuSubTrigger,
     DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
-import { UserIcon } from 'lucide-react';
+import { UserIcon, LogOut } from 'lucide-react';
+import { Avatar, AvatarFallback, AvatarImage } from '@radix-ui/react-avatar';
 import { useAuthStore } from '@/store/useAuthStore';
 
 export function UserMenu() {
-    const { logout } = useAuthStore();
+    const { logout, authUser } = useAuthStore();
 
     return (
-        <DropdownMenu>
+        <DropdownMenu modal={false}>
             <DropdownMenuTrigger asChild>
                 <Button className="w-8 h-8 rounded-full flex items-center justify-center bg-gray-300 text-white cursor-pointer">
                     <UserIcon size={18} />
                 </Button>
             </DropdownMenuTrigger>
-            <DropdownMenuContent className="w-56" align="start">
-                <DropdownMenuLabel>My Account</DropdownMenuLabel>
+            <DropdownMenuContent className="w-60 mr-4" align="start">
                 <DropdownMenuGroup>
-                    <DropdownMenuItem>
-                        Profile
-                        <DropdownMenuShortcut>⇧⌘P</DropdownMenuShortcut>
-                    </DropdownMenuItem>
-                    <DropdownMenuItem>
-                        Billing
-                        <DropdownMenuShortcut>⌘B</DropdownMenuShortcut>
-                    </DropdownMenuItem>
-                    <DropdownMenuItem>
-                        Settings
-                        <DropdownMenuShortcut>⌘S</DropdownMenuShortcut>
-                    </DropdownMenuItem>
-                    <DropdownMenuItem>
-                        Keyboard shortcuts
-                        <DropdownMenuShortcut>⌘K</DropdownMenuShortcut>
-                    </DropdownMenuItem>
+                    <div className="flex items-center gap-2 border-b px-2 mb-1">
+                        <Avatar className="h-7 w-7 rounded-lg overflow-hidden">
+                            <AvatarImage src="/test-avt.jpg" alt="avt" />
+                            <AvatarFallback className="rounded-lg">
+                                CN
+                            </AvatarFallback>
+                        </Avatar>
+
+                        <div>
+                            <span className="block font-semibold text-gray-800 truncate">
+                                {authUser?.username}
+                            </span>
+                            <span className="block text-sm text-gray-500 truncate">
+                                {authUser?.email}
+                            </span>
+                        </div>
+                    </div>
                 </DropdownMenuGroup>
-                <DropdownMenuSeparator />
-                <DropdownMenuGroup>
-                    <DropdownMenuItem>Team</DropdownMenuItem>
-                    <DropdownMenuSub>
-                        <DropdownMenuSubTrigger>
-                            Invite users
-                        </DropdownMenuSubTrigger>
-                        <DropdownMenuPortal>
-                            <DropdownMenuSubContent>
-                                <DropdownMenuItem>Email</DropdownMenuItem>
-                                <DropdownMenuItem>Message</DropdownMenuItem>
-                                <DropdownMenuSeparator />
-                                <DropdownMenuItem>More...</DropdownMenuItem>
-                            </DropdownMenuSubContent>
-                        </DropdownMenuPortal>
-                    </DropdownMenuSub>
-                    <DropdownMenuItem>
-                        New Team
-                        <DropdownMenuShortcut>⌘+T</DropdownMenuShortcut>
-                    </DropdownMenuItem>
-                </DropdownMenuGroup>
-                <DropdownMenuSeparator />
-                <DropdownMenuItem>GitHub</DropdownMenuItem>
-                <DropdownMenuItem>Support</DropdownMenuItem>
-                <DropdownMenuItem disabled>API</DropdownMenuItem>
-                <DropdownMenuSeparator />
                 <DropdownMenuItem onClick={logout}>
+                    <LogOut />
                     Log out
-                    <DropdownMenuShortcut>⇧⌘Q</DropdownMenuShortcut>
                 </DropdownMenuItem>
             </DropdownMenuContent>
         </DropdownMenu>

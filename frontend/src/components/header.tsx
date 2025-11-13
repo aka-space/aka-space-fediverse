@@ -88,6 +88,9 @@ export default function Header() {
                     <Button
                         variant="rounded"
                         size="default"
+                        onClick={() => {
+                            router.push('/post/create');
+                        }}
                         className=" cursor-pointer"
                     >
                         <CirclePlus className="size-3" />
