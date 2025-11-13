@@ -1,10 +1,10 @@
-use std::collections::BTreeMap;
+use std::collections::HashMap;
 
 use serde::{Deserialize, Serialize};
 use sqlx::PgExecutor;
 use uuid::Uuid;
 
-#[derive(Debug, PartialEq, Eq, PartialOrd, Ord, sqlx::Type, Serialize, Deserialize)]
+#[derive(Debug, PartialEq, Eq, Hash, sqlx::Type, Serialize, Deserialize)]
 #[sqlx(rename_all = "snake_case")]
 #[serde(rename_all = "snake_case")]
 pub enum Reaction {
@@ -16,10 +16,10 @@ pub enum Reaction {
     Angry,
 }
 
-pub async fn get_reactions(
-    id: Uuid,
+pub async fn count_by_post(
+    post_id: Uuid,
     executor: impl PgExecutor<'_>,
-) -> sqlx::Result<BTreeMap<Reaction, i64>> {
+) -> sqlx::Result<HashMap<Reaction, i64>> {
     let raw = sqlx::query!(
         r#"
             SELECT kind as "kind: Reaction", COUNT(account_id) as count
@@ -27,12 +27,12 @@ pub async fn get_reactions(
             WHERE post_id = $1
             GROUP BY kind
         "#,
-        id
+        post_id
     )
     .fetch_one(executor)
     .await;
 
-    Ok(BTreeMap::from_iter(
+    Ok(HashMap::from_iter(
         raw.into_iter()
             .map(|row| (row.kind, row.count.unwrap_or(0))),
     ))
