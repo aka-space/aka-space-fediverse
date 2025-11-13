@@ -39,6 +39,27 @@ pub async fn create(
     .await
 }
 
+pub async fn add_tags(
+    id: Uuid,
+    tags: &[String],
+    executor: impl PgExecutor<'_>,
+) -> sqlx::Result<()> {
+    sqlx::query!(
+        r#"
+            INSERT INTO post_tags(post_id, tag_id)
+            SELECT $1, tags.id
+            FROM tags
+            WHERE tags.name = ANY($2::text[])
+        "#,
+        id,
+        tags
+    )
+    .execute(executor)
+    .await?;
+
+    Ok(())
+}
+
 #[derive(Default)]
 pub enum SortablePostColumn {
     #[default]
@@ -103,4 +124,26 @@ pub async fn get(slug: String, executor: impl PgExecutor<'_>) -> sqlx::Result<Op
     )
     .fetch_optional(executor)
     .await
+}
+
+pub async fn update(
+    id: Uuid,
+    author_id: Uuid,
+    content: &str,
+    executor: impl PgExecutor<'_>,
+) -> sqlx::Result<()> {
+    sqlx::query!(
+        r#"
+            UPDATE posts
+            SET content = $3
+            WHERE id = $1 AND author_id = $2
+        "#,
+        id,
+        author_id,
+        content
+    )
+    .execute(executor)
+    .await?;
+
+    Ok(())
 }
