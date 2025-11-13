@@ -33,7 +33,6 @@ export const useCreateComment = () => {
         },
         onSuccess: () => {
             queryClient.invalidateQueries({ queryKey: ['comments'] });
-
         },
         onError: (error) => {
             console.error('Error creating comment:', error);

@@ -7,7 +7,12 @@ import { Heart, MessageCircle, MoreHorizontal, Trash2 } from 'lucide-react';
 import { Comment } from '@/types';
 import { formatTimeAgo } from '@/lib/formatDate';
 import { useGetComments } from '@/hooks/comment/use-get-comments';
-import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from './ui/dropdown-menu';
+import {
+    DropdownMenu,
+    DropdownMenuContent,
+    DropdownMenuItem,
+    DropdownMenuTrigger,
+} from './ui/dropdown-menu';
 import { toast } from 'sonner';
 import { useDeleteComment } from '@/hooks/comment/use-delete-comment';
 
@@ -34,7 +39,7 @@ const CommentPost = ({ postId }: CommentPostProps) => {
     };
 
     const handleDeleteComment = (commentId: string) => {
-        if(!commentId) return;
+        if (!commentId) return;
 
         deleteComment(commentId, {
             onSuccess: () => {
