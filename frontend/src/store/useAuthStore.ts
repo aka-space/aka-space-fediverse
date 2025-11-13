@@ -95,7 +95,6 @@ export const useAuthStore = create<AuthState>((set, get) => ({
 
     getUser: async () => {
         const token = localStorage.getItem('accessToken');
-        if (!token) return;
 
         try {
             const userRes = await axiosInstance.get('/auth/me', {
