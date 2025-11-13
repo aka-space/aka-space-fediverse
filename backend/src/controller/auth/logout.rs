@@ -43,7 +43,6 @@ pub async fn logout(State(state): State<Arc<ApiState>>, jar: CookieJar) -> Resul
             .message("Login first before logout".into())
             .build());
     };
-    cookie.set_path("/");
     cookie.make_removal();
 
     let token = cookie.value();
