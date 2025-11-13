@@ -10,13 +10,33 @@ pub struct Post {
     id: Uuid,
     slug: String,
 
-    author_id: String,
+    author_id: Uuid,
     title: String,
     content: String,
     view: i32,
 
     created_at: DateTime<Utc>,
     updated_at: DateTime<Utc>,
+}
+
+pub async fn create(
+    author_id: Uuid,
+    title: &str,
+    content: &str,
+    executor: impl PgExecutor<'_>,
+) -> sqlx::Result<Uuid> {
+    sqlx::query_scalar!(
+        r#"
+            INSERT INTO posts(author_id, title, content)
+            VALUES($1, $2, $3)
+            RETURNING id
+        "#,
+        author_id,
+        title,
+        content
+    )
+    .fetch_one(executor)
+    .await
 }
 
 #[derive(Default)]
