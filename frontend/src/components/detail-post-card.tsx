@@ -13,8 +13,9 @@ import {
 } from './ui/dropdown-menu';
 import { useUpdatePost } from '@/hooks/use-update-post';
 import { toast } from 'sonner';
-import { useState } from 'react';
+import { useMemo, useState } from 'react';
 import { ReportModal } from './report-modal';
+import commentsData from '@/data/comments.json';
 
 interface PostCardProps {
     post: Post;
@@ -23,6 +24,11 @@ interface PostCardProps {
 export function DetailPostCard({ post }: PostCardProps) {
     const [isReportModalOpen, setIsReportModalOpen] = useState(false);
     const { mutate: likePost } = useUpdatePost();
+
+    const commentCount = useMemo(() => {
+        return commentsData.filter((comment) => comment.postId === post.id)
+            .length;
+    }, [post.id]);
 
     const handleLikePost = (e: React.MouseEvent) => {
         e.stopPropagation();
@@ -152,7 +158,7 @@ export function DetailPostCard({ post }: PostCardProps) {
                             </button>
                             <button className="flex items-center gap-1 hover:text-blue-500 transition-colors">
                                 <MessageCircle className="h-4 w-4" />
-                                <span>{post.comments}</span>
+                                <span>{commentCount}</span>
                             </button>
                         </div>
                     </div>
