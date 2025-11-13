@@ -4,8 +4,13 @@ import { Textarea } from './ui/textarea';
 import { Button } from './ui/button';
 import { Send } from 'lucide-react';
 import { Spinner } from './ui/spinner';
+import { useCreateComment } from '@/hooks/comment/use-create-comment';
+import { useAuthStore } from '@/store/useAuthStore';
 
-const CommentInput = () => {
+const CommentInput = ({ postId }: { postId: string }) => {
+    const { authUser } = useAuthStore();
+    const { mutate: createComment } = useCreateComment();
+
     const [comment, setComment] = useState<string>('');
     const [isSubmitting, setIsSubmitting] = useState<boolean>(false);
     const placeholder = 'Write a comment...';
@@ -15,11 +20,29 @@ const CommentInput = () => {
 
         setIsSubmitting(true);
         try {
-            console.log('Submitting comment:', comment);
+            const data = {
+                comment: comment.trim(),
+                author: {
+                    name: authUser?.username,
+                    avatar: `${authUser?.username}.png`,
+                },
+                postId: postId,
+                commentId: null,
+                createdAt: new Date().toISOString(),
+                likes: 0,
+            };
 
-            await new Promise((resolve) => setTimeout(resolve, 1000));
-
-            setComment('');
+            createComment(data, {
+                onSuccess: () => {
+                    setComment('');
+                },
+                onError: (error) => {
+                    console.error('Error submitting comment:', error);
+                },
+                onSettled: () => {
+                    setIsSubmitting(false);
+                },
+            });
         } catch (error) {
             console.error('Error submitting comment:', error);
         } finally {
