@@ -2,7 +2,7 @@
 
 import { useState } from 'react';
 import { Button } from './ui/button';
-import { Flame, TrendingUp, Clock } from 'lucide-react';
+import { Flame, Clock } from 'lucide-react';
 const filters = [
     { id: 'new', label: 'New', icon: Clock },
     { id: 'hot', label: 'Hot', icon: Flame },
