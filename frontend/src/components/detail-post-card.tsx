@@ -26,8 +26,9 @@ export function DetailPostCard({ post }: PostCardProps) {
     const { mutate: likePost } = useUpdatePost();
 
     const commentCount = useMemo(() => {
-            return commentsData.filter((comment) => comment.postId === post.id).length;
-        }, [post.id]);
+        return commentsData.filter((comment) => comment.postId === post.id)
+            .length;
+    }, [post.id]);
 
     const handleLikePost = (e: React.MouseEvent) => {
         e.stopPropagation();

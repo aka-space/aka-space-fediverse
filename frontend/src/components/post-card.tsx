@@ -27,7 +27,8 @@ export function PostCard({ post }: PostCardProps) {
     const [isReportModalOpen, setIsReportModalOpen] = useState(false);
 
     const commentCount = useMemo(() => {
-        return commentsData.filter((comment) => comment.postId === post.id).length;
+        return commentsData.filter((comment) => comment.postId === post.id)
+            .length;
     }, [post.id]);
 
     const handleNavigate = (id: string) => {
