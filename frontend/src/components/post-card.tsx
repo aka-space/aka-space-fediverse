@@ -15,7 +15,8 @@ import { formatTimeAgo } from '@/lib/formatDate';
 import { useUpdatePost } from '@/hooks/use-update-post';
 import { toast } from 'sonner';
 import { ReportModal } from './report-modal';
-import { useState } from 'react';
+import { useState, useMemo } from 'react';
+import commentsData from '@/data/comments.json';
 
 interface PostCardProps {
     post: Post;
@@ -24,6 +25,10 @@ interface PostCardProps {
 export function PostCard({ post }: PostCardProps) {
     const route = useRouter();
     const [isReportModalOpen, setIsReportModalOpen] = useState(false);
+
+    const commentCount = useMemo(() => {
+        return commentsData.filter((comment) => comment.postId === post.id).length;
+    }, [post.id]);
 
     const handleNavigate = (id: string) => {
         route.push(`/post/${id}`);
@@ -136,7 +141,7 @@ export function PostCard({ post }: PostCardProps) {
                             </button>
                             <button className="flex items-center gap-1 hover:text-blue-500 transition-colors">
                                 <MessageCircle className="h-4 w-4" />
-                                <span>{post.comments}</span>
+                                <span>{commentCount}</span>
                             </button>
                         </div>
                     </div>
