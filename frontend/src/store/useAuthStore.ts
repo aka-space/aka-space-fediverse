@@ -10,7 +10,6 @@ interface AuthState {
     isRegisting: boolean;
     register: (data: UserRegister) => Promise<boolean | undefined>;
     login: (data: UserLogin) => Promise<boolean | undefined>;
-    loginWithGG: () => Promise<void>;
     refreshAccessToken: () => Promise<string | null>;
     logout: () => Promise<void>;
     getUser: () => Promise<void>;
@@ -62,26 +61,6 @@ export const useAuthStore = create<AuthState>((set, get) => ({
         }
     },
 
-    loginWithGG: async () => {
-        set({ isLoggingIn: true });
-        try {
-            await axiosInstance.get('/oauth2/google');
-            toast.success('Login successfully');
-        } catch (error) {
-            const message =
-                error instanceof Error &&
-                error.message.includes('popup_closed_by_user')
-                    ? 'Google login was cancelled.'
-                    : 'Google login failed. Please try again.';
-
-            toast.error(message);
-            console.log('Google login ERROR: ', error);
-            set({ authUser: null });
-        } finally {
-            set({ isLoggingIn: false });
-        }
-    },
-
     refreshAccessToken: async () => {
         try {
             const res = await axiosInstance.post(
@@ -116,6 +95,8 @@ export const useAuthStore = create<AuthState>((set, get) => ({
 
     getUser: async () => {
         const token = localStorage.getItem('accessToken');
+        if (!token) return;
+
         try {
             const userRes = await axiosInstance.get('/auth/me', {
                 headers: {
