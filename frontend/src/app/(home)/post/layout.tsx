@@ -15,7 +15,7 @@ export default function Layout({ children }: LayoutProps) {
         if (!authUser) {
             route.push('/login');
         }
-    }, [authUser]);
+    }, [authUser, route]);
 
     return <div>{children}</div>;
 }

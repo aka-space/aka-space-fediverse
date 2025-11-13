@@ -45,7 +45,6 @@ export const useCreatePostStore = create<PostState>()(
             saveToDraft: () =>
                 set((state) => ({
                     drafts: [...state.drafts, state.postData],
-                    postData: initialState,
                 })),
 
             loadDraft: (index) =>
