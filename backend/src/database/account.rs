@@ -68,7 +68,7 @@ pub async fn get(id: Uuid, executor: impl PgExecutor<'_>) -> sqlx::Result<Option
 }
 
 pub async fn get_minimal(
-    id: Uuid,
+    email: &str,
     executor: impl PgExecutor<'_>,
 ) -> sqlx::Result<Option<MinimalAccount>> {
     sqlx::query_as!(
@@ -78,10 +78,10 @@ pub async fn get_minimal(
                 email,
                 username
             FROM accounts
-            WHERE id = $1 AND is_active = true
+            WHERE email = $1 AND is_active = true
             LIMIT 1
         "#,
-        id
+        email
     )
     .fetch_optional(executor)
     .await
