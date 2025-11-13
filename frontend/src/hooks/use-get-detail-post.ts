@@ -1,11 +1,12 @@
 import { useQuery } from '@tanstack/react-query';
+
 const API_URL = 'https://68765855814c0dfa653bba48.mockapi.io/mockTest';
 
-export const useGetPosts = () => {
+export const useGetDetailPost = (id: string) => {
     return useQuery({
-        queryKey: ['posts'],
+        queryKey: ['post'],
         queryFn: async () => {
-            const response = await fetch(API_URL, {
+            const response = await fetch(`${API_URL}/${id}`, {
                 method: 'GET',
             });
             if (!response.ok) {

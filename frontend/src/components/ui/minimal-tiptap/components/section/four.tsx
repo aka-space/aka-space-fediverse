@@ -28,8 +28,20 @@ const formatActions: ListItem[] = [
         ),
         isActive: (editor) => editor.isActive('orderedList'),
         action: (editor) => editor.chain().focus().toggleOrderedList().run(),
-        canExecute: (editor) =>
-            editor.can().chain().focus().toggleOrderedList().run(),
+        canExecute: (editor) => {
+            try {
+                return (
+                    editor
+                        ?.can()
+                        ?.chain()
+                        ?.focus()
+                        ?.toggleOrderedList()
+                        ?.run() || false
+                );
+            } catch {
+                return false;
+            }
+        },
         shortcuts: ['mod', 'shift', '7'],
     },
     {
@@ -38,8 +50,20 @@ const formatActions: ListItem[] = [
         icon: <ListBulletIcon className="size-5" />,
         isActive: (editor) => editor.isActive('bulletList'),
         action: (editor) => editor.chain().focus().toggleBulletList().run(),
-        canExecute: (editor) =>
-            editor.can().chain().focus().toggleBulletList().run(),
+        canExecute: (editor) => {
+            try {
+                return (
+                    editor
+                        ?.can()
+                        ?.chain()
+                        ?.focus()
+                        ?.toggleBulletList()
+                        ?.run() || false
+                );
+            } catch {
+                return false;
+            }
+        },
         shortcuts: ['mod', 'shift', '8'],
     },
 ];

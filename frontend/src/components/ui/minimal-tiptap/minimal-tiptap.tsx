@@ -23,7 +23,7 @@ export interface MinimalTiptapProps
 }
 
 const Toolbar = ({ editor }: { editor: Editor }) => (
-    <div className="border-border flex h-12 shrink-0 overflow-x-auto border-b p-2">
+    <div className="border-border sticky top-0 z-10 bg-white dark:bg-neutral-800 flex h-12 shrink-0 overflow-x-auto border-b p-2">
         <div className="flex w-max items-center gap-px">
             <SectionOne editor={editor} activeLevels={[1, 2, 3, 4, 5, 6]} />
 
@@ -87,7 +87,7 @@ export const MinimalTiptapEditor = ({
             as="div"
             name="editor"
             className={cn(
-                'border-input min-data-[orientation=vertical]:h-72 flex h-auto w-full flex-col rounded-md border shadow-xs',
+                'border-input min-data-[orientation=vertical]:h-72 flex h-auto w-full flex-col rounded-md border shadow-xs overflow-auto',
                 'focus-within:border-ring focus-within:ring-ring/50 focus-within:ring-[3px]',
                 className,
             )}

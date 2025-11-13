@@ -2,33 +2,26 @@ import { Card, CardContent, CardHeader } from '@/components/ui/card';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
+import { Heart, MessageCircle, MoreHorizontal } from 'lucide-react';
+import { Post } from '@/types';
+import { formatTimeAgo } from '@/lib/formatDate';
 import {
     DropdownMenu,
     DropdownMenuContent,
     DropdownMenuItem,
     DropdownMenuTrigger,
-} from '@/components/ui/dropdown-menu';
-import { Heart, MessageCircle, MoreHorizontal } from 'lucide-react';
-import { Post } from '@/types';
-import { useRouter } from 'next/navigation';
-import { formatTimeAgo } from '@/lib/formatDate';
+} from './ui/dropdown-menu';
 import { useUpdatePost } from '@/hooks/use-update-post';
 import { toast } from 'sonner';
-import { ReportModal } from './report-modal';
 import { useState } from 'react';
+import { ReportModal } from './report-modal';
 
 interface PostCardProps {
     post: Post;
 }
 
-export function PostCard({ post }: PostCardProps) {
-    const route = useRouter();
+export function DetailPostCard({ post }: PostCardProps) {
     const [isReportModalOpen, setIsReportModalOpen] = useState(false);
-
-    const handleNavigate = (id: string) => {
-        route.push(`/post/${id}`);
-    };
-
     const { mutate: likePost } = useUpdatePost();
 
     const handleLikePost = (e: React.MouseEvent) => {
@@ -64,15 +57,14 @@ export function PostCard({ post }: PostCardProps) {
                                 </AvatarFallback>
                             </Avatar>
                             <div>
-                                <p className="font-semibold text-sm text-gray-900 hover:underline cursor-pointer">
+                                <p className="font-semibold text-sm text-gray-900 dark:text-gray-100 cursor-pointer hover:underline">
                                     {post.author.name}
                                 </p>
-                                <p className="text-xs text-gray-500">
+                                <p className="text-xs text-gray-500 dark:text-gray-400">
                                     {formatTimeAgo(post.createdAt)}
                                 </p>
                             </div>
                         </div>
-
                         <DropdownMenu>
                             <DropdownMenuTrigger asChild>
                                 <Button
@@ -88,7 +80,6 @@ export function PostCard({ post }: PostCardProps) {
                                 className="w-48 border border-gray-200 dark:border-neutral-700"
                             >
                                 <DropdownMenuItem>Save post</DropdownMenuItem>
-                                <DropdownMenuItem>Hide post</DropdownMenuItem>
                                 <DropdownMenuItem
                                     onClick={() => setIsReportModalOpen(true)}
                                 >
@@ -100,33 +91,58 @@ export function PostCard({ post }: PostCardProps) {
                 </CardHeader>
 
                 <CardContent className="pt-0 space-y-4">
-                    <div
-                        onClick={() => handleNavigate(post.id)}
-                        className="cursor-pointer"
-                    >
-                        <h3 className="text-lg font-semibold text-gray-900 mb-2 line-clamp-2">
+                    <div>
+                        <h3 className="text-xl font-bold text-gray-900 dark:text-gray-100 mb-2">
                             {post.title}
                         </h3>
 
-                        <p className="text-sm text-gray-600 line-clamp-3">
+                        <p className="text-sm text-gray-600 dark:text-gray-400 mb-6 leading-relaxed">
                             {post.overview}
                         </p>
+
+                        <div
+                            className="post-content prose prose-sm max-w-none text-gray-700 dark:text-gray-300
+                                   prose-p:my-3 prose-p:leading-relaxed
+                                   prose-headings:font-semibold prose-headings:text-gray-900 dark:prose-headings:text-gray-100
+                                   prose-h2:text-xl prose-h2:mt-6 prose-h2:mb-4
+                                   prose-h3:text-lg prose-h3:mt-4 prose-h3:mb-3
+                                   prose-a:text-blue-600 dark:prose-a:text-blue-400
+                                   prose-a:no-underline hover:prose-a:underline
+                                   prose-strong:text-gray-900 dark:prose-strong:text-gray-100
+                                   prose-code:before:content-none prose-code:after:content-none
+                                   prose-code:bg-gray-100 dark:prose-code:bg-gray-800
+                                   prose-code:text-pink-600 dark:prose-code:text-pink-400
+                                   prose-code:px-1.5 prose-code:py-0.5 prose-code:rounded
+                                   prose-code:text-sm prose-code:font-mono
+                                   prose-pre:bg-[#1e1e1e] dark:prose-pre:bg-[#0d0d0d]
+                                   prose-pre:text-gray-100 prose-pre:p-4 prose-pre:rounded-lg
+                                   prose-pre:overflow-x-auto prose-pre:my-4
+                                   prose-pre:border prose-pre:border-gray-700
+                                   prose-ul:my-3 prose-ul:list-disc prose-ul:pl-6
+                                   prose-ol:my-3 prose-ol:list-decimal prose-ol:pl-6
+                                   prose-li:my-1
+                                   prose-blockquote:border-l-4 prose-blockquote:border-blue-500
+                                   prose-blockquote:pl-4 prose-blockquote:italic
+                                   prose-blockquote:text-gray-600 dark:prose-blockquote:text-gray-400
+                                   prose-img:rounded-lg prose-img:my-6 prose-img:shadow-md"
+                            dangerouslySetInnerHTML={{ __html: post.content }}
+                        />
                     </div>
 
-                    <div className="flex flex-row justify-between">
+                    <div className="flex flex-row justify-between items-center pt-4 border-t border-gray-200 dark:border-neutral-700">
                         <div className="flex flex-wrap gap-2">
                             {post.tags.map((tag) => (
                                 <Badge
                                     key={tag}
                                     variant="secondary"
-                                    className="text-xs bg-gray-100 text-gray-700 hover:bg-gray-200 cursor-pointer"
+                                    className="text-xs bg-gray-100 dark:bg-neutral-800 text-gray-700 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-neutral-700 cursor-pointer transition-colors"
                                 >
                                     {tag}
                                 </Badge>
                             ))}
                         </div>
 
-                        <div className="flex items-center gap-6 text-sm text-gray-500">
+                        <div className="flex items-center gap-6 text-sm text-gray-500 dark:text-gray-400">
                             <button
                                 className="flex items-center gap-1 hover:text-red-700 transition-colors"
                                 onClick={handleLikePost}
