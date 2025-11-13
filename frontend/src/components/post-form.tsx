@@ -6,7 +6,7 @@ import { Button } from './ui/button';
 import { Textarea } from './ui/textarea';
 import { MinimalTiptapEditor } from './ui/minimal-tiptap';
 import { useCreatePostStore } from '@/store/useCreatePostStore';
-import { useCreatePost } from '@/hooks/use-create-post';
+import { useCreatePost } from '@/hooks/post/use-create-post';
 import { useRouter } from 'next/navigation';
 import { toast } from 'sonner';
 import type { Content } from '@tiptap/react';
