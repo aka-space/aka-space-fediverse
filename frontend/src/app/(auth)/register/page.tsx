@@ -1,43 +1,40 @@
 'use client';
 
 import { RegisterForm } from '@/components/register-form';
+import { useRegister } from '@/hooks/use-register';
 import { RegisterFormData } from '@/schemas/auth';
-import { useAuthStore } from '@/store/useAuthStore';
 import { useRouter } from 'next/navigation';
-import { useState } from 'react';
 import { toast } from 'sonner';
 
 export default function RegisterPage() {
-    const [loading, setLoading] = useState(false);
-
     const route = useRouter();
-
-    const { register } = useAuthStore();
+    const register = useRegister();
 
     const handleSubmit = async (data: RegisterFormData): Promise<void> => {
-        setLoading(true);
-        try {
-            if (data.confirmPassword.match(data.password)) {
-                const res = await register(data);
-                if (res) {
-                    setLoading(false);
-                    toast.success('Register successfully');
-                    route.push('/');
-                }
-            } else {
-                toast.error('Register failed');
-            }
-        } catch (error) {
-            console.log('Register failed: ', error);
-        } finally {
-            setLoading(false);
+        if (!data.confirmPassword.match(data.password)) {
+            toast.error('Passwords do not match');
+            return;
         }
+
+        register.mutate(data, {
+            onSuccess: () => {
+                toast.success('Register successfully');
+                route.push('/');
+            },
+
+            onError: () => {
+                toast.error('Register failed');
+            },
+        });
     };
 
     return (
         <div className="flex min-h-svh flex-col items-center justify-center gap-6 p-6 md:p-10">
             <div className="flex w-full max-w-[460px] flex-col gap-6">
-                <RegisterForm onSubmit={handleSubmit} loading={loading} />
+                <RegisterForm
+                    onSubmit={handleSubmit}
+                    loading={register.isPending}
+                />
             </div>
         </div>
     );
