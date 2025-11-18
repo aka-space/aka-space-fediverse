@@ -8,12 +8,11 @@ import {
 } from '@/components/ui/dropdown-menu';
 import { UserIcon, LogOut } from 'lucide-react';
 import { Avatar, AvatarFallback, AvatarImage } from '@radix-ui/react-avatar';
-import { useGetUser } from '@/hooks/use-get-user';
 import { useAuthStore } from '@/store/useAuthStore';
 import { toast } from 'sonner';
 
 export function UserMenu() {
-    const { data: user } = useGetUser();
+    const { authUser } = useAuthStore();
 
     const handleLogout = async () => {
         const success = await useAuthStore.getState().logout();
@@ -43,10 +42,10 @@ export function UserMenu() {
 
                         <div>
                             <span className="block font-semibold text-gray-800 truncate">
-                                {user?.username}
+                                {authUser?.username}
                             </span>
                             <span className="block text-sm text-gray-500 truncate">
-                                {user?.email}
+                                {authUser?.email}
                             </span>
                         </div>
                     </div>

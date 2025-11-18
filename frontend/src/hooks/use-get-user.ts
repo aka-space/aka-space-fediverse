@@ -6,10 +6,9 @@ import { useQuery } from '@tanstack/react-query';
 export const useGetUser = () => {
     const token = useAuthStore((s) => s.accessToken);
     const setUser = useAuthStore((s) => s.setUser);
-    const isRefreshing = useAuthStore((s) => s.isRefreshing);
 
     return useQuery({
-        queryKey: ['authUser'],
+        queryKey: ['authUser', token],
 
         queryFn: async () => {
             try {
@@ -28,7 +27,7 @@ export const useGetUser = () => {
                 console.log(error);
             }
         },
-        enabled: !!token && !isRefreshing,
+        enabled: !!token,
         staleTime: 1000 * 60 * 5,
         retry: false,
     });

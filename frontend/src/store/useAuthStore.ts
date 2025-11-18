@@ -5,7 +5,6 @@ import { persist } from 'zustand/middleware';
 
 interface AuthState {
     accessToken: string | null;
-    isRefreshing: boolean;
     authUser: UserRegister | null;
     setUser: (user: UserRegister | null) => void;
     setAccessToken: (token: string | null) => void;
@@ -23,7 +22,6 @@ export const useAuthStore = create<AuthState>()(
             setAccessToken: (token) => set({ accessToken: token }),
 
             refreshAccessToken: async () => {
-                set({ isRefreshing: true });
                 try {
                     const res = await axiosInstance.post('/auth/refresh');
                     const newToken = res.data;
@@ -33,8 +31,6 @@ export const useAuthStore = create<AuthState>()(
                     console.error('Refresh accessToken ERROR:', error);
                     set({ authUser: null, accessToken: null });
                     return null;
-                } finally {
-                    set({ isRefreshing: false });
                 }
             },
 
