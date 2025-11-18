@@ -6,6 +6,7 @@ import { Send } from 'lucide-react';
 import { Spinner } from './ui/spinner';
 import { useCreateComment } from '@/hooks/comment/use-create-comment';
 import { useAuthStore } from '@/store/useAuthStore';
+import MessageInput from './ui/message-input-block/message-input-block';
 
 const CommentInput = ({ postId }: { postId: string }) => {
     const { authUser } = useAuthStore();
@@ -13,7 +14,6 @@ const CommentInput = ({ postId }: { postId: string }) => {
 
     const [comment, setComment] = useState<string>('');
     const [isSubmitting, setIsSubmitting] = useState<boolean>(false);
-    const placeholder = 'Write a comment...';
 
     const handleSubmit = async () => {
         if (!comment.trim()) return;
@@ -68,35 +68,7 @@ const CommentInput = ({ postId }: { postId: string }) => {
             </Avatar>
 
             <div className="flex-1 flex flex-col gap-2">
-                <Textarea
-                    value={comment}
-                    onChange={(e) => setComment(e.target.value)}
-                    onKeyDown={handleKeyDown}
-                    placeholder={placeholder}
-                    className="min-h-[80px] resize-none focus-visible:ring-1"
-                    disabled={isSubmitting}
-                />
-
-                <div className="flex justify-end">
-                    <Button
-                        onClick={handleSubmit}
-                        disabled={!comment.trim() || isSubmitting}
-                        size="sm"
-                        className="gap-2 min-w-[120px]"
-                    >
-                        {isSubmitting ? (
-                            <>
-                                <Spinner className="h-4 w-4" />
-                                <span>Loading...</span>
-                            </>
-                        ) : (
-                            <>
-                                <Send className="h-4 w-4" />
-                                <span>Comment</span>
-                            </>
-                        )}
-                    </Button>
-                </div>
+                <MessageInput isSubmitting={isSubmitting} handleKeyDown={handleKeyDown} handleSubmit={handleSubmit} setComment={setComment} value={comment} />
             </div>
         </div>
     );
