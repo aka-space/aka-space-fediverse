@@ -1,9 +1,15 @@
 'use client';
 
-import React from 'react';
+import React, { useState } from 'react';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Button } from '@/components/ui/button';
-import { Heart, MessageCircle, MoreHorizontal, Trash2 } from 'lucide-react';
+import {
+    Heart,
+    MessageCircle,
+    MoreHorizontal,
+    Send,
+    Trash2,
+} from 'lucide-react';
 import { Comment } from '@/types';
 import { formatTimeAgo } from '@/lib/formatDate';
 import { useGetComments } from '@/hooks/comment/use-get-comments';
@@ -15,6 +21,12 @@ import {
 } from './ui/dropdown-menu';
 import { toast } from 'sonner';
 import { useDeleteComment } from '@/hooks/comment/use-delete-comment';
+import { useUpdateComment } from '@/hooks/comment/use-update-comment';
+import { useCreateComment } from '@/hooks/comment/use-create-comment';
+import { Input } from './ui/input';
+import { useAuthStore } from '@/store/useAuthStore';
+import MessageInput from './ui/message-input-block/message-input-block';
+import ReplyInput from './reply-input';
 
 interface CommentPostProps {
     postId: string;
@@ -22,7 +34,12 @@ interface CommentPostProps {
 
 const CommentPost = ({ postId }: CommentPostProps) => {
     const { data: comments, isPending: loading } = useGetComments();
+    const { mutate: likeComment } = useUpdateComment();
     const { mutate: deleteComment } = useDeleteComment();
+    const { mutate: createComment, isPending: isCreatingComment } = useCreateComment();
+    const { authUser } = useAuthStore();
+
+    const [replyingTo, setReplyingTo] = useState<string | null>(null);
 
     const postComments = comments?.filter(
         (comment: Comment) => comment.postId === postId,
@@ -51,6 +68,39 @@ const CommentPost = ({ postId }: CommentPostProps) => {
         });
     };
 
+    const handleReplyClick = (commentId: string) => {
+        setReplyingTo(commentId);
+    };
+
+    const handleCancelReply = () => {
+        setReplyingTo(null);
+    };
+
+    const handleSubmitReply = (parentCommentId: string, replyText: string) => {
+        const newReply = {
+            postId: postId,
+            commentId: parentCommentId,
+            comment: replyText,
+            author: {
+                name: authUser?.username,
+                avatar: `/${authUser?.username}.png`,
+            },
+            likes: 0,
+            createdAt: new Date().toISOString(),
+        };
+
+        createComment(newReply, {
+            onSuccess: () => {
+                toast.success('Reply posted successfully');
+                setReplyingTo(null);
+            },
+            onError: (error) => {
+                toast.error('Failed to post reply');
+                console.error('Reply error:', error);
+            },
+        });
+    };
+
     const CommentItem = ({
         comment,
         isReply = false,
@@ -60,15 +110,27 @@ const CommentPost = ({ postId }: CommentPostProps) => {
         isLast?: boolean;
     }) => {
         const replies = getReplies(comment.id);
+        const isReplying = replyingTo === comment.id;
+
+        const handleLikeComment = (e: React.MouseEvent) => {
+            e.stopPropagation();
+            likeComment(
+                { ...comment, likes: comment.likes + 1 },
+                {
+                    onSuccess: () => {
+                        comment.likes += 1;
+                    },
+                    onError: (error) => {
+                        toast.error(
+                            error.message || 'Failed to like the comment.',
+                        );
+                    },
+                },
+            );
+        };
 
         return (
             <div className="relative">
-                {isReply && (
-                    <>
-                        <div className="absolute left-[-32px] top-[36px] w-[32px] h-[2px] bg-gray-300 dark:bg-neutral-600"></div>
-                    </>
-                )}
-
                 <div className="flex gap-3 py-4">
                     <div className="relative">
                         <Avatar className="h-10 w-10 relative z-10 cursor-pointer">
@@ -83,10 +145,10 @@ const CommentPost = ({ postId }: CommentPostProps) => {
 
                         {replies.length > 0 && !isReply && (
                             <div
-                                className="absolute left-[20px] w-[2px] bg-gray-300 dark:bg-neutral-600"
+                                className={`absolute left-[20px] w-[2px] bg-gray-300 dark:bg-neutral-600`}
                                 style={{
                                     top: '40px',
-                                    height: `calc(100% - 120px + ${(replies.length - 1) * 100}px)`,
+                                    height: `calc(100% - 70px + ${(replies.length - 1) * 100}px)`,
                                 }}
                             ></div>
                         )}
@@ -140,6 +202,7 @@ const CommentPost = ({ postId }: CommentPostProps) => {
                                 variant="ghost"
                                 size="sm"
                                 className="h-auto p-0 text-gray-600 dark:text-gray-400 hover:text-red-500 cursor-pointer"
+                                onClick={handleLikeComment}
                             >
                                 <Heart className="h-4 w-4 mr-1" />
                                 <span className="text-xs">{comment.likes}</span>
@@ -149,18 +212,29 @@ const CommentPost = ({ postId }: CommentPostProps) => {
                                 variant="ghost"
                                 size="sm"
                                 className="h-auto p-0 text-gray-600 dark:text-gray-400 hover:text-blue-500 cursor-pointer"
+                                onClick={() => handleReplyClick(comment.id)}
                             >
                                 <MessageCircle className="h-4 w-4 mr-1" />
                                 <span className="text-xs">Reply</span>
                             </Button>
                         </div>
 
+                        {isReplying && (
+                            <ReplyInput
+                                onSubmit={(text) =>
+                                    handleSubmitReply(comment.id, text)
+                                }
+                                onCancel={handleCancelReply}
+                                isSubmitting={isCreatingComment}
+                            />
+                        )}
+
                         {replies.length > 0 && (
                             <div className="mt-2 relative">
                                 {replies.map(
                                     (reply: Comment, index: number) => (
                                         <CommentItem
-                                            key={reply.id}
+                                            key={`post_${reply.id}`}
                                             comment={reply}
                                             isReply={true}
                                             isLast={
