@@ -1,5 +1,6 @@
 use serde::Serialize;
 use sqlx::PgExecutor;
+use utoipa::ToSchema;
 use uuid::Uuid;
 
 #[derive(Debug, PartialEq, Eq, sqlx::Type, Serialize)]
@@ -10,6 +11,7 @@ pub enum Role {
     Admin,
 }
 
+#[derive(Serialize, ToSchema)]
 pub struct MinimalAccount {
     pub email: String,
     pub username: String,
@@ -67,8 +69,8 @@ pub async fn get(id: Uuid, executor: impl PgExecutor<'_>) -> sqlx::Result<Option
     .await
 }
 
-pub async fn get_minimal(
-    email: &str,
+pub async fn get_by_username(
+    username: &str,
     executor: impl PgExecutor<'_>,
 ) -> sqlx::Result<Option<MinimalAccount>> {
     sqlx::query_as!(
@@ -78,10 +80,10 @@ pub async fn get_minimal(
                 email,
                 username
             FROM accounts
-            WHERE email = $1 AND is_active = true
+            WHERE username = $1 AND is_active = true
             LIMIT 1
         "#,
-        email
+        username
     )
     .fetch_optional(executor)
     .await

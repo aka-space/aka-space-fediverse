@@ -34,6 +34,8 @@ impl Modify for SecurityAddon {
     paths(
         controller::ping,
 
+        controller::account::get_by_username,
+
         controller::auth::register,
         controller::auth::login,
         controller::auth::me,
