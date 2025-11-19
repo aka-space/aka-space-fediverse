@@ -104,7 +104,7 @@ pub async fn get_all(
     .await
 }
 
-pub async fn get(slug: String, executor: impl PgExecutor<'_>) -> sqlx::Result<Option<Post>> {
+pub async fn get_by_slug(slug: &str, executor: impl PgExecutor<'_>) -> sqlx::Result<Option<Post>> {
     sqlx::query_as!(
         Post,
         r#"
