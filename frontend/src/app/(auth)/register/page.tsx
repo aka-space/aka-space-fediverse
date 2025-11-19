@@ -22,8 +22,9 @@ export default function RegisterPage() {
                 route.push('/');
             },
 
-            onError: () => {
+            onError: (error) => {
                 toast.error('Register failed');
+                console.log('Register failed: ', error);
             },
         });
     };
