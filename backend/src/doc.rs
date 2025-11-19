@@ -39,7 +39,9 @@ impl Modify for SecurityAddon {
         controller::auth::me,
         controller::auth::refresh,
         controller::auth::logout,
-        controller::auth::oauth2::start
+        controller::auth::oauth2::start,
+
+        controller::tag::get_all,
     ),
     components(schemas(
         Provider,

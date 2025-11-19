@@ -1,5 +1,6 @@
 pub mod auth;
 mod ping;
+pub mod tag;
 
 use std::sync::Arc;
 
@@ -13,4 +14,5 @@ pub fn build() -> Router<Arc<ApiState>> {
     Router::new()
         .route("/", routing::get(ping))
         .merge(auth::build())
+        .merge(tag::build())
 }

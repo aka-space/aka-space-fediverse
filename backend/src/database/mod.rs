@@ -3,7 +3,7 @@ use serde::Deserialize;
 pub mod account;
 pub mod post;
 pub mod reaction;
-pub mod tags;
+pub mod tag;
 
 #[derive(Clone, Copy)]
 pub struct Pagination {
