@@ -45,7 +45,7 @@ pub struct Request {
         ("offset" = Option<u32>, Query, description = "offset (0-indexed)"),
     ),
     responses(
-        (status = 200, description = "List of posts matching query", body = Vec<Post>),
+        (status = 200, description = "List of posts matching query", body = Paginated<Post>),
         (status = 400, description = "Bad request / no posts found", body = Error),
         (status = 500, description = "Internal server error", body = Error)
     )

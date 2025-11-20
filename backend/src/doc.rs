@@ -47,6 +47,8 @@ impl Modify for SecurityAddon {
         controller::post::get_by_slug,
         controller::post::query,
         controller::post::update,
+        controller::post::create_comment,
+        controller::post::get_comment,
 
         controller::tag::get_all,
     ),
@@ -54,6 +56,7 @@ impl Modify for SecurityAddon {
         Provider,
         SortDirection,
         database::post::SortableColumn,
+        database::comment::SortableColumn,
         Error,
     )),
     modifiers(&SecurityAddon),

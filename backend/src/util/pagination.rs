@@ -1,4 +1,5 @@
 use serde::{Deserialize, Serialize};
+use utoipa::ToSchema;
 
 pub const fn default_limit() -> u64 {
     10
@@ -17,7 +18,7 @@ pub struct Pagination {
     pub offset: u64,
 }
 
-#[derive(Debug, Serialize)]
+#[derive(Debug, Serialize, ToSchema)]
 pub struct Paginated<T> {
     pub has_next: bool,
     pub data: Vec<T>,
