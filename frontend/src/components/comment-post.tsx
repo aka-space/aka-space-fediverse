@@ -36,7 +36,8 @@ const CommentPost = ({ postId }: CommentPostProps) => {
     const { data: comments, isPending: loading } = useGetComments();
     const { mutate: likeComment } = useUpdateComment();
     const { mutate: deleteComment } = useDeleteComment();
-    const { mutate: createComment, isPending: isCreatingComment } = useCreateComment();
+    const { mutate: createComment, isPending: isCreatingComment } =
+        useCreateComment();
     const { authUser } = useAuthStore();
 
     const [replyingTo, setReplyingTo] = useState<string | null>(null);

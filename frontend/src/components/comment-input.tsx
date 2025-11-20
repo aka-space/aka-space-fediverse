@@ -68,7 +68,13 @@ const CommentInput = ({ postId }: { postId: string }) => {
             </Avatar>
 
             <div className="flex-1 flex flex-col gap-2">
-                <MessageInput isSubmitting={isSubmitting} handleKeyDown={handleKeyDown} handleSubmit={handleSubmit} setComment={setComment} value={comment} />
+                <MessageInput
+                    isSubmitting={isSubmitting}
+                    handleKeyDown={handleKeyDown}
+                    handleSubmit={handleSubmit}
+                    setComment={setComment}
+                    value={comment}
+                />
             </div>
         </div>
     );

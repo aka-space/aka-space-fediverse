@@ -15,7 +15,11 @@ import { Toggle } from '@/components/ui/toggle';
 import { cn } from '@/lib/utils';
 import { Emoji } from '@/types';
 
-function EmojiPickerPopover({ onSelect }: { onSelect: (emoji: Emoji) => void }) {
+function EmojiPickerPopover({
+    onSelect,
+}: {
+    onSelect: (emoji: Emoji) => void;
+}) {
     const [mod, setMod] = useState<typeof import('frimousse') | null>(null);
     useEffect(() => {
         let mounted = true;
@@ -175,8 +179,7 @@ export default function MessageInput({
     };
 
     const handleSend = () => {
-        if (!(message.trim()))
-            return;
+        if (!message.trim()) return;
         setMessage('');
     };
 
@@ -194,8 +197,8 @@ export default function MessageInput({
                             aria-label="Message"
                             className="min-h-[37px] w-full resize-none border-none px-2 text-base shadow-none outline-none ring-0 hover:border-none hover:shadow-none hover:outline-none hover:ring-0 focus:border-none focus:shadow-none focus:outline-none focus:ring-0 focus-visible:ring-0 focus-visible:ring-offset-0 sm:text-sm"
                             onChange={(e) => {
-                              setMessage(e.target.value)
-                              setComment(e.target.value)
+                                setMessage(e.target.value);
+                                setComment(e.target.value);
                             }}
                             onKeyDown={(e) => {
                                 const isMac = navigator.platform
@@ -245,9 +248,7 @@ export default function MessageInput({
                             <Button
                                 aria-label="Send message"
                                 className="shrink-0"
-                                disabled={
-                                    !(message.trim()) || isSubmitting
-                                }
+                                disabled={!message.trim() || isSubmitting}
                                 onClick={() => {
                                     handleSend();
                                     handleSubmit();
