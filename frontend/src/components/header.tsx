@@ -11,7 +11,7 @@ import { useAuthStore } from '@/store/useAuthStore';
 const STORAGE_KEY = 'search-history';
 
 export default function Header() {
-    const { data: user } = useGetUser();
+    const { authUser } = useAuthStore();
 
     const router = useRouter();
 
