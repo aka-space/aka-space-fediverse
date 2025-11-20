@@ -1,9 +1,10 @@
 use chrono::{DateTime, Utc};
+use serde::Deserialize;
 use sqlx::PgExecutor;
 use sqlx_conditional_queries::conditional_query_as;
 use uuid::Uuid;
 
-use crate::database::{Pagination, Sort, SortDirection};
+use crate::controller::{Pagination, Sort, SortDirection};
 
 #[derive(Debug)]
 pub struct Post {
@@ -20,7 +21,7 @@ pub struct Post {
 }
 
 #[derive(Debug)]
-pub struct PostKey {
+pub struct Key {
     pub id: Uuid,
     pub slug: String,
 }
@@ -30,9 +31,9 @@ pub async fn create(
     title: &str,
     content: &str,
     executor: impl PgExecutor<'_>,
-) -> sqlx::Result<PostKey> {
+) -> sqlx::Result<Key> {
     sqlx::query_as!(
-        PostKey,
+        Key,
         r#"
             INSERT INTO posts(author_id, title, content)
             VALUES($1, $2, $3)
@@ -67,8 +68,8 @@ pub async fn add_tags(
     Ok(())
 }
 
-#[derive(Default)]
-pub enum SortablePostColumn {
+#[derive(Default, Deserialize)]
+pub enum SortableColumn {
     #[default]
     Id,
     View,
@@ -79,7 +80,7 @@ pub async fn query(
     query: Option<&str>,
     tags: Option<&[String]>,
     author_name: Option<&str>,
-    sort: Sort<SortablePostColumn>,
+    sort: Sort<SortableColumn>,
     Pagination { limit, offset }: Pagination,
     executor: impl PgExecutor<'_>,
 ) -> sqlx::Result<Vec<Post>> {
