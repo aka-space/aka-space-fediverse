@@ -11,7 +11,7 @@ pub enum Role {
     Admin,
 }
 
-#[derive(Serialize, ToSchema)]
+#[derive(Debug, Serialize, ToSchema)]
 pub struct MinimalAccount {
     pub email: String,
     pub username: String,

@@ -19,7 +19,7 @@ pub enum Reaction {
 pub async fn count_by_post(
     post_id: Uuid,
     executor: impl PgExecutor<'_>,
-) -> sqlx::Result<HashMap<Reaction, i64>> {
+) -> sqlx::Result<HashMap<Reaction, u64>> {
     let raw = sqlx::query!(
         r#"
             SELECT kind as "kind: Reaction", COUNT(account_id) as count
@@ -34,6 +34,6 @@ pub async fn count_by_post(
 
     Ok(HashMap::from_iter(
         raw.into_iter()
-            .map(|row| (row.kind, row.count.unwrap_or(0))),
+            .map(|row| (row.kind, row.count.unwrap_or(0) as u64)),
     ))
 }
