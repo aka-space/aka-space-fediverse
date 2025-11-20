@@ -75,7 +75,7 @@ pub enum SortablePostColumn {
     CreatedAt,
 }
 
-pub async fn get_all(
+pub async fn query(
     sort: Sort<SortablePostColumn>,
     Pagination { limit, offset }: Pagination,
     executor: impl PgExecutor<'_>,

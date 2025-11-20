@@ -1,4 +1,5 @@
 mod create;
+mod update;
 
 use std::sync::Arc;
 
@@ -7,7 +8,10 @@ use axum::{Router, routing};
 use crate::state::ApiState;
 
 pub use create::*;
+pub use update::*;
 
 pub fn build() -> Router<Arc<ApiState>> {
-    Router::new().route("/post", routing::post(create))
+    Router::new()
+        .route("/post", routing::post(create))
+        .route("/post/{id}", routing::put(update))
 }
