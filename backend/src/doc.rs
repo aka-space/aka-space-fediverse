@@ -43,6 +43,8 @@ impl Modify for SecurityAddon {
         controller::auth::logout,
         controller::auth::oauth2::start,
 
+        controller::post::create,
+
         controller::tag::get_all,
     ),
     components(schemas(

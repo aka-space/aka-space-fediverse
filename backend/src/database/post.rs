@@ -24,12 +24,12 @@ pub async fn create(
     title: &str,
     content: &str,
     executor: impl PgExecutor<'_>,
-) -> sqlx::Result<Uuid> {
+) -> sqlx::Result<String> {
     sqlx::query_scalar!(
         r#"
             INSERT INTO posts(author_id, title, content)
             VALUES($1, $2, $3)
-            RETURNING id
+            RETURNING slug
         "#,
         author_id,
         title,
