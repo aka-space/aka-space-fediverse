@@ -58,4 +58,3 @@ export interface Emoji {
     group?: string;
     skin?: number;
 }
-

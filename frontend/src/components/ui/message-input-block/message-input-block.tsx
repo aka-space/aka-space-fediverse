@@ -16,7 +16,7 @@ import { cn } from '@/lib/utils';
 import { Emoji } from '@/types';
 
 function EmojiPickerPopover({ onSelect }: { onSelect: (emoji: Emoji) => void }) {
-    const [mod, setMod] = useState<any>(null);
+    const [mod, setMod] = useState<typeof import('frimousse') | null>(null);
     useEffect(() => {
         let mounted = true;
         import('frimousse').then((m) => {
@@ -51,7 +51,7 @@ function EmojiPickerPopover({ onSelect }: { onSelect: (emoji: Emoji) => void }) 
                     <EmojiPicker.List
                         className="select-none pb-1.5"
                         components={{
-                            CategoryHeader: ({ category, ...props }: { category: { label: string }; [key: string]: any }) => (
+                            CategoryHeader: ({ category, ...props }) => (
                                 <div
                                     className="sticky top-0 z-10 bg-background px-3 pt-3 pb-1.5 font-medium text-muted-foreground text-xs"
                                     {...props}
@@ -59,7 +59,7 @@ function EmojiPickerPopover({ onSelect }: { onSelect: (emoji: Emoji) => void }) 
                                     {category.label}
                                 </div>
                             ),
-                            Row: ({ children, ...props }: { children: React.ReactNode; [key: string]: any }) => (
+                            Row: ({ children, ...props }) => (
                                 <div
                                     className="flex scroll-my-1.5 gap-1 px-1.5"
                                     {...props}
@@ -67,7 +67,7 @@ function EmojiPickerPopover({ onSelect }: { onSelect: (emoji: Emoji) => void }) 
                                     {children}
                                 </div>
                             ),
-                            Emoji: ({ emoji, ...props }: { emoji: { emoji: string }; [key: string]: any }) => (
+                            Emoji: ({ emoji, ...props }) => (
                                 <button
                                     className="flex size-8 items-center justify-center rounded-md text-lg transition-colors hover:bg-accent focus:bg-accent"
                                     {...props}
