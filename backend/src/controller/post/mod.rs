@@ -1,5 +1,5 @@
 mod create;
-mod get;
+mod get_by_slug;
 mod update;
 
 use std::{collections::HashMap, sync::Arc};
@@ -17,13 +17,13 @@ use crate::{
 };
 
 pub use create::*;
-pub use get::*;
+pub use get_by_slug::*;
 pub use update::*;
 
 pub fn build() -> Router<Arc<ApiState>> {
     Router::new()
         .route("/post", routing::post(create))
-        .route("/post/{slug}", routing::get(get))
+        .route("/post/{slug}", routing::get(get_by_slug))
         .route("/post/{id}", routing::put(update))
 }
 
