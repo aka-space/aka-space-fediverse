@@ -7,16 +7,22 @@ use crate::database::{Pagination, Sort, SortDirection};
 
 #[derive(Debug)]
 pub struct Post {
-    id: Uuid,
-    slug: String,
+    pub id: Uuid,
+    pub slug: String,
 
-    author_id: Uuid,
-    title: String,
-    content: String,
-    view: i32,
+    pub author_id: Uuid,
+    pub title: String,
+    pub content: String,
+    pub view: i32,
 
-    created_at: DateTime<Utc>,
-    updated_at: DateTime<Utc>,
+    pub created_at: DateTime<Utc>,
+    pub updated_at: DateTime<Utc>,
+}
+
+#[derive(Debug)]
+pub struct PostKey {
+    pub id: Uuid,
+    pub slug: String,
 }
 
 pub async fn create(
@@ -24,12 +30,13 @@ pub async fn create(
     title: &str,
     content: &str,
     executor: impl PgExecutor<'_>,
-) -> sqlx::Result<String> {
-    sqlx::query_scalar!(
+) -> sqlx::Result<PostKey> {
+    sqlx::query_as!(
+        PostKey,
         r#"
             INSERT INTO posts(author_id, title, content)
             VALUES($1, $2, $3)
-            RETURNING slug
+            RETURNING id, slug
         "#,
         author_id,
         title,
