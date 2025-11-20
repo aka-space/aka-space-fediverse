@@ -2,9 +2,10 @@ use chrono::{DateTime, Utc};
 use serde::Deserialize;
 use sqlx::PgExecutor;
 use sqlx_conditional_queries::conditional_query_as;
+use utoipa::ToSchema;
 use uuid::Uuid;
 
-use crate::controller::{Pagination, Sort, SortDirection};
+use crate::util::{Pagination, Sort, SortDirection};
 
 #[derive(Debug)]
 pub struct Post {
@@ -68,7 +69,8 @@ pub async fn add_tags(
     Ok(())
 }
 
-#[derive(Default, Deserialize)]
+#[derive(Default, Deserialize, ToSchema)]
+#[serde(rename_all = "snake_case")]
 pub enum SortableColumn {
     #[default]
     Id,
@@ -78,12 +80,15 @@ pub enum SortableColumn {
 
 pub async fn query(
     query: Option<&str>,
-    tags: Option<&[String]>,
+    tags: &[String],
     author_name: Option<&str>,
     sort: Sort<SortableColumn>,
-    Pagination { limit, offset }: Pagination,
+    pagination: Pagination,
     executor: impl PgExecutor<'_>,
 ) -> sqlx::Result<Vec<Post>> {
+    let limit = pagination.limit as i64;
+    let offset = pagination.offset as i64;
+
     conditional_query_as!(
         Post,
         r#"
@@ -94,7 +99,7 @@ pub async fn query(
                 (title LIKE '%' || {query} || '%' ) OR
                 (content LIKE '%' || {query} || '%' )
             ) AND (
-                {tags}::text[] IS NULL OR
+                cardinality({tags}::text[]) = 0 OR
                 EXISTS (
                     SELECT 1
                     FROM tags
@@ -114,9 +119,9 @@ pub async fn query(
             OFFSET {offset}
         "#,
         #column = match sort.column {
-            SortablePostColumn::Id => "id",
-            SortablePostColumn::View => "view",
-            SortablePostColumn::CreatedAt => "created_at",
+            SortableColumn::Id => "id",
+            SortableColumn::View => "view",
+            SortableColumn::CreatedAt => "created_at",
         },
         #direction = match sort.direction {
             SortDirection::Ascending => "ASC",

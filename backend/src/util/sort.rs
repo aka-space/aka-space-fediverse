@@ -1,6 +1,8 @@
 use serde::Deserialize;
+use utoipa::ToSchema;
 
-#[derive(Default, Deserialize)]
+#[derive(Default, Deserialize, ToSchema)]
+#[serde(rename_all = "snake_case")]
 pub enum SortDirection {
     #[default]
     Ascending,
@@ -10,8 +12,8 @@ pub enum SortDirection {
 #[derive(Deserialize)]
 pub struct Sort<T> {
     #[serde(default)]
-    column: T,
+    pub column: T,
 
     #[serde(default)]
-    direction: SortDirection,
+    pub direction: SortDirection,
 }

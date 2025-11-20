@@ -10,7 +10,7 @@ use utoipa::ToSchema;
 use validator::Validate;
 
 use crate::{
-    database::{self, post::PostKey},
+    database::{self},
     error::{Error, Result},
     state::ApiState,
 };
@@ -63,7 +63,7 @@ pub async fn create(
         }
     };
 
-    let PostKey { id, slug } = match database::post::create(
+    let database::post::Key { id, slug } = match database::post::create(
         author_id,
         &request.title,
         &request.content,
