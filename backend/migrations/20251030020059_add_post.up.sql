@@ -45,7 +45,7 @@ CREATE TABLE IF NOT EXISTS post_comments(
 
     post_id uuid NOT NULL REFERENCES posts(id),
     account_id uuid NOT NULL REFERENCES accounts(id),
-    content uuid NOT NULL,
+    content text NOT NULL,
 
     created_at timestamptz NOT NULL DEFAULT now(),
     updated_at timestamptz NOT NULL DEFAULT now()
