@@ -1,10 +1,12 @@
 mod create;
+mod get;
 mod update;
 
 use std::{collections::HashMap, sync::Arc};
 
 use axum::{Router, http::StatusCode, routing};
 use chrono::{DateTime, Utc};
+use serde::Serialize;
 use sqlx::PgPool;
 use uuid::Uuid;
 
@@ -15,20 +17,23 @@ use crate::{
 };
 
 pub use create::*;
+pub use get::*;
 pub use update::*;
 
 pub fn build() -> Router<Arc<ApiState>> {
     Router::new()
         .route("/post", routing::post(create))
+        .route("/post/{slug}", routing::get(get))
         .route("/post/{id}", routing::put(update))
 }
 
-#[derive(Debug)]
+#[derive(Debug, Serialize)]
 pub struct Post {
     pub id: Uuid,
     pub slug: String,
 
     pub author: MinimalAccount,
+    pub tags: Vec<String>,
     pub title: String,
     pub content: String,
     pub view: i32,
@@ -59,6 +64,17 @@ impl Post {
                     .build());
             }
         };
+        let tags = match database::tag::get_by_post(raw.id, database).await {
+            Ok(tags) => tags,
+            Err(error) => {
+                tracing::error!(?error, "Failed to get post's tag'");
+
+                return Err(Error::builder()
+                    .status(StatusCode::BAD_REQUEST)
+                    .message("Post is removed".to_string())
+                    .build());
+            }
+        };
         let reactions = match database::reaction::count_by_post(raw.id, database).await {
             Ok(reactions) => reactions,
             Err(error) => {
@@ -74,6 +90,7 @@ impl Post {
         Ok(Post {
             id: raw.id,
             slug: raw.slug,
+            tags,
             author: MinimalAccount {
                 email: author.email,
                 username: author.username,
