@@ -1,10 +1,10 @@
 use serde::{Deserialize, Serialize};
 
-const fn default_limit() -> u64 {
+pub const fn default_limit() -> u64 {
     10
 }
 
-const fn default_offset() -> u64 {
+pub const fn default_offset() -> u64 {
     0
 }
 
