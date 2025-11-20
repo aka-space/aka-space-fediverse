@@ -86,7 +86,7 @@ impl Comment {
 
 #[utoipa::path(
     get,
-    tag = "Post",
+    tags = ["Post", "Comment"],
     path = "/post/{id}/comment",
     params(
         ("id" = Uuid, Path, description = "Post id"),

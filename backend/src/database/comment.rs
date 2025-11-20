@@ -79,7 +79,7 @@ pub async fn get_by_post(
 pub async fn update(
     id: Uuid,
     account_id: Uuid,
-    content: String,
+    content: &str,
     executor: impl PgExecutor<'_>,
 ) -> sqlx::Result<()> {
     sqlx::query!(

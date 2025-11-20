@@ -50,6 +50,8 @@ impl Modify for SecurityAddon {
         controller::post::create_comment,
         controller::post::get_comment,
 
+        controller::comment::update,
+
         controller::tag::get_all,
     ),
     components(schemas(
