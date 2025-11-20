@@ -163,7 +163,8 @@ pub async fn update(
     sqlx::query!(
         r#"
             UPDATE posts
-            SET content = $3
+            SET content = $3,
+                updated_at = now()
             WHERE id = $1 AND author_id = $2
         "#,
         id,
