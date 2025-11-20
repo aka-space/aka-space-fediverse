@@ -1,9 +1,9 @@
 mod create;
+mod create_comment;
 mod get_by_slug;
+mod get_comment;
 mod query;
 mod update;
-mod create_comment;
-mod get_comment;
 
 use std::{collections::HashMap, sync::Arc};
 
@@ -21,11 +21,11 @@ use crate::{
 };
 
 pub use create::*;
+pub use create_comment::*;
 pub use get_by_slug::*;
+pub use get_comment::*;
 pub use query::*;
 pub use update::*;
-pub use create_comment::*;
-pub use get_comment::*;
 
 pub fn build() -> Router<Arc<ApiState>> {
     Router::new()

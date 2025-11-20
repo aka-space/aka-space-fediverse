@@ -2,8 +2,8 @@ use std::collections::HashMap;
 
 use serde::{Deserialize, Serialize};
 use sqlx::PgExecutor;
-use uuid::Uuid;
 use utoipa::ToSchema;
+use uuid::Uuid;
 
 #[derive(Debug, PartialEq, Eq, Hash, sqlx::Type, Serialize, Deserialize, ToSchema)]
 #[sqlx(rename_all = "snake_case")]
