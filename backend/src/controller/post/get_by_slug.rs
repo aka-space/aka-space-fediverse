@@ -14,9 +14,17 @@ use crate::{
 };
 
 #[utoipa::path(
-    put,
+    get,
     tag = "Post",
     path = "/post/{slug}",
+    params(
+        ("slug" = String, description = "Post slug (path parameter)"),
+    ),
+    responses(
+        (status = 200, description = "Post found", body = Post),
+        (status = 400, description = "Bad request / No post found", body = Error),
+        (status = 500, description = "Internal server error", body = Error)
+    )
 )]
 pub async fn get_by_slug(
     State(state): State<Arc<ApiState>>,

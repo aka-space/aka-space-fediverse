@@ -44,6 +44,7 @@ impl Modify for SecurityAddon {
         controller::auth::oauth2::start,
 
         controller::post::create,
+        controller::post::get_by_slug,
         controller::post::update,
 
         controller::tag::get_all,

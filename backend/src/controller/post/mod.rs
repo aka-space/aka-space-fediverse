@@ -8,6 +8,7 @@ use axum::{Router, http::StatusCode, routing};
 use chrono::{DateTime, Utc};
 use serde::Serialize;
 use sqlx::PgPool;
+use utoipa::ToSchema;
 use uuid::Uuid;
 
 use crate::{
@@ -23,11 +24,12 @@ pub use update::*;
 pub fn build() -> Router<Arc<ApiState>> {
     Router::new()
         .route("/post", routing::post(create))
-        .route("/post/{slug}", routing::get(get_by_slug))
+        // this is actually /post/{slug} but it conflict with /post/{id}
+        .route("/post/{id}", routing::get(get_by_slug))
         .route("/post/{id}", routing::put(update))
 }
 
-#[derive(Debug, Serialize)]
+#[derive(Debug, Serialize, ToSchema)]
 pub struct Post {
     pub id: Uuid,
     pub slug: String,
