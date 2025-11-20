@@ -1,6 +1,6 @@
 'use client';
 
-import { Image as ImageIcon, Paperclip, Send, Smile, X } from 'lucide-react';
+import { Send, Smile } from 'lucide-react';
 import { useEffect, useRef, useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
@@ -9,15 +9,13 @@ import {
     DropdownMenuContent,
     DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
-import { Input } from '@/components/ui/input';
-import { ScrollArea } from '@/components/ui/scroll-area';
-import { Skeleton } from '@/components/ui/skeleton';
 import { Spinner } from '@/components/ui/spinner';
 import { Textarea } from '@/components/ui/textarea';
 import { Toggle } from '@/components/ui/toggle';
 import { cn } from '@/lib/utils';
+import { Emoji } from '@/types';
 
-function EmojiPickerPopover({ onSelect }: { onSelect: (emoji: any) => void }) {
+function EmojiPickerPopover({ onSelect }: { onSelect: (emoji: Emoji) => void }) {
     const [mod, setMod] = useState<any>(null);
     useEffect(() => {
         let mounted = true;
@@ -53,7 +51,7 @@ function EmojiPickerPopover({ onSelect }: { onSelect: (emoji: any) => void }) {
                     <EmojiPicker.List
                         className="select-none pb-1.5"
                         components={{
-                            CategoryHeader: ({ category, ...props }: any) => (
+                            CategoryHeader: ({ category, ...props }: { category: { label: string }; [key: string]: any }) => (
                                 <div
                                     className="sticky top-0 z-10 bg-background px-3 pt-3 pb-1.5 font-medium text-muted-foreground text-xs"
                                     {...props}
@@ -61,7 +59,7 @@ function EmojiPickerPopover({ onSelect }: { onSelect: (emoji: any) => void }) {
                                     {category.label}
                                 </div>
                             ),
-                            Row: ({ children, ...props }: any) => (
+                            Row: ({ children, ...props }: { children: React.ReactNode; [key: string]: any }) => (
                                 <div
                                     className="flex scroll-my-1.5 gap-1 px-1.5"
                                     {...props}
@@ -69,7 +67,7 @@ function EmojiPickerPopover({ onSelect }: { onSelect: (emoji: any) => void }) {
                                     {children}
                                 </div>
                             ),
-                            Emoji: ({ emoji, ...props }: any) => (
+                            Emoji: ({ emoji, ...props }: { emoji: { emoji: string }; [key: string]: any }) => (
                                 <button
                                     className="flex size-8 items-center justify-center rounded-md text-lg transition-colors hover:bg-accent focus:bg-accent"
                                     {...props}
@@ -85,70 +83,70 @@ function EmojiPickerPopover({ onSelect }: { onSelect: (emoji: any) => void }) {
     );
 }
 
-function GifPickerPopover({ onSelect }: { onSelect: (url: string) => void }) {
-    const [search, setSearch] = useState('');
-    const [gifs, setGifs] = useState<any[]>([]);
-    const [loading, setLoading] = useState(false);
-    const API_KEY = process.env.NEXT_PUBLIC_GIPHY_API_KEY;
+// function GifPickerPopover({ onSelect }: { onSelect: (url: string) => void }) {
+//     const [search, setSearch] = useState('');
+//     const [gifs, setGifs] = useState<any[]>([]);
+//     const [loading, setLoading] = useState(false);
+//     const API_KEY = process.env.NEXT_PUBLIC_GIPHY_API_KEY;
 
-    useEffect(() => {
-        if (!API_KEY) return;
-        setLoading(true);
-        const endpoint = search
-            ? `https://api.giphy.com/v1/gifs/search?api_key=${API_KEY}&q=${encodeURIComponent(search)}&limit=16&rating=pg`
-            : `https://api.giphy.com/v1/gifs/trending?api_key=${API_KEY}&limit=16&rating=pg`;
-        fetch(endpoint)
-            .then((res) => res.json())
-            .then((data) => setGifs(data.data || []))
-            .finally(() => setLoading(false));
-    }, [search, API_KEY]);
+//     useEffect(() => {
+//         if (!API_KEY) return;
+//         setLoading(true);
+//         const endpoint = search
+//             ? `https://api.giphy.com/v1/gifs/search?api_key=${API_KEY}&q=${encodeURIComponent(search)}&limit=16&rating=pg`
+//             : `https://api.giphy.com/v1/gifs/trending?api_key=${API_KEY}&limit=16&rating=pg`;
+//         fetch(endpoint)
+//             .then((res) => res.json())
+//             .then((data) => setGifs(data.data || []))
+//             .finally(() => setLoading(false));
+//     }, [search, API_KEY]);
 
-    return (
-        <div className="w-72 max-w-[95vw] p-2">
-            <Input
-                onChange={(e) => setSearch(e.target.value)}
-                placeholder="Search GIFs..."
-                type="text"
-                value={search}
-            />
-            <div className="grid grid-cols-4 gap-2 pt-2">
-                {API_KEY ? (
-                    loading ? (
-                        Array.from({ length: 8 }).map((_, i) => (
-                            <Skeleton className="h-20 w-full" key={i} />
-                        ))
-                    ) : gifs.length === 0 ? (
-                        <div className="col-span-4 text-center text-muted-foreground text-sm">
-                            No GIFs found.
-                        </div>
-                    ) : (
-                        gifs.map((gif) => (
-                            <button
-                                className="overflow-hidden rounded-ele focus:outline-none focus:ring-2 focus:ring-primary"
-                                key={gif.id}
-                                onClick={() =>
-                                    onSelect(gif.images.fixed_height.url)
-                                }
-                                type="button"
-                            >
-                                <img
-                                    alt={gif.title}
-                                    className="h-full w-full object-cover"
-                                    loading="lazy"
-                                    src={gif.images.fixed_height_small.url}
-                                />
-                            </button>
-                        ))
-                    )
-                ) : (
-                    <div className="col-span-4 text-center text-muted-foreground text-sm">
-                        Configure NEXT_PUBLIC_GIPHY_API_KEY to enable GIFs.
-                    </div>
-                )}
-            </div>
-        </div>
-    );
-}
+//     return (
+//         <div className="w-72 max-w-[95vw] p-2">
+//             <Input
+//                 onChange={(e) => setSearch(e.target.value)}
+//                 placeholder="Search GIFs..."
+//                 type="text"
+//                 value={search}
+//             />
+//             <div className="grid grid-cols-4 gap-2 pt-2">
+//                 {API_KEY ? (
+//                     loading ? (
+//                         Array.from({ length: 8 }).map((_, i) => (
+//                             <Skeleton className="h-20 w-full" key={i} />
+//                         ))
+//                     ) : gifs.length === 0 ? (
+//                         <div className="col-span-4 text-center text-muted-foreground text-sm">
+//                             No GIFs found.
+//                         </div>
+//                     ) : (
+//                         gifs.map((gif) => (
+//                             <button
+//                                 className="overflow-hidden rounded-ele focus:outline-none focus:ring-2 focus:ring-primary"
+//                                 key={gif.id}
+//                                 onClick={() =>
+//                                     onSelect(gif.images.fixed_height.url)
+//                                 }
+//                                 type="button"
+//                             >
+//                                 <img
+//                                     alt={gif.title}
+//                                     className="h-full w-full object-cover"
+//                                     loading="lazy"
+//                                     src={gif.images.fixed_height_small.url}
+//                                 />
+//                             </button>
+//                         ))
+//                     )
+//                 ) : (
+//                     <div className="col-span-4 text-center text-muted-foreground text-sm">
+//                         Configure NEXT_PUBLIC_GIPHY_API_KEY to enable GIFs.
+//                     </div>
+//                 )}
+//             </div>
+//         </div>
+//     );
+// }
 
 export default function MessageInput({
     className,
@@ -169,7 +167,7 @@ export default function MessageInput({
     const [showEmoji, setShowEmoji] = useState(false);
     const textareaRef = useRef<HTMLTextAreaElement>(null);
 
-    const handleEmojiSelect = (emoji: any) => {
+    const handleEmojiSelect = (emoji: Emoji) => {
         const newMessage = message + (emoji.emoji || '');
         setMessage(newMessage);
         setComment(newMessage);

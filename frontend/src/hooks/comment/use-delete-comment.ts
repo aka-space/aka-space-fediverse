@@ -1,6 +1,5 @@
 'use client';
 
-import { Comment } from '@/types';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 
 const API_URL = 'https://68765855814c0dfa653bba48.mockapi.io/comment';
