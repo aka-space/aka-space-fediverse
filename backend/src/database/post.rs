@@ -76,6 +76,9 @@ pub enum SortablePostColumn {
 }
 
 pub async fn query(
+    query: Option<&str>,
+    tags: Option<&[String]>,
+    author_name: Option<&str>,
     sort: Sort<SortablePostColumn>,
     Pagination { limit, offset }: Pagination,
     executor: impl PgExecutor<'_>,
@@ -83,16 +86,28 @@ pub async fn query(
     conditional_query_as!(
         Post,
         r#"
-            SELECT
-                id,
-                slug,
-                author_id,
-                title,
-                content,
-                view,
-                created_at,
-                updated_at
+            SELECT id, slug, author_id, title, content, view, created_at, updated_at
             FROM posts
+            WHERE (
+                {query}::text IS NULL OR
+                (title LIKE '%' || {query} || '%' ) OR
+                (content LIKE '%' || {query} || '%' )
+            ) AND (
+                {tags}::text[] IS NULL OR
+                EXISTS (
+                    SELECT 1
+                    FROM tags
+                    WHERE id IN (
+                        SELECT tag_id 
+                        FROM post_tags 
+                        WHERE post_id = posts.id
+                    )
+                    AND name = ANY({tags})
+                )
+            ) AND (
+                {author_name}::text IS NULL OR
+                author_id = (SELECT id FROM accounts WHERE username = {author_name})
+            )
             ORDER BY {#column} {#direction}
             LIMIT {limit}
             OFFSET {offset}
