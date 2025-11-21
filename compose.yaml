@@ -57,12 +57,85 @@ services:
       OAUTH2__GOOGLE__REDIRECT_URL: ${GOOGLE_REDIRECT_URL}
       OAUTH2__GOOGLE__ISSUER_URL: "https://accounts.google.com"
       OAUTH2__GOOGLE__SCOPES: "email,profile"
+
+      OTEL_EXPORTER_OTLP_TRACES_ENDPOINT: "http://otel-collector:4317"
+      OTEL_EXPORTER_OTLP_TRACES_PROTOCOL: "grpc"
+      OTEL_TRACES_SAMPLER: "always_on"
+      OTEL_SERVICE_NAME: "aka backend"
     image: ${REGISTRY}/backend:latest
     restart: always
     depends_on:
       - database
     networks:
       - network
+    profiles:
+      - backend
+      - deploy
+
+  elasticsearch:
+    image: docker.elastic.co/elasticsearch/elasticsearch:8.8.0
+    container_name: aka-es
+    environment:
+      - node.name=es-node
+      - discovery.type=single-node
+      - xpack.security.enabled=false
+      - "ES_JAVA_OPTS=-Xms1g -Xmx1g"
+    ulimits:
+      memlock:
+        soft: -1
+        hard: -1
+    volumes:
+      - elasticsearch:/usr/share/elasticsearch/data
+    healthcheck:
+      test: ["CMD-SHELL", "curl -sS http://localhost:9200/_cluster/health | grep -q '\"status\":\"green\"' || exit 1"]
+      interval: 10s
+      timeout: 5s
+      retries: 30
+    networks:
+      - network
+    profiles:
+      - backend
+      - deploy
+
+  kibana:
+    image: docker.elastic.co/kibana/kibana:8.8.0
+    container_name: aka-kibana
+    environment:
+      - ELASTICSEARCH_HOSTS=http://elasticsearch:9200
+      - SERVER_HOST=0.0.0.0
+      - xpack.security.enabled=false
+    depends_on:
+      - elasticsearch
+    networks:
+      - network
+    profiles:
+      - backend
+      - deploy
+
+  apm-server:
+    image: docker.elastic.co/apm/apm-server:8.8.0
+    container_name: aka-apm-server
+    volumes:
+      - ./apm-server.yaml:/usr/share/apm-server/apm-server.yaml:ro
+    environment:
+      - ELASTICSEARCH_HOSTS=http://elasticsearch:9200
+      - "APM_SERVER_JAVA_OPTS=-Xms256m -Xmx256m"
+    depends_on:
+      - elasticsearch
+    networks:
+      - network
+    profiles:
+      - backend
+      - deploy
+
+  otel-collector:
+    image: otel/opentelemetry-collector-contrib:0.82.0
+    container_name: aka-otel-collector
+    volumes:
+      - ./otel-collector-config.yaml:/etc/otel/config.yaml:ro
+    command: ["--config=/etc/otel/config.yaml"]
+    depends_on:
+      - apm-server
     profiles:
       - backend
       - deploy
@@ -88,4 +161,7 @@ volumes:
     external: true
   cloudbeaver:
     name: aka-cloudbeaver
+    external: true
+  elasticsearch:
+    name: aka-elasticsearch
     external: true

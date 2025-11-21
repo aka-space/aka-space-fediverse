@@ -8,9 +8,14 @@ import { Post } from '@/types';
 import { NoPost } from '@/components/no-post';
 import { useMemo, useState } from 'react';
 import { formatTime } from '@/lib/formatDate';
+import { useSearchParams } from 'next/navigation';
 
 export default function Home() {
-    const { data: posts, isPending: loading } = useGetPosts();
+    const searchParams = useSearchParams();
+    const search = searchParams.get('search') ?? '';
+
+    const { data: posts, isPending: loading } = useGetPosts(search);
+
     const [filter, setFilter] = useState<string>('new');
     const sortedPosts = useMemo(() => {
         if (!posts) return [];
@@ -41,7 +46,7 @@ export default function Home() {
                         </div>
                     )}
 
-                    {!posts && !loading && <NoPost />}
+                    {posts?.length === 0 && !loading && <NoPost />}
 
                     {sortedPosts.map((post: Post) => (
                         <PostCard key={post.id} post={post} />

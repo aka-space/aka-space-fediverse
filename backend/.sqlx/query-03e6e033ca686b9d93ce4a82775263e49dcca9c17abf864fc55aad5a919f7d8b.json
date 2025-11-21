@@ -1,0 +1,15 @@
+{
+  "db_name": "PostgreSQL",
+  "query": "\n            INSERT INTO post_tags(post_id, tag_id)\n            SELECT $1, tags.id\n            FROM tags\n            WHERE tags.name = ANY($2::text[])\n        ",
+  "describe": {
+    "columns": [],
+    "parameters": {
+      "Left": [
+        "Uuid",
+        "TextArray"
+      ]
+    },
+    "nullable": []
+  },
+  "hash": "03e6e033ca686b9d93ce4a82775263e49dcca9c17abf864fc55aad5a919f7d8b"
+}

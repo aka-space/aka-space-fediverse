@@ -4,6 +4,7 @@ import './globals.css';
 import Header from '@/components/header';
 import QueryProviders from '@/providers/query';
 import { Toaster } from 'sonner';
+import { Suspense } from 'react';
 
 const geistSans = Geist({
     variable: '--font-geist-sans',
@@ -32,7 +33,9 @@ export default function RootLayout({
             >
                 <QueryProviders>
                     <Toaster richColors />
-                    <Header />
+                    <Suspense fallback={null}>
+                        <Header />
+                    </Suspense>
                     {children}
                 </QueryProviders>
             </body>
