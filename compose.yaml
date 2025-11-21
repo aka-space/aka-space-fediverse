@@ -112,6 +112,25 @@ services:
       - backend
       - deploy
 
+  init-apm-setup:
+    image: docker.elastic.co/apm/apm-server:8.8.0
+    depends_on:
+      - elasticsearch
+      - kibana
+    entrypoint: ["sh", "-c"]
+    command: >
+      "i=0;
+       until curl -sS http://elasticsearch:9200/_cluster/health >/dev/null 2>&1 || [ $i -ge 120 ]; do
+         i=$((i+1)); sleep 1;
+       done;
+       apm-server setup -c /usr/share/apm-server/apm-server.yml"
+    volumes:
+      - ./apm-server.yml:/usr/share/apm-server/apm-server.yml:ro
+    restart: "no"
+    profiles:
+      - backend
+      - deploy
+
   apm-server:
     image: docker.elastic.co/apm/apm-server:8.8.0
     container_name: aka-apm-server
@@ -122,6 +141,8 @@ services:
       - "APM_SERVER_JAVA_OPTS=-Xms256m -Xmx256m"
     depends_on:
       - elasticsearch
+      - kibana
+      - init-apm-setup
     networks:
       - network
     profiles:
