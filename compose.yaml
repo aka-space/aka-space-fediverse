@@ -78,7 +78,7 @@ services:
     environment:
       - node.name=es-node
       - discovery.type=single-node
-      - xpack.security.enabled=false
+      - xpack.security.enabled=true
       - "ES_JAVA_OPTS=-Xms1g -Xmx1g"
     ulimits:
       memlock:
@@ -103,7 +103,7 @@ services:
     environment:
       - ELASTICSEARCH_HOSTS=http://elasticsearch:9200
       - SERVER_HOST=0.0.0.0
-      - xpack.security.enabled=false
+      - xpack.security.enabled=true
     depends_on:
       - elasticsearch
     networks:
