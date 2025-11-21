@@ -11,16 +11,22 @@ exporters:
   logging:
     loglevel: debug
 
-  elasticsearch/trace:
+  elasticsearch/logs:
     endpoints: [https://elasticsearch:9200]
     user: elastic
-    password: 
-    api_key: 
+    password:
     tls:
       insecure_skip_verify: true
+    mapping:
+      mode: ecs
 
 service:
   pipelines:
     traces:
       receivers: [otlp]
       exporters: [elasticsearch/trace]
+
+    logs:
+      receivers: [otlp]
+      processors: [batch]
+      exporters: [elasticsearch/logs]
