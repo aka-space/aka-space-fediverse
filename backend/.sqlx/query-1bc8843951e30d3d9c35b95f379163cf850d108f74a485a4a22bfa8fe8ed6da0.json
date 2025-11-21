@@ -1,0 +1,68 @@
+{
+  "db_name": "PostgreSQL",
+  "query": "\n            SELECT id, slug, author_id, title, content, view, created_at, updated_at\n            FROM posts\n            WHERE (\n                $1::text IS NULL OR\n                (title LIKE '%' || $1 || '%' ) OR\n                (content LIKE '%' || $1 || '%' )\n            ) AND (\n                cardinality($2::text[]) = 0 OR\n                EXISTS (\n                    SELECT 1\n                    FROM tags\n                    WHERE id IN (\n                        SELECT tag_id \n                        FROM post_tags \n                        WHERE post_id = posts.id\n                    )\n                    AND name = ANY($2)\n                )\n            ) AND (\n                $3::text IS NULL OR\n                author_id = (SELECT id FROM accounts WHERE username = $3)\n            )\n            ORDER BY id DESC\n            LIMIT $4\n            OFFSET $5\n        ",
+  "describe": {
+    "columns": [
+      {
+        "ordinal": 0,
+        "name": "id",
+        "type_info": "Uuid"
+      },
+      {
+        "ordinal": 1,
+        "name": "slug",
+        "type_info": "Text"
+      },
+      {
+        "ordinal": 2,
+        "name": "author_id",
+        "type_info": "Uuid"
+      },
+      {
+        "ordinal": 3,
+        "name": "title",
+        "type_info": "Text"
+      },
+      {
+        "ordinal": 4,
+        "name": "content",
+        "type_info": "Text"
+      },
+      {
+        "ordinal": 5,
+        "name": "view",
+        "type_info": "Int4"
+      },
+      {
+        "ordinal": 6,
+        "name": "created_at",
+        "type_info": "Timestamptz"
+      },
+      {
+        "ordinal": 7,
+        "name": "updated_at",
+        "type_info": "Timestamptz"
+      }
+    ],
+    "parameters": {
+      "Left": [
+        "Text",
+        "TextArray",
+        "Text",
+        "Int8",
+        "Int8"
+      ]
+    },
+    "nullable": [
+      false,
+      false,
+      false,
+      false,
+      false,
+      false,
+      false,
+      false
+    ]
+  },
+  "hash": "1bc8843951e30d3d9c35b95f379163cf850d108f74a485a4a22bfa8fe8ed6da0"
+}

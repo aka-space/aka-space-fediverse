@@ -7,7 +7,7 @@ use utoipa::{
 };
 use utoipa_swagger_ui::SwaggerUi;
 
-use crate::{config::Provider, error::Error};
+use crate::{config::Provider, database, error::Error, util::SortDirection};
 
 use super::{controller, state::ApiState};
 
@@ -34,15 +34,31 @@ impl Modify for SecurityAddon {
     paths(
         controller::ping,
 
+        controller::account::get_by_username,
+
         controller::auth::register,
         controller::auth::login,
         controller::auth::me,
         controller::auth::refresh,
         controller::auth::logout,
-        controller::auth::oauth2::start
+        controller::auth::oauth2::start,
+
+        controller::post::create,
+        controller::post::get_by_slug,
+        controller::post::query,
+        controller::post::update,
+        controller::post::create_comment,
+        controller::post::get_comment,
+
+        controller::comment::update,
+
+        controller::tag::get_all,
     ),
     components(schemas(
         Provider,
+        SortDirection,
+        database::post::SortableColumn,
+        database::comment::SortableColumn,
         Error,
     )),
     modifiers(&SecurityAddon),
