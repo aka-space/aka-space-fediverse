@@ -116,7 +116,7 @@ services:
     image: docker.elastic.co/apm/apm-server:8.8.0
     container_name: aka-apm-server
     volumes:
-      - ./apm-server.yml:/usr/share/apm-server/apm-server.yml:ro
+      - ./apm-server.yaml:/usr/share/apm-server/apm-server.yaml:ro
     environment:
       - ELASTICSEARCH_HOSTS=http://elasticsearch:9200
       - "APM_SERVER_JAVA_OPTS=-Xms256m -Xmx256m"
