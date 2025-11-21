@@ -104,7 +104,7 @@ services:
       - ELASTICSEARCH_HOSTS=http://elasticsearch:9200
       - SERVER_HOST=0.0.0.0
       - xpack.security.enabled=true
-      - ELASTICSEARCH_USERNAME=elastic
+      - ELASTICSEARCH_USERNAME=${ELASTICSEARCH_USERNAME}
       - ELASTICSEARCH_PASSWORD=${ELASTICSEARCH_PASSWORD}
     depends_on:
       - elasticsearch
