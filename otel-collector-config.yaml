@@ -6,15 +6,20 @@ receivers:
 
 processors:
   batch:
+  resourcedetection:
+    detectors: ["system"]
 
 exporters:
   logging:
     loglevel: debug
 
+  elasticsearch/trace:
+    endpoints: ["http://elasticsearch:9200"]
+    tls:
+      insecure_skip_verify: true
+
   elasticsearch/logs:
-    endpoints: [https://elasticsearch:9200]
-    user: elastic
-    password:
+    endpoints: ["http://elasticsearch:9200"]
     tls:
       insecure_skip_verify: true
     mapping:
@@ -24,9 +29,10 @@ service:
   pipelines:
     traces:
       receivers: [otlp]
+      processors: [resourcedetection, batch]
       exporters: [elasticsearch/trace]
 
     logs:
       receivers: [otlp]
-      processors: [batch]
-      exporters: [elasticsearch/logs]
+      processors: [resourcedetection, batch]
+      exporters: [elasticsearch/logs, logging]
