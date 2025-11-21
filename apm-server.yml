@@ -1,0 +1,15 @@
+apm-server:
+  host: "0.0.0.0:8200"
+
+otlp:
+  enabled: true
+  protocols:
+    grpc:
+      enabled: true
+      host: "0.0.0.0:4317"
+
+output.elasticsearch:
+  hosts: ["http://elasticsearch:9200"]
+
+setup.kibana:
+  host: "http://kibana:5601"
