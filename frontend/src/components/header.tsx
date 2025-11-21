@@ -6,20 +6,16 @@ import React, { useEffect, useState } from 'react';
 import { Input } from './ui/input';
 import { UserMenu } from './user-menu';
 import { Button } from './ui/button';
-import { useAuthStore } from '@/store/useAuthStore';
+import { useGetUser } from '@/hooks/use-get-user';
 
 export default function Header() {
     const router = useRouter();
     const pathname = usePathname();
+    const { data: user } = useGetUser();
 
     const hideSearch = pathname === '/login' || pathname === '/register';
-    const { authUser } = useAuthStore();
     const [active, setActive] = useState<string>('');
     const [isScrolled, setIsScrolled] = useState(false);
-
-    useEffect(() => {
-        useAuthStore.getState().initAuth();
-    }, []);
 
     useEffect(() => {
         const handleScroll = () => setIsScrolled(window.scrollY > 10);
@@ -59,7 +55,7 @@ export default function Header() {
                 </div>
             )}
             {/* Menu */}
-            {!authUser ? (
+            {!user ? (
                 <ul className="flex items-center gap-5">
                     <Button
                         variant={active === 'register' ? 'dark' : 'light'}

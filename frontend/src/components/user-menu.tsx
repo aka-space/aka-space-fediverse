@@ -9,9 +9,19 @@ import {
 import { UserIcon, LogOut } from 'lucide-react';
 import { Avatar, AvatarFallback, AvatarImage } from '@radix-ui/react-avatar';
 import { useAuthStore } from '@/store/useAuthStore';
+import { toast } from 'sonner';
 
 export function UserMenu() {
-    const { logout, authUser } = useAuthStore();
+    const { authUser } = useAuthStore();
+
+    const handleLogout = async () => {
+        const success = await useAuthStore.getState().logout();
+        if (success) {
+            toast.success('Logout successfully');
+        } else {
+            toast.error('Logout failed');
+        }
+    };
 
     return (
         <DropdownMenu modal={false}>
@@ -40,7 +50,8 @@ export function UserMenu() {
                         </div>
                     </div>
                 </DropdownMenuGroup>
-                <DropdownMenuItem onClick={logout}>
+
+                <DropdownMenuItem onClick={handleLogout}>
                     <LogOut />
                     Log out
                 </DropdownMenuItem>
