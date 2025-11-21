@@ -85,7 +85,7 @@ services:
         soft: -1
         hard: -1
     volumes:
-      - esdata:/usr/share/elasticsearch/data
+      - elasticsearch:/usr/share/elasticsearch/data
     healthcheck:
       test: ["CMD-SHELL", "curl -sS http://localhost:9200/_cluster/health | grep -q '\"status\":\"green\"' || exit 1"]
       interval: 10s
@@ -161,4 +161,7 @@ volumes:
     external: true
   cloudbeaver:
     name: aka-cloudbeaver
+    external: true
+  elasticsearch:
+    name: aka-elasticsearch
     external: true
