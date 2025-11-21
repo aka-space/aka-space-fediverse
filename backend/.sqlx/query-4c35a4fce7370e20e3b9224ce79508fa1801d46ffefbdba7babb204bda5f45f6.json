@@ -1,0 +1,14 @@
+{
+  "db_name": "PostgreSQL",
+  "query": "\n            INSERT INTO tags (name)\n            SELECT * FROM UNNEST($1::VARCHAR(64)[])\n            ON CONFLICT DO NOTHING\n        ",
+  "describe": {
+    "columns": [],
+    "parameters": {
+      "Left": [
+        "VarcharArray"
+      ]
+    },
+    "nullable": []
+  },
+  "hash": "4c35a4fce7370e20e3b9224ce79508fa1801d46ffefbdba7babb204bda5f45f6"
+}

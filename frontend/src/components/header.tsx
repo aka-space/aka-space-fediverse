@@ -6,16 +6,15 @@ import React, { useEffect, useRef, useState } from 'react';
 import { Input } from './ui/input';
 import { UserMenu } from './user-menu';
 import { Button } from './ui/button';
-import { useAuthStore } from '@/store/useAuthStore';
+import { useGetUser } from '@/hooks/use-get-user';
 
 const STORAGE_KEY = 'search-history';
 
 export default function Header() {
-    const { authUser } = useAuthStore();
-
     const router = useRouter();
-
     const pathname = usePathname();
+    const { data: user } = useGetUser();
+
     const hideSearch = pathname === '/login' || pathname === '/register';
     const [active, setActive] = useState<string>('');
     const [isScrolled, setIsScrolled] = useState(false);
@@ -172,7 +171,7 @@ export default function Header() {
                 </div>
             )}
             {/* Menu */}
-            {!authUser ? (
+            {!user ? (
                 <ul className="flex items-center gap-5">
                     <Button
                         variant={active === 'register' ? 'dark' : 'light'}
