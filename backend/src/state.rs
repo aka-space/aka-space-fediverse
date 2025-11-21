@@ -20,6 +20,7 @@ pub struct ApiState {
 impl ApiState {
     pub async fn new() -> Arc<Self> {
         let database = PgPool::connect(&CONFIG.database_url).await.unwrap();
+        sqlx::migrate!().run(&database).await.unwrap();
 
         let redis_client = redis::Client::open(CONFIG.redis_url.as_str()).unwrap();
         let redis_connection = redis_client
