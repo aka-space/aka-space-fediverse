@@ -3,7 +3,7 @@ import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Heart, MessageCircle, MoreHorizontal } from 'lucide-react';
-import { Post } from '@/types';
+import { Comment, Post } from '@/types';
 import { formatTimeAgo } from '@/lib/formatDate';
 import {
     DropdownMenu,
@@ -11,11 +11,11 @@ import {
     DropdownMenuItem,
     DropdownMenuTrigger,
 } from './ui/dropdown-menu';
-import { useUpdatePost } from '@/hooks/use-update-post';
+import { useUpdatePost } from '@/hooks/post/use-update-post';
 import { toast } from 'sonner';
 import { useMemo, useState } from 'react';
 import { ReportModal } from './report-modal';
-import commentsData from '@/data/comments.json';
+import { useGetComments } from '@/hooks/comment/use-get-comments';
 
 interface PostCardProps {
     post: Post;
@@ -24,10 +24,12 @@ interface PostCardProps {
 export function DetailPostCard({ post }: PostCardProps) {
     const [isReportModalOpen, setIsReportModalOpen] = useState(false);
     const { mutate: likePost } = useUpdatePost();
+    const { data: comments } = useGetComments();
 
     const commentCount = useMemo(() => {
-        return commentsData.filter((comment) => comment.postId === post.id)
-            .length;
+        return comments?.filter(
+            (comment: Comment) => comment.postId === post.id,
+        ).length;
     }, [post.id]);
 
     const handleLikePost = (e: React.MouseEvent) => {

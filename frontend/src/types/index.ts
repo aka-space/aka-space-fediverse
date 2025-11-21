@@ -51,3 +51,10 @@ export type UserRegister = {
     email: string;
     password: string;
 };
+
+export interface Emoji {
+    emoji: string;
+    label: string;
+    group?: string;
+    skin?: number;
+}
