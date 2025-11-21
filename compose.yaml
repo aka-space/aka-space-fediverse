@@ -58,7 +58,7 @@ services:
       OAUTH2__GOOGLE__ISSUER_URL: "https://accounts.google.com"
       OAUTH2__GOOGLE__SCOPES: "email,profile"
 
-      OTEL_EXPORTER_OTLP_ENDPOINT: "http://otel-collector:4318"
+      OTEL_EXPORTER_OTLP_ENDPOINT: "http://otel-collector:4318/v1/traces"
       OTEL_EXPORTER_OTLP_TRACES_PROTOCOL: "http/protobuf"
       OTEL_SERVICE_NAME: "aka-backend"
       OTEL_TRACES_SAMPLER: "always_on"
