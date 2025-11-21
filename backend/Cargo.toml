@@ -6,11 +6,13 @@ edition = "2024"
 [dependencies]
 axum = { version = "0.8.6", features = ["macros"] }
 axum-extra = { version = "0.12.2", features = ["cookie", "query", "typed-header"] }
+axum-tracing-opentelemetry = { version = "0.32.2", features = ["tracing_level_info"] }
 bcrypt = "0.17.1"
 bon = "3.8.1"
 chrono = "0.4.42"
 config = { version = "0.15.18", default-features = false }
 dashmap = "6.1.0"
+init-tracing-opentelemetry = { version = "0.34.0", features = ["otlp", "tracing_subscriber_ext", "metrics"] }
 jsonwebtoken = { version = "10.1.0", features = ["rust_crypto"] }
 openidconnect = "4.0.1"
 redis = { version = "0.32.7", features = ["tokio-comp", "tokio-native-tls-comp"] }

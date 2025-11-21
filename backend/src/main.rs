@@ -24,16 +24,17 @@ async fn build_app() -> Router {
         .merge(doc::build())
         .layer(TraceLayer::new_for_http())
         .layer(middleware::cors(&CONFIG.cors.origin))
+        .layer(axum_tracing_opentelemetry::middleware::OtelAxumLayer::default())
+        .layer(axum_tracing_opentelemetry::middleware::OtelInResponseLayer)
         .with_state(state)
 }
 
 #[tokio::main]
 async fn main() {
-    tracing_subscriber::fmt()
-        .with_max_level(tracing::Level::DEBUG)
-        .pretty()
-        .with_timer(tracing_subscriber::fmt::time::ChronoLocal::rfc_3339())
-        .init();
+    let _guard = init_tracing_opentelemetry::TracingConfig::development()
+        .with_log_directives("debug")
+        .init_subscriber()
+        .unwrap();
 
     let app = build_app().await;
 
