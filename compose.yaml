@@ -35,7 +35,7 @@ services:
 
   valkey:
     container_name: aka-valkey
-    image: bitnami/valkey:latest
+    image: valkey/valkey:latest
     environment:
       - VALKEY_PASSWORD=${REDIS_PASSWORD}
     networks:
