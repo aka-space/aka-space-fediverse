@@ -8,18 +8,19 @@ processors:
   batch:
 
 exporters:
-  otlp/apm:
-    endpoint: apm-server:4317
+  logging:
+    loglevel: debug
+
+  elasticsearch/trace:
+    endpoints: [https://elasticsearch:9200]
+    user: elastic
+    password: 
+    api_key: 
     tls:
-      insecure: true
+      insecure_skip_verify: true
 
 service:
   pipelines:
     traces:
       receivers: [otlp]
-      processors: [batch]
-      exporters: [otlp/apm]
-    metrics:
-      receivers: [otlp]
-      processors: [batch]
-      exporters: [otlp/apm]
+      exporters: [elasticsearch/trace]
