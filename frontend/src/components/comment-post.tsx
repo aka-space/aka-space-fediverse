@@ -11,7 +11,7 @@ import {
     Trash2,
 } from 'lucide-react';
 import { Comment } from '@/types';
-import { formatTimeAgo } from '@/lib/formatDate';
+import { formatTimeAgo } from '@/lib/format';
 import { useGetComments } from '@/hooks/comment/use-get-comments';
 import {
     DropdownMenu,
