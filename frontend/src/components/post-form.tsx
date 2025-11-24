@@ -18,6 +18,7 @@ import {
 } from '@/components/ui/dropdown-menu';
 import { FileText, Trash2 } from 'lucide-react';
 import { InputWithTags } from './ui/input-with-tags';
+import { formatOverview } from '@/lib/format';
 
 const PostForm = () => {
     const router = useRouter();
@@ -34,11 +35,11 @@ const PostForm = () => {
 
     const createPost = useCreatePost();
 
-    const handleChange = (
+    const handleTitleChange = (
         e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>,
     ) => {
         const { name, value } = e.target;
-        setPostData({ [name]: value });
+        setPostData({ [name]: value, slug: value.toLowerCase().replace(/\s+/g, '-') });
     };
 
     const handleEditorChange = (value: Content) => {
@@ -130,8 +131,8 @@ const PostForm = () => {
                                                     {draft.title || 'Untitled'}
                                                 </div>
                                                 <div className="text-xs text-muted-foreground truncate w-full">
-                                                    {draft.overview ||
-                                                        'No overview'}
+                                                    {formatOverview(draft.content) ||
+                                                        'No content'}
                                                 </div>
                                             </div>
                                             <Button
@@ -164,28 +165,10 @@ const PostForm = () => {
                                 name="title"
                                 type="text"
                                 value={postData.title}
-                                onChange={handleChange}
+                                onChange={handleTitleChange}
                                 className="w-full border border-gray-200 bg-white dark:bg-neutral-800 dark:border-neutral-700 rounded-sm"
                                 placeholder="Enter your Title..."
                                 required
-                                disabled={createPost.isPending}
-                            />
-                        </div>
-
-                        <div className="mb-4">
-                            <label
-                                htmlFor="overview"
-                                className="block text-lg font-medium text-gray-700 dark:text-gray-300 mb-1"
-                            >
-                                Overview
-                            </label>
-                            <Textarea
-                                id="overview"
-                                name="overview"
-                                value={postData.overview}
-                                onChange={handleChange}
-                                className="w-full min-h-[84px] resize-vertical border border-gray-200 bg-white dark:bg-neutral-800 dark:border-neutral-700 rounded-sm"
-                                placeholder="Enter your Overview..."
                                 disabled={createPost.isPending}
                             />
                         </div>
