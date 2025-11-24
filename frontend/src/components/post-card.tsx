@@ -11,9 +11,7 @@ import {
 import { Heart, MessageCircle, MoreHorizontal } from 'lucide-react';
 import { Post, Comment } from '@/types';
 import { useRouter } from 'next/navigation';
-import { formatTimeAgo } from '@/lib/formatDate';
-import { useUpdatePost } from '@/hooks/post/use-update-post';
-import { toast } from 'sonner';
+import { formatOverview, formatTimeAgo } from '@/lib/format';
 import { ReportModal } from './report-modal';
 import { useState, useMemo } from 'react';
 import { useGetComments } from '@/hooks/comment/use-get-comments';
@@ -26,12 +24,11 @@ export function PostCard({ post }: PostCardProps) {
     const route = useRouter();
     const [isReportModalOpen, setIsReportModalOpen] = useState(false);
 
-    const handleNavigate = (id: string) => {
-        route.push(`/post/${id}`);
+    const handleNavigate = (slug: string) => {
+        route.push(`/post/${slug}`);
     };
 
-    const { mutate: likePost } = useUpdatePost();
-    const { data: comments } = useGetComments();
+    const { data: comments,  } = useGetComments();
 
     const commentCount = useMemo(() => {
         return comments?.filter(
@@ -39,20 +36,17 @@ export function PostCard({ post }: PostCardProps) {
         ).length;
     }, [comments, post.id]);
 
-    const handleLikePost = (e: React.MouseEvent) => {
-        e.stopPropagation();
-        likePost(
-            { ...post, likes: post.likes + 1 },
-            {
-                onSuccess: () => {
-                    post.likes += 1;
-                },
-                onError: (error) => {
-                    toast.error(error.message || 'Failed to like the post.');
-                },
-            },
-        );
-    };
+    const contentPreview = useMemo(() => {
+        const text = post.content.replace(/<[^>]*>/g, '');
+        const decoded = text
+            .replace(/&nbsp;/g, ' ')
+            .replace(/&amp;/g, '&')
+            .replace(/&lt;/g, '<')
+            .replace(/&gt;/g, '>')
+            .replace(/&quot;/g, '"')
+            .replace(/&#39;/g, "'");
+        return decoded.trim();
+    }, [post.content]);
 
     return (
         <>
@@ -62,21 +56,21 @@ export function PostCard({ post }: PostCardProps) {
                         <div className="flex items-center gap-3">
                             <Avatar className="h-10 w-10 cursor-pointer">
                                 <AvatarImage
-                                    src={post.author.avatar}
-                                    alt={post.author.name}
+                                    src={`/${post.author.username?.toLowerCase()}.png`}
+                                    alt={post.author.username}
                                 />
                                 <AvatarFallback className="bg-gray-200">
-                                    {post.author.name
-                                        .substring(0, 2)
+                                    {post.author.username
+                                        ?.substring(0, 2)
                                         .toUpperCase()}
                                 </AvatarFallback>
                             </Avatar>
                             <div>
                                 <p className="font-semibold text-sm text-gray-900 hover:underline cursor-pointer">
-                                    {post.author.name}
+                                    {post.author.username}
                                 </p>
                                 <p className="text-xs text-gray-500">
-                                    {formatTimeAgo(post.createdAt)}
+                                    {formatTimeAgo(post.updated_at)}
                                 </p>
                             </div>
                         </div>
@@ -109,7 +103,7 @@ export function PostCard({ post }: PostCardProps) {
 
                 <CardContent className="pt-0 space-y-4">
                     <div
-                        onClick={() => handleNavigate(post.id)}
+                        onClick={() => handleNavigate(post.slug)}
                         className="cursor-pointer"
                     >
                         <h3 className="text-lg font-semibold text-gray-900 mb-2 line-clamp-2">
@@ -117,7 +111,7 @@ export function PostCard({ post }: PostCardProps) {
                         </h3>
 
                         <p className="text-sm text-gray-600 line-clamp-3">
-                            {post.overview}
+                            {formatOverview(contentPreview)}
                         </p>
                     </div>
 
@@ -137,10 +131,9 @@ export function PostCard({ post }: PostCardProps) {
                         <div className="flex items-center gap-6 text-sm text-gray-500">
                             <button
                                 className="flex items-center gap-1 hover:text-red-700 transition-colors"
-                                onClick={handleLikePost}
                             >
                                 <Heart className="h-4 w-4" />
-                                <span>{post.likes}</span>
+                                <span>{post.view}</span>
                             </button>
                             <button className="flex items-center gap-1 hover:text-blue-500 transition-colors">
                                 <MessageCircle className="h-4 w-4" />
