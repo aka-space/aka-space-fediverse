@@ -8,14 +8,14 @@ interface LayoutProps {
     children: React.ReactNode;
 }
 export default function Layout({ children }: LayoutProps) {
-    const { authUser } = useAuthStore();
     const route = useRouter();
-
+    
     useEffect(() => {
-        if (!authUser) {
+        const accessToken = localStorage.getItem('accessToken');
+        
+        if (!accessToken) {
             route.push('/login');
         }
-    }, [authUser, route]);
-
+    }, [route]);
     return <div>{children}</div>;
 }
