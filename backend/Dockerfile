@@ -14,6 +14,7 @@ RUN cargo chef cook --release --recipe-path recipe.json
 COPY Cargo.toml Cargo.lock ./
 COPY src/ ./src
 COPY .sqlx ./.sqlx
+COPY migrations ./migrations
 RUN cargo build --release
 
 FROM debian:bookworm AS application
