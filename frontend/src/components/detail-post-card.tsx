@@ -4,7 +4,7 @@ import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Heart, MessageCircle, MoreHorizontal } from 'lucide-react';
 import { Comment, Post } from '@/types';
-import { formatTimeAgo } from '@/lib/formatDate';
+import { formatTimeAgo } from '@/lib/format';
 import {
     DropdownMenu,
     DropdownMenuContent,
@@ -32,21 +32,6 @@ export function DetailPostCard({ post }: PostCardProps) {
         ).length;
     }, [post.id]);
 
-    const handleLikePost = (e: React.MouseEvent) => {
-        e.stopPropagation();
-        likePost(
-            { ...post, likes: post.likes + 1 },
-            {
-                onSuccess: () => {
-                    post.likes += 1;
-                },
-                onError: (error) => {
-                    toast.error(error.message || 'Failed to like the post.');
-                },
-            },
-        );
-    };
-
     return (
         <>
             <Card className="w-full hover:shadow-md transition-shadow gap-0">
@@ -55,21 +40,21 @@ export function DetailPostCard({ post }: PostCardProps) {
                         <div className="flex items-center gap-3">
                             <Avatar className="h-10 w-10 cursor-pointer">
                                 <AvatarImage
-                                    src={post.author.avatar}
-                                    alt={post.author.name}
+                                    src={`/${post.author.username?.toLowerCase()}.png`}
+                                    alt={post.author.username}
                                 />
                                 <AvatarFallback className="bg-gray-200">
-                                    {post.author.name
-                                        .substring(0, 2)
+                                    {post.author.username
+                                        ?.substring(0, 2)
                                         .toUpperCase()}
                                 </AvatarFallback>
                             </Avatar>
                             <div>
                                 <p className="font-semibold text-sm text-gray-900 dark:text-gray-100 cursor-pointer hover:underline">
-                                    {post.author.name}
+                                    {post.author.username}
                                 </p>
                                 <p className="text-xs text-gray-500 dark:text-gray-400">
-                                    {formatTimeAgo(post.createdAt)}
+                                    {formatTimeAgo(post.created_at)}
                                 </p>
                             </div>
                         </div>
@@ -103,10 +88,6 @@ export function DetailPostCard({ post }: PostCardProps) {
                         <h3 className="text-xl font-bold text-gray-900 dark:text-gray-100 mb-2">
                             {post.title}
                         </h3>
-
-                        <p className="text-sm text-gray-600 dark:text-gray-400 mb-6 leading-relaxed">
-                            {post.overview}
-                        </p>
 
                         <div
                             className="post-content prose prose-sm max-w-none text-gray-700 dark:text-gray-300
@@ -153,10 +134,9 @@ export function DetailPostCard({ post }: PostCardProps) {
                         <div className="flex items-center gap-6 text-sm text-gray-500 dark:text-gray-400">
                             <button
                                 className="flex items-center gap-1 hover:text-red-700 transition-colors"
-                                onClick={handleLikePost}
                             >
                                 <Heart className="h-4 w-4" />
-                                <span>{post.likes}</span>
+                                <span>{post.view}</span>
                             </button>
                             <button className="flex items-center gap-1 hover:text-blue-500 transition-colors">
                                 <MessageCircle className="h-4 w-4" />
