@@ -8,7 +8,7 @@ export type Post = {
     content: string;
     created_at: string;
     updated_at: string;
-    reactions: Object;
+    reactions: object;
     view: number;
     slug: string;
     tags: string[];
@@ -36,7 +36,7 @@ export type PostDataForCreate = {
     content: string;
     created_at: string;
     updated_at: string;
-    reactions: Object;
+    reactions: object;
     view: number;
     slug: string;
     tags: string[];
