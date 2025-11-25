@@ -159,7 +159,7 @@ export default function Home() {
 
                     {!hasMore && sortedPosts.length > 0 && (
                         <div className="text-center py-4 text-gray-500 dark:text-gray-400 text-sm">
-                            You've reached the end
+                            You have reached the end
                         </div>
                     )}
                 </div>
