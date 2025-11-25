@@ -8,22 +8,27 @@ export const useGetPosts = (search = '', limit = 10, offset = 0) => {
         queryKey: ['posts', search, limit, offset],
         queryFn: async () => {
             try {
-                const response = await axiosInstance.get(`/post?limit=${limit}&offset=${offset}`);
+                const response = await axiosInstance.get(
+                    `/post?limit=${limit}&offset=${offset}`,
+                );
 
                 if (response.status === 200) {
                     const data: Post[] = response.data.data;
                     const hasMore = response.data.has_next;
 
-                    if (search.trim() === '') return {data, hasMore};
-                    return {data: data.filter(
-                        (post: Post) =>
-                            post.title
-                                .toLowerCase()
-                                .includes(search.toLowerCase()) ||
-                            post.content
-                                .toLowerCase()
-                                .includes(search.toLowerCase()),
-                    ), hasMore};
+                    if (search.trim() === '') return { data, hasMore };
+                    return {
+                        data: data.filter(
+                            (post: Post) =>
+                                post.title
+                                    .toLowerCase()
+                                    .includes(search.toLowerCase()) ||
+                                post.content
+                                    .toLowerCase()
+                                    .includes(search.toLowerCase()),
+                        ),
+                        hasMore,
+                    };
                 }
 
                 return { data: [], hasMore: false };

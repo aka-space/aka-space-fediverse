@@ -9,10 +9,10 @@ interface LayoutProps {
 }
 export default function Layout({ children }: LayoutProps) {
     const route = useRouter();
-    
+
     useEffect(() => {
         const accessToken = localStorage.getItem('accessToken');
-        
+
         if (!accessToken) {
             route.push('/login');
         }

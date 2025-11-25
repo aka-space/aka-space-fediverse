@@ -18,7 +18,8 @@ const initialState: PostDataForCreate = {
     title: '',
     author: {
         name: useAuthStore.getState().authUser?.username || 'testuser',
-        email: useAuthStore.getState().authUser?.email || 'testuser@example.com',
+        email:
+            useAuthStore.getState().authUser?.email || 'testuser@example.com',
     },
     content: '',
     tags: [],

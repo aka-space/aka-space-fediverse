@@ -116,8 +116,10 @@ export default function Home() {
             <div className="flex flex-col gap-6 max-w-4xl w-full">
                 <div className="space-y-8">
                     <div className="flex items-center justify-between">
-                        <PostsFilter 
-                            setFilter={(newFilter) => setFilter(newFilter as 'new' | 'hot')} 
+                        <PostsFilter
+                            setFilter={(newFilter) =>
+                                setFilter(newFilter as 'new' | 'hot')
+                            }
                         />
                         <Button
                             variant="outline"
@@ -138,9 +140,9 @@ export default function Home() {
                         </div>
                     )}
 
-                    {!loading && sortedPosts.length === 0 && currentPage === 0 && (
-                        <NoPost />
-                    )}
+                    {!loading &&
+                        sortedPosts.length === 0 &&
+                        currentPage === 0 && <NoPost />}
 
                     {sortedPosts.map((post: Post) => (
                         <PostCard key={post.id} post={post} />

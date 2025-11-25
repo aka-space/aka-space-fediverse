@@ -39,7 +39,10 @@ const PostForm = () => {
         e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>,
     ) => {
         const { name, value } = e.target;
-        setPostData({ [name]: value, slug: value.toLowerCase().replace(/\s+/g, '-') });
+        setPostData({
+            [name]: value,
+            slug: value.toLowerCase().replace(/\s+/g, '-'),
+        });
     };
 
     const handleEditorChange = (value: Content) => {
@@ -131,8 +134,9 @@ const PostForm = () => {
                                                     {draft.title || 'Untitled'}
                                                 </div>
                                                 <div className="text-xs text-muted-foreground truncate w-full">
-                                                    {formatOverview(draft.content) ||
-                                                        'No content'}
+                                                    {formatOverview(
+                                                        draft.content,
+                                                    ) || 'No content'}
                                                 </div>
                                             </div>
                                             <Button

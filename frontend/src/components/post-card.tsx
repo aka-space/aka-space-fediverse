@@ -28,7 +28,7 @@ export function PostCard({ post }: PostCardProps) {
         route.push(`/post/${slug}`);
     };
 
-    const { data: comments,  } = useGetComments();
+    const { data: comments } = useGetComments();
 
     const commentCount = useMemo(() => {
         return comments?.filter(
@@ -129,9 +129,7 @@ export function PostCard({ post }: PostCardProps) {
                         </div>
 
                         <div className="flex items-center gap-6 text-sm text-gray-500">
-                            <button
-                                className="flex items-center gap-1 hover:text-red-700 transition-colors"
-                            >
+                            <button className="flex items-center gap-1 hover:text-red-700 transition-colors">
                                 <Heart className="h-4 w-4" />
                                 <span>{post.view}</span>
                             </button>
