@@ -9,14 +9,14 @@ import {
     DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
 import { Heart, MessageCircle, MoreHorizontal } from 'lucide-react';
-import { Post } from '@/types';
+import { Post, Comment } from '@/types';
 import { useRouter } from 'next/navigation';
 import { formatTimeAgo } from '@/lib/formatDate';
-import { useUpdatePost } from '@/hooks/use-update-post';
+import { useUpdatePost } from '@/hooks/post/use-update-post';
 import { toast } from 'sonner';
 import { ReportModal } from './report-modal';
 import { useState, useMemo } from 'react';
-import commentsData from '@/data/comments.json';
+import { useGetComments } from '@/hooks/comment/use-get-comments';
 
 interface PostCardProps {
     post: Post;
@@ -26,16 +26,18 @@ export function PostCard({ post }: PostCardProps) {
     const route = useRouter();
     const [isReportModalOpen, setIsReportModalOpen] = useState(false);
 
-    const commentCount = useMemo(() => {
-        return commentsData.filter((comment) => comment.postId === post.id)
-            .length;
-    }, [post.id]);
-
     const handleNavigate = (id: string) => {
         route.push(`/post/${id}`);
     };
 
     const { mutate: likePost } = useUpdatePost();
+    const { data: comments } = useGetComments();
+
+    const commentCount = useMemo(() => {
+        return comments?.filter(
+            (comment: Comment) => comment.postId === post.id,
+        ).length;
+    }, [comments, post.id]);
 
     const handleLikePost = (e: React.MouseEvent) => {
         e.stopPropagation();

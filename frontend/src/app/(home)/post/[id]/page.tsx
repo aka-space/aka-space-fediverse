@@ -5,7 +5,7 @@ import CommentPost from '@/components/comment-post';
 import { DetailPostCard } from '@/components/detail-post-card';
 import { NoPost } from '@/components/no-post';
 import { Spinner } from '@/components/ui/spinner';
-import { useGetDetailPost } from '@/hooks/use-get-detail-post';
+import { useGetDetailPost } from '@/hooks/post/use-get-detail-post';
 import { Post } from '@/types';
 import { useParams } from 'next/navigation';
 
@@ -29,7 +29,7 @@ export default function DetailPostPage() {
 
                     {post && (
                         <>
-                            <CommentInput />
+                            <CommentInput postId={post.id} />
                             <CommentPost postId={post.id} />
                         </>
                     )}

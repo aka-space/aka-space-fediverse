@@ -3,7 +3,7 @@
 import { PostsFilter } from '@/components/posts-filter';
 import { PostCard } from '@/components/post-card';
 import { Spinner } from '@/components/ui/spinner';
-import { useGetPosts } from '@/hooks/use-get-posts';
+import { useGetPosts } from '@/hooks/post/use-get-posts';
 import { Post } from '@/types';
 import { NoPost } from '@/components/no-post';
 import { useMemo, useState } from 'react';
