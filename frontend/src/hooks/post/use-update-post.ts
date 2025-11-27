@@ -4,8 +4,6 @@ import { axiosInstance } from '@/lib/axios';
 import { Post } from '@/types';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 
-const API_URL = 'https://68765855814c0dfa653bba48.mockapi.io/mockTest';
-
 export const useUpdatePost = () => {
     const queryClient = useQueryClient();
 
