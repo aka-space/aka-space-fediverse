@@ -10,11 +10,12 @@ interface AuthState {
     setAccessToken: (token: string | null) => void;
     refreshAccessToken: () => Promise<string | null>;
     logout: () => Promise<boolean>;
+    getUser: () => Promise<UserRegister | null>;
 }
 
 export const useAuthStore = create<AuthState>()(
     persist(
-        (set) => ({
+        (set, get) => ({
             authUser: null,
             accessToken: null,
             isRefreshing: false,
@@ -34,10 +35,26 @@ export const useAuthStore = create<AuthState>()(
                 }
             },
 
+            getUser: async () => {
+                try {
+                    const token = get().accessToken;
+                    const res = await axiosInstance.get('/auth/me', {
+                        headers: {
+                            Authorization: `Bearer ${token}`,
+                        },
+                    });
+                    set({ authUser: res.data });
+                    return res.data;
+                } catch (error) {
+                    console.log('Get user ERROR', error);
+                }
+            },
+
             logout: async () => {
                 try {
                     await axiosInstance.post('/auth/logout');
                     set({ authUser: null, accessToken: null });
+                    localStorage.removeItem('auth-storage');
                     return true;
                 } catch (err) {
                     console.log('Logout ERROR: ', err);
@@ -45,6 +62,7 @@ export const useAuthStore = create<AuthState>()(
                 }
             },
         }),
+
         {
             name: 'auth-storage',
         },
