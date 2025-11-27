@@ -11,7 +11,7 @@ export const useUpdatePost = () => {
 
     return useMutation({
         mutationFn: async (data: Post) => {
-            const response = await axiosInstance.put(`/post/${data.id}`, data,{
+            const response = await axiosInstance.put(`/post/${data.id}`, data, {
                 headers: {
                     'Content-Type': 'application/json',
                     Authorization: `Bearer ${token}`,
