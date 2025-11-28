@@ -2,33 +2,30 @@
 
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { useCreatePostStore } from '@/store/useCreatePostStore';
-
-const API_URL = 'https://68765855814c0dfa653bba48.mockapi.io/mockTest';
-
-interface PostData {
-    title: string;
-    overview: string;
-    content: string;
-}
+import { axiosInstance } from '@/lib/axios';
+import { PostDataForCreate } from '@/types';
+import { useAuthStore } from '@/store/useAuthStore';
 
 export const useCreatePost = () => {
     const queryClient = useQueryClient();
+    const token = useAuthStore((s) => s.accessToken);
     const { resetPostData } = useCreatePostStore();
 
     return useMutation({
-        mutationFn: async (data: PostData) => {
-            const response = await fetch(API_URL, {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify(data),
+        mutationFn: async (data: PostDataForCreate) => {
+            const response = await axiosInstance.post('/post', data, {
+                headers: {
+                    'Content-Type': 'application/json',
+                    Authorization: `Bearer ${token}`,
+                },
             });
-            if (!response.ok) {
+            if (response.status !== 200) {
                 throw new Error('Failed to create post');
             }
-            return response.json();
+            return response.data;
         },
         onSuccess: () => {
-            queryClient.invalidateQueries({ queryKey: ['posts'] });
+            queryClient.invalidateQueries({ queryKey: ['posts', token] });
 
             resetPostData();
         },

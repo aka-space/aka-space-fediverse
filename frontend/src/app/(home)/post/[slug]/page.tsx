@@ -10,8 +10,8 @@ import { Post } from '@/types';
 import { useParams } from 'next/navigation';
 
 export default function DetailPostPage() {
-    const { id } = useParams();
-    const { data: post, isPending: loading } = useGetDetailPost(id as string);
+    const { slug } = useParams();
+    const { data: post, isPending: loading } = useGetDetailPost(slug as string);
 
     return (
         <div className="w-full flex justify-center mb-6 px-4">

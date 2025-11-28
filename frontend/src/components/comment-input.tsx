@@ -61,8 +61,8 @@ const CommentInput = ({ postId }: { postId: string }) => {
         <div className="flex gap-3 py-4">
             <Avatar className="h-10 w-10">
                 <AvatarImage
-                    src="https://i.pravatar.cc/150?img=11"
-                    alt="Your avatar"
+                    src={`${authUser?.username.toLowerCase()}.png`}
+                    alt={authUser?.username}
                 />
                 <AvatarFallback className="bg-gray-200">ME</AvatarFallback>
             </Avatar>

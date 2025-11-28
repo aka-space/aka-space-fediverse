@@ -1,16 +1,16 @@
 export type Post = {
     id: string;
     author: {
-        name: string;
-        avatar: string;
+        username: string;
+        email: string;
     };
     title: string;
     content: string;
-    createdAt: string;
-    likes: number;
-    comments: number;
-    shares: number;
-    overview: string;
+    created_at: string;
+    updated_at: string;
+    reactions: object;
+    view: number;
+    slug: string;
     tags: string[];
 };
 
@@ -28,19 +28,20 @@ export type Comment = {
 };
 
 export type PostDataForCreate = {
-    title: string;
     author: {
         name: string;
-        avatar: string;
+        email: string;
     };
-    overview: string;
+    title: string;
     content: string;
+    created_at: string;
+    updated_at: string;
+    reactions: object;
+    view: number;
+    slug: string;
     tags: string[];
-    createdAt: string;
-    likes: number;
-    comments: number;
-    shares: number;
 };
+
 export type UserLogin = {
     email: string;
     password: string;

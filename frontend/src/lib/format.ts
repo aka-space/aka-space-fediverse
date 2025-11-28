@@ -33,3 +33,8 @@ export const formatTime = (dateString: string) => {
     );
     return timeInMinutes;
 };
+
+export const formatOverview = (content: string) => {
+    if (content.length <= 100) return content;
+    return content.slice(0, 100) + '...';
+};
