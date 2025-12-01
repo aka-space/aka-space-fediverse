@@ -1,18 +1,30 @@
+import { axiosInstance } from '@/lib/axios';
+import { useAuthStore } from '@/store/useAuthStore';
 import { useQuery } from '@tanstack/react-query';
+import { toast } from 'sonner';
 
-const API_URL = 'https://68765855814c0dfa653bba48.mockapi.io/mockTest';
-
-export const useGetDetailPost = (id: string) => {
+export const useGetDetailPost = (slug: string) => {
+    const token = useAuthStore((s) => s.accessToken);
     return useQuery({
         queryKey: ['post'],
         queryFn: async () => {
-            const response = await fetch(`${API_URL}/${id}`, {
-                method: 'GET',
-            });
-            if (!response.ok) {
-                throw new Error('Network response was not ok');
+            try {
+                const response = await axiosInstance.get(`/post/${slug}`, {
+                    headers: {
+                        'Content-Type': 'application/json',
+                        Authorization: `Bearer ${token}`,
+                    },
+                });
+                if (response.status !== 200) {
+                    toast.error('Error fetching post details');
+                    throw new Error('Network response was not ok');
+                }
+                return response.data;
+            } catch (error) {
+                console.error('Error fetching post details:', error);
+                toast.error('Error fetching post details');
+                throw error;
             }
-            return response.json();
         },
     });
 };

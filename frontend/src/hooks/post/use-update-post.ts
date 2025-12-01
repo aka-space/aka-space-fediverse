@@ -1,24 +1,26 @@
 'use client';
 
+import { axiosInstance } from '@/lib/axios';
+import { useAuthStore } from '@/store/useAuthStore';
 import { Post } from '@/types';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 
-const API_URL = 'https://68765855814c0dfa653bba48.mockapi.io/mockTest';
-
 export const useUpdatePost = () => {
     const queryClient = useQueryClient();
+    const token = useAuthStore((s) => s.accessToken);
 
     return useMutation({
         mutationFn: async (data: Post) => {
-            const response = await fetch(`${API_URL}/${data.id}`, {
-                method: 'PUT',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify(data),
+            const response = await axiosInstance.put(`/post/${data.id}`, data, {
+                headers: {
+                    'Content-Type': 'application/json',
+                    Authorization: `Bearer ${token}`,
+                },
             });
-            if (!response.ok) {
+            if (response.status !== 204) {
                 throw new Error('Failed to update post');
             }
-            return response.json();
+            return response.data;
         },
         onSuccess: () => {
             queryClient.invalidateQueries({ queryKey: ['posts'] });

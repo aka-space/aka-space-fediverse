@@ -18,15 +18,16 @@ const initialState: PostDataForCreate = {
     title: '',
     author: {
         name: useAuthStore.getState().authUser?.username || 'testuser',
-        avatar: `/${useAuthStore.getState().authUser?.username}`,
+        email:
+            useAuthStore.getState().authUser?.email || 'testuser@example.com',
     },
-    overview: '',
     content: '',
     tags: [],
-    createdAt: new Date().toString(),
-    likes: 0,
-    comments: 0,
-    shares: 0,
+    created_at: new Date().toString(),
+    updated_at: new Date().toString(),
+    reactions: {},
+    view: 0,
+    slug: '',
 };
 
 export const useCreatePostStore = create<PostState>()(
