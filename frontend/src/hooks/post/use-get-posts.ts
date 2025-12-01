@@ -8,7 +8,7 @@ export const useGetPosts = (
     limit = 10,
     offset = 0,
     column: 'view' | 'created_at',
-    filter: 'new' | 'hot'
+    filter: 'new' | 'hot',
 ) => {
     return useQuery<{ data: Post[]; hasMore: boolean }, Error>({
         queryKey: ['posts', search, limit, offset, column, filter],
@@ -22,7 +22,7 @@ export const useGetPosts = (
                         column,
                         direction,
                         ...(search && { query: search }),
-                    }
+                    },
                 });
 
                 if (response.status === 200) {

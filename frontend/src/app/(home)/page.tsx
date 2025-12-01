@@ -40,7 +40,7 @@ export default function Home() {
         limit,
         offset,
         column,
-        filter
+        filter,
     );
 
     const observerTarget = useRef<HTMLDivElement>(null);
