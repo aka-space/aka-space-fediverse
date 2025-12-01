@@ -1,10 +1,9 @@
 import { axiosInstance } from '@/lib/axios';
 import { useAuthStore } from '@/store/useAuthStore';
 import { UserRegister } from '@/types';
-import { useMutation, useQueryClient } from '@tanstack/react-query';
+import { useMutation } from '@tanstack/react-query';
 
 export const useRegister = () => {
-    const queryClient = useQueryClient();
     const setAccessToken = useAuthStore((s) => s.setAccessToken);
 
     return useMutation({
@@ -14,11 +13,8 @@ export const useRegister = () => {
                 throw new Error('Register failed');
             }
             setAccessToken(res.data);
+            await useAuthStore.getState().getUser();
             return true;
-        },
-
-        onSuccess: () => {
-            queryClient.invalidateQueries({ queryKey: ['authUser'] });
         },
     });
 };

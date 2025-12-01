@@ -9,7 +9,6 @@ interface AuthState {
     setUser: (user: UserRegister | null) => void;
     setAccessToken: (token: string | null) => void;
     refreshAccessToken: () => Promise<string | null>;
-    logout: () => Promise<boolean>;
     getUser: () => Promise<string | null>;
     initAuth: () => Promise<void>;
 }
@@ -48,18 +47,6 @@ export const useAuthStore = create<AuthState>()(
                     return res.data;
                 } catch (error) {
                     console.log('Get user ERROR', error);
-                }
-            },
-
-            logout: async () => {
-                try {
-                    await axiosInstance.post('/auth/logout');
-                    set({ authUser: null, accessToken: null });
-                    localStorage.removeItem('auth-storage');
-                    return true;
-                } catch (err) {
-                    console.log('Logout ERROR: ', err);
-                    return false;
                 }
             },
 

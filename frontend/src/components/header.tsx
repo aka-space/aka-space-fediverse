@@ -64,7 +64,7 @@ export default function Header() {
     };
 
     useEffect(() => {
-        useAuthStore.getInitialState().initAuth();
+        useAuthStore.getState().initAuth();
         const handleClickOutside = (e: MouseEvent) => {
             if (
                 wrapperRef.current &&

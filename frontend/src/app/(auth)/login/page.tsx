@@ -1,7 +1,7 @@
 'use client';
 
 import { LoginForm } from '@/components/login-form';
-import { useLogin } from '@/hooks/use-login';
+import { useLogin } from '@/hooks/auth/use-login';
 import { LoginFormData } from '@/schemas/auth';
 import { useRouter } from 'next/navigation';
 import { toast } from 'sonner';
