@@ -31,12 +31,14 @@ export default function Home() {
 
     const searchParams = useSearchParams();
     const search = searchParams.get('search') ?? '';
+    const tags = searchParams.get('tags') ?? '';
 
     const offset = currentPage * limit;
     const column = filter === 'hot' ? 'view' : 'created_at';
 
     const { data: posts, isPending: loading } = useGetPosts(
         search,
+        tags,
         limit,
         offset,
         column,

@@ -122,6 +122,9 @@ export function PostCard({ post }: PostCardProps) {
                                     key={tag}
                                     variant="secondary"
                                     className="text-xs bg-gray-100 text-gray-700 hover:bg-gray-200 cursor-pointer"
+                                    onClick={() => {
+                                        route.push(`/?tags=${tag}`);
+                                    }}
                                 >
                                     {tag}
                                 </Badge>

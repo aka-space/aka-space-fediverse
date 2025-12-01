@@ -5,13 +5,14 @@ import { toast } from 'sonner';
 
 export const useGetPosts = (
     search = '',
+    tags = '',
     limit = 10,
     offset = 0,
     column: 'view' | 'created_at',
     filter: 'new' | 'hot',
 ) => {
     return useQuery<{ data: Post[]; hasMore: boolean }, Error>({
-        queryKey: ['posts', search, limit, offset, column, filter],
+        queryKey: ['posts', search, limit, offset, column, filter, tags],
         queryFn: async () => {
             try {
                 const direction = 'descending';
@@ -21,6 +22,7 @@ export const useGetPosts = (
                         offset,
                         column,
                         direction,
+                        ...(tags && { tags }),
                         ...(search && { query: search }),
                     },
                 });
