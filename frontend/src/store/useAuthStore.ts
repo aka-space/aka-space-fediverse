@@ -10,7 +10,8 @@ interface AuthState {
     setAccessToken: (token: string | null) => void;
     refreshAccessToken: () => Promise<string | null>;
     logout: () => Promise<boolean>;
-    getUser: () => Promise<UserRegister | null>;
+    getUser: () => Promise<string | null>;
+    initAuth: () => Promise<void>;
 }
 
 export const useAuthStore = create<AuthState>()(
@@ -59,6 +60,14 @@ export const useAuthStore = create<AuthState>()(
                 } catch (err) {
                     console.log('Logout ERROR: ', err);
                     return false;
+                }
+            },
+
+            initAuth: async () => {
+                try {
+                    await get().getUser();
+                } catch (err) {
+                    console.error('initAuth ERROR:', err);
                 }
             },
         }),

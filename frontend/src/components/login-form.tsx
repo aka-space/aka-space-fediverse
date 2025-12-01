@@ -11,8 +11,6 @@ import { LoginFormData, loginSchema } from '@/schemas/auth';
 import { Controller, useForm } from 'react-hook-form';
 import { Field, FieldError, FieldGroup } from '@/components/ui/field';
 import { Spinner } from './ui/spinner';
-import { useAuthStore } from '@/store/useAuthStore';
-import { useQueryClient } from '@tanstack/react-query';
 
 export function LoginForm({
     className,
@@ -31,22 +29,6 @@ export function LoginForm({
         },
     });
     const route = useRouter();
-
-    const queryClient = useQueryClient();
-    const { getUser } = useAuthStore();
-
-    const handleLoginGoogle = async () => {
-        try {
-            await queryClient.fetchQuery({
-                queryKey: ['authUser'],
-                queryFn: getUser,
-            });
-        } catch (err) {
-            console.log('Error fetching user', err);
-        } finally {
-            redirect(`${process.env.NEXT_PUBLIC_API_URL}/oauth2/google`);
-        }
-    };
 
     return (
         <div className={cn('flex flex-col gap-6', className)} {...props}>
@@ -159,7 +141,11 @@ export function LoginForm({
                                             alt="Login With GG"
                                             width={35}
                                             height={35}
-                                            onClick={handleLoginGoogle}
+                                            onClick={() =>
+                                                redirect(
+                                                    `${process.env.NEXT_PUBLIC_API_URL}/oauth2/google`,
+                                                )
+                                            }
                                         />
 
                                         <Image
