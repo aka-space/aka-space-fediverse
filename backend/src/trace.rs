@@ -8,14 +8,10 @@ use tracing_subscriber::{EnvFilter, layer::SubscriberExt, util::SubscriberInitEx
 
 use crate::error::ApiResult;
 
-const SERVICE_NAME: &str = "backend";
-
 pub fn init() -> ApiResult<()> {
-    let otlp_exporter = SpanExporter::builder().with_http().build()?;
+    let otlp_exporter = SpanExporter::builder().with_tonic().build()?;
 
-    let resource = opentelemetry_sdk::Resource::builder()
-        .with_service_name(SERVICE_NAME)
-        .build();
+    let resource = opentelemetry_sdk::Resource::builder().build();
 
     let tracer_provider = SdkTracerProvider::builder()
         .with_batch_exporter(otlp_exporter)
@@ -25,7 +21,10 @@ pub fn init() -> ApiResult<()> {
     global::set_tracer_provider(tracer_provider);
 
     let tracer = global::tracer("backend-tracer");
-    let otel_layer = OpenTelemetryLayer::new(tracer);
+    let otel_layer = OpenTelemetryLayer::new(tracer)
+        .with_threads(false)
+        .with_target(false)
+        .with_tracked_inactivity(false);
 
     tracing_subscriber::registry()
         .with(ErrorLayer::default())
@@ -34,7 +33,7 @@ pub fn init() -> ApiResult<()> {
                 .with_default_directive(LevelFilter::INFO.into())
                 .from_env_lossy(),
         )
-        .with(tracing_subscriber::fmt::layer())
+        .with(tracing_subscriber::fmt::layer().with_thread_ids(false))
         .with(otel_layer)
         .init();
 
