@@ -12,7 +12,7 @@ use serde::Deserialize;
 use crate::{
     config::{CONFIG, OAUTH2_TEMPORARY, Provider},
     database,
-    error::{Error, Result},
+    error::{ApiResult, OptionExt},
     state::ApiState,
 };
 
@@ -22,31 +22,22 @@ pub struct AuthRequest {
     pub state: String,
 }
 
+#[tracing::instrument(err(Debug), skip(state, jar))]
 pub async fn authorized(
     State(state): State<Arc<ApiState>>,
     jar: CookieJar,
     Path(provider): Path<Provider>,
     Query(query): Query<AuthRequest>,
-) -> Result<(CookieJar, Redirect)> {
-    let Some(cookie) = jar.get(OAUTH2_TEMPORARY) else {
-        tracing::warn!("No cookie found");
+) -> ApiResult<(CookieJar, Redirect)> {
+    let cookie = jar
+        .get(OAUTH2_TEMPORARY)
+        .with_context(StatusCode::UNAUTHORIZED, "Invalid call to oauth2 api")?;
 
-        return Err(Error::builder()
-            .status(StatusCode::UNAUTHORIZED)
-            .message("Invalid call to oauth2 api".into())
-            .build());
-    };
-
-    let Some((csrf, nonce)): Option<(CsrfToken, Nonce)> =
-        state.redis_service.get(cookie.value()).await?
-    else {
-        tracing::warn!(key = ?cookie.value(),"Key not found");
-
-        return Err(Error::builder()
-            .status(StatusCode::UNAUTHORIZED)
-            .message("Invalid call to oauth2 api".into())
-            .build());
-    };
+    let (csrf, nonce) = state
+        .redis_service
+        .get::<(CsrfToken, Nonce)>(cookie.value())
+        .await?
+        .with_context(StatusCode::UNAUTHORIZED, "Invalid call to oauth2 api")?;
 
     let claims = state.oauth2_services[&provider]
         .exchange(
@@ -61,25 +52,10 @@ pub async fn authorized(
 
     let email = claims.email().expect("Account must have email").as_str();
 
-    let opt_account = match database::account::get_by_email(email, &state.database).await {
-        Ok(opt_account) => opt_account,
-        Err(error) => {
-            tracing::error!(?error, "Failed to get account");
-
-            return Err(Error::internal());
-        }
-    };
-
+    let opt_account = database::account::get_by_email(email, &state.database).await?;
     let id = match opt_account {
         Some(account) => account.id,
-        None => match database::account::create(email, email, None, &state.database).await {
-            Ok(id) => id,
-            Err(error) => {
-                tracing::error!(?error, "Failed to create account");
-
-                return Err(Error::internal());
-            }
-        },
+        None => database::account::create(email, email, None, &state.database).await?,
     };
 
     let (access, refresh) = state.token_service.encode(id)?;

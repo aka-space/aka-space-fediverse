@@ -5,7 +5,7 @@ use axum_extra::extract::CookieJar;
 
 use crate::{
     config::REFRESH_COOKIE,
-    error::{Error, Result},
+    error::{ApiError, ApiResult, OptionExt},
     state::ApiState,
 };
 
@@ -25,38 +25,29 @@ use crate::{
         (
             status = 401,
             description = "Missing or invalid refresh token",
-            body = Error
+            body = ApiError
         ),
         (
             status = 500,
             description = "Internal server error",
-            body = Error
+            body = ApiError
         )
     )
 )]
+#[tracing::instrument(err(Debug), skip(state, jar))]
 pub async fn refresh(
     State(state): State<Arc<ApiState>>,
     jar: CookieJar,
-) -> Result<(CookieJar, String)> {
+) -> ApiResult<(CookieJar, String)> {
     let token_service = &state.token_service;
 
-    let Some(cookie) = jar.get(REFRESH_COOKIE).cloned() else {
-        tracing::warn!("Missing refresh token");
+    let cookie = jar
+        .get(REFRESH_COOKIE)
+        .cloned()
+        .with_context(StatusCode::UNAUTHORIZED, "Missing refresh token")?;
 
-        return Err(Error::builder()
-            .status(StatusCode::UNAUTHORIZED)
-            .message("Missing refresh token".into())
-            .build());
-    };
     let token = cookie.value();
-    let Ok(id) = token_service.refresh.decode(token) else {
-        tracing::warn!("Receive invalid refresh token");
-
-        return Err(Error::builder()
-            .status(StatusCode::UNAUTHORIZED)
-            .message("Invalid refresh token".into())
-            .build());
-    };
+    let id = token_service.refresh.decode(token)?;
     if let Some(mut tokens) = token_service.refresh_tokens.get_mut(&id) {
         tokens.remove(token);
     }

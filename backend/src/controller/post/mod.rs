@@ -16,7 +16,7 @@ use uuid::Uuid;
 
 use crate::{
     database::{self, account::MinimalAccount, reaction::Reaction},
-    error::{Error, Result},
+    error::{ApiResult, OptionExt, ResultExt},
     state::ApiState,
 };
 
@@ -55,48 +55,19 @@ pub struct Post {
 }
 
 impl Post {
-    pub async fn from_raw(raw: database::post::Post, database: &PgPool) -> Result<Post> {
-        let author = match database::account::get(raw.author_id, database).await {
-            Ok(Some(author)) => author,
-            Ok(None) => {
-                tracing::error!("Post's author is banned");
+    pub async fn from_raw(raw: database::post::Post, database: &PgPool) -> ApiResult<Post> {
+        let opt_author = database::account::get(raw.author_id, database)
+            .await
+            .with_context(StatusCode::BAD_REQUEST, "Post's author is banned")?;
+        let author = opt_author.with_context(StatusCode::BAD_REQUEST, "Post's author is banned")?;
 
-                return Err(Error::builder()
-                    .status(StatusCode::BAD_REQUEST)
-                    .message("Post's author is banned".to_string())
-                    .build());
-            }
-            Err(error) => {
-                tracing::error!(?error, "Failed to get user");
+        let tags = database::tag::get_by_post(raw.id, database)
+            .await
+            .with_context(StatusCode::BAD_REQUEST, "Post is removed")?;
 
-                return Err(Error::builder()
-                    .status(StatusCode::BAD_REQUEST)
-                    .message("Post's author is banned".to_string())
-                    .build());
-            }
-        };
-        let tags = match database::tag::get_by_post(raw.id, database).await {
-            Ok(tags) => tags,
-            Err(error) => {
-                tracing::error!(?error, "Failed to get post's tag'");
-
-                return Err(Error::builder()
-                    .status(StatusCode::BAD_REQUEST)
-                    .message("Post is removed".to_string())
-                    .build());
-            }
-        };
-        let reactions = match database::reaction::count_by_post(raw.id, database).await {
-            Ok(reactions) => reactions,
-            Err(error) => {
-                tracing::error!(?error, "Failed to count reaction for post");
-
-                return Err(Error::builder()
-                    .status(StatusCode::BAD_REQUEST)
-                    .message("Post is removed".to_string())
-                    .build());
-            }
-        };
+        let reactions = database::reaction::count_by_post(raw.id, database)
+            .await
+            .with_context(StatusCode::BAD_REQUEST, "Post is removed")?;
 
         Ok(Post {
             id: raw.id,

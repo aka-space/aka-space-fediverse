@@ -9,7 +9,7 @@ use axum::{
 use crate::{
     controller::post::Post,
     database,
-    error::{Error, Result},
+    error::{ApiError, ApiResult, OptionExt, ResultExt},
     state::ApiState,
 };
 
@@ -22,33 +22,19 @@ use crate::{
     ),
     responses(
         (status = 200, description = "Post found", body = Post),
-        (status = 400, description = "Bad request / No post found", body = Error),
-        (status = 500, description = "Internal server error", body = Error)
+        (status = 400, description = "Bad request / No post found", body = ApiError),
+        (status = 500, description = "Internal server error", body = ApiError)
     )
 )]
+#[tracing::instrument(err(Debug), skip(state))]
 pub async fn get_by_slug(
     State(state): State<Arc<ApiState>>,
     Path(slug): Path<String>,
-) -> Result<Json<Post>> {
-    let raw = match database::post::get_by_slug(&slug, &state.database).await {
-        Ok(Some(raw)) => raw,
-        Ok(None) => {
-            tracing::error!("No post according to given slug");
-
-            return Err(Error::builder()
-                .status(StatusCode::BAD_REQUEST)
-                .message("No post according to given slug".to_string())
-                .build());
-        }
-        Err(error) => {
-            tracing::error!(?error, "Failed to get post data");
-
-            return Err(Error::builder()
-                .status(StatusCode::BAD_REQUEST)
-                .message("No post according to given slug".to_string())
-                .build());
-        }
-    };
+) -> ApiResult<Json<Post>> {
+    let opt_raw = database::post::get_by_slug(&slug, &state.database)
+        .await
+        .with_context(StatusCode::BAD_REQUEST, "No post according to given slug")?;
+    let raw = opt_raw.with_context(StatusCode::BAD_REQUEST, "No post according to given slug")?;
 
     Post::from_raw(raw, &state.database).await.map(Json)
 }

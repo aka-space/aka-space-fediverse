@@ -11,7 +11,7 @@ use validator::Validate;
 
 use crate::{
     database::{self},
-    error::{Error, Result},
+    error::{ApiError, ApiResult, ResultExt},
     state::ApiState,
 };
 
@@ -41,73 +41,39 @@ pub struct Request {
     security(("jwt_token" = [])),
     responses(
         (status = 201, description = "Post created. Returns slug of the created post.", body = String),
-        (status = 400, description = "Bad request - validation failed or invalid data", body = Error),
-        (status = 401, description = "Unauthorized - missing/invalid token", body = Error),
-        (status = 500, description = "Internal server error", body = Error)
+        (status = 400, description = "Bad request - validation failed or invalid data", body = ApiError),
+        (status = 401, description = "Unauthorized - missing/invalid token", body = ApiError),
+        (status = 500, description = "Internal server error", body = ApiError)
     )
 )]
+#[tracing::instrument(err(Debug), skip(state))]
 pub async fn create(
     State(state): State<Arc<ApiState>>,
     TypedHeader(bearer): TypedHeader<Authorization<Bearer>>,
     Json(request): Json<Request>,
-) -> Result<String> {
+) -> ApiResult<String> {
     let token = bearer.token();
     let author_id = state.token_service.access.decode(token)?;
 
-    let mut transaction = match state.database.begin().await {
-        Ok(transaction) => transaction,
-        Err(error) => {
-            tracing::error!(?error, "Failed to create database transaction");
+    let mut transaction = state.database.begin().await?;
 
-            return Err(Error::internal());
-        }
-    };
-
-    let database::post::Key { id, slug } = match database::post::create(
+    let database::post::Key { id, slug } = database::post::create(
         author_id,
         &request.title,
         &request.content,
         &mut *transaction,
     )
     .await
-    {
-        Ok(key) => key,
-        Err(error) => {
-            tracing::error!(?error, "Failed to create post");
+    .with_context(StatusCode::BAD_REQUEST, "Post with given title existed")?;
 
-            return Err(Error::builder()
-                .status(StatusCode::BAD_REQUEST)
-                .message("Post with given title existed".to_string())
-                .build());
-        }
-    };
+    database::tag::create(&request.tags, &mut *transaction)
+        .await
+        .with_context(StatusCode::BAD_REQUEST, "Invalid tags")?;
+    database::post::add_tags(id, &request.tags, &mut *transaction)
+        .await
+        .with_context(StatusCode::BAD_REQUEST, "Invalid tags")?;
 
-    if let Err(error) = database::tag::create(&request.tags, &mut *transaction).await {
-        tracing::error!(?error, "Failed to insert tags");
-
-        return Err(Error::builder()
-            .status(StatusCode::BAD_REQUEST)
-            .message("Invalid tags".to_string())
-            .build());
-    }
-
-    if let Err(error) = database::post::add_tags(id, &request.tags, &mut *transaction).await {
-        tracing::error!(?error, "Failed to add tags to post");
-
-        return Err(Error::builder()
-            .status(StatusCode::BAD_REQUEST)
-            .message("Invalid tags".to_string())
-            .build());
-    }
-
-    if let Err(error) = transaction.commit().await {
-        tracing::error!(?error, "Failed to commit transaction");
-
-        return Err(Error::builder()
-            .status(StatusCode::BAD_REQUEST)
-            .message("Failed to create post".to_string())
-            .build());
-    }
+    transaction.commit().await?;
 
     Ok(slug)
 }

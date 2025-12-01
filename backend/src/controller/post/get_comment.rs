@@ -14,12 +14,12 @@ use uuid::Uuid;
 
 use crate::{
     database::{self, account::MinimalAccount},
-    error::{Error, Result},
+    error::{ApiError, ApiResult, OptionExt, ResultExt},
     state::ApiState,
     util::{self, Paginated, Pagination, Sort, SortDirection},
 };
 
-#[derive(Deserialize)]
+#[derive(Debug, Deserialize)]
 pub struct Request {
     #[serde(flatten)]
     pub sort: Sort<database::comment::SortableColumn>,
@@ -50,26 +50,15 @@ pub struct Comment {
 }
 
 impl Comment {
-    pub async fn from_raw(raw: database::comment::Comment, database: &PgPool) -> Result<Comment> {
-        let account = match database::account::get(raw.account_id, database).await {
-            Ok(Some(author)) => author,
-            Ok(None) => {
-                tracing::error!("Comment's author is banned");
-
-                return Err(Error::builder()
-                    .status(StatusCode::BAD_REQUEST)
-                    .message("Comment's author is banned".to_string())
-                    .build());
-            }
-            Err(error) => {
-                tracing::error!(?error, "Failed to get user");
-
-                return Err(Error::builder()
-                    .status(StatusCode::BAD_REQUEST)
-                    .message("Comment's author is banned".to_string())
-                    .build());
-            }
-        };
+    pub async fn from_raw(
+        raw: database::comment::Comment,
+        database: &PgPool,
+    ) -> ApiResult<Comment> {
+        let opt_account = database::account::get(raw.account_id, database)
+            .await
+            .with_context(StatusCode::BAD_REQUEST, "Comment's author is banned")?;
+        let account =
+            opt_account.with_context(StatusCode::BAD_REQUEST, "Comment's author is banned")?;
 
         Ok(Comment {
             id: raw.id,
@@ -97,18 +86,19 @@ impl Comment {
     ),
     responses(
         (status = 200, description = "List comments for a post (paginated)", body = Paginated<Comment>),
-        (status = 400, description = "Bad request / no comments found", body = Error),
-        (status = 500, description = "Internal server error", body = Error)
+        (status = 400, description = "Bad request / no comments found", body = ApiError),
+        (status = 500, description = "Internal server error", body = ApiError)
     )
 )]
+#[tracing::instrument(err(Debug), skip(state))]
 pub async fn get_comment(
     State(state): State<Arc<ApiState>>,
     Path(id): Path<Uuid>,
     Query(request): Query<Request>,
-) -> Result<Json<Paginated<Comment>>> {
+) -> ApiResult<Json<Paginated<Comment>>> {
     let limit = request.limit as usize + 1;
 
-    let raws = match database::comment::get_by_post(
+    let raws = database::comment::get_by_post(
         id,
         request.sort,
         Pagination {
@@ -118,17 +108,7 @@ pub async fn get_comment(
         &state.database,
     )
     .await
-    {
-        Ok(raw) => raw,
-        Err(error) => {
-            tracing::error!(?error, "Failed to get comments");
-
-            return Err(Error::builder()
-                .status(StatusCode::BAD_REQUEST)
-                .message("no comment found".to_string())
-                .build());
-        }
-    };
+    .with_context(StatusCode::BAD_REQUEST, "No comment found")?;
     let has_next = raws.len() == limit;
 
     let mut comments = Vec::with_capacity(raws.len());

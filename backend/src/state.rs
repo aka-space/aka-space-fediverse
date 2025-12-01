@@ -4,6 +4,7 @@ use sqlx::PgPool;
 
 use crate::{
     config::{CONFIG, Provider},
+    error::ApiResult,
     service::{
         auth::{JwtService, OAuth2Service, TokenService},
         redis::RedisService,
@@ -18,18 +19,11 @@ pub struct ApiState {
 }
 
 impl ApiState {
-    pub async fn new() -> Arc<Self> {
-        let database = PgPool::connect(&CONFIG.database_url).await.unwrap();
-        sqlx::migrate!().run(&database).await.unwrap();
+    pub async fn new() -> ApiResult<Arc<Self>> {
+        let database = PgPool::connect(&CONFIG.database_url).await?;
+        sqlx::migrate!().run(&database).await?;
 
-        let redis_client = redis::Client::open(CONFIG.redis_url.as_str()).unwrap();
-        let redis_connection = redis_client
-            .get_multiplexed_async_connection()
-            .await
-            .unwrap();
-        let redis_service = RedisService {
-            connection: redis_connection,
-        };
+        let redis_service = RedisService::new(&CONFIG.redis_url).await?;
 
         let token_service = TokenService {
             access: JwtService::new(&CONFIG.jwt.secret, CONFIG.jwt.expired_in),
@@ -39,15 +33,15 @@ impl ApiState {
 
         let mut oauth2_services = HashMap::new();
         for (provider, config) in CONFIG.oauth2.clone() {
-            let service = OAuth2Service::new(config).await;
+            let service = OAuth2Service::new(config).await?;
             oauth2_services.insert(provider, service);
         }
 
-        Arc::new(Self {
+        Ok(Arc::new(Self {
             database,
             redis_service,
             token_service,
             oauth2_services,
-        })
+        }))
     }
 }

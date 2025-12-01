@@ -7,7 +7,7 @@ use utoipa::{
 };
 use utoipa_swagger_ui::SwaggerUi;
 
-use crate::{config::Provider, database, error::Error, util::SortDirection};
+use crate::{config::Provider, database, error::ApiError, util::SortDirection};
 
 use super::{controller, state::ApiState};
 
@@ -59,7 +59,7 @@ impl Modify for SecurityAddon {
         SortDirection,
         database::post::SortableColumn,
         database::comment::SortableColumn,
-        Error,
+        ApiError,
     )),
     modifiers(&SecurityAddon),
 )]

@@ -11,7 +11,8 @@ use openidconnect::{
 
 use crate::{
     config::OAuth2Config,
-    error::{Error, Result},
+    ensure,
+    error::{ApiResult, OptionExt},
 };
 
 type InnerClient = CoreClient<
@@ -30,16 +31,14 @@ pub struct OAuth2Service {
 }
 
 impl OAuth2Service {
-    pub async fn new(config: OAuth2Config) -> Self {
+    #[tracing::instrument(err(Debug))]
+    pub async fn new(config: OAuth2Config) -> ApiResult<Self> {
         let http_client = reqwest::ClientBuilder::new()
             .redirect(reqwest::redirect::Policy::none())
-            .build()
-            .unwrap();
+            .build()?;
 
         let provider_metadata =
-            CoreProviderMetadata::discover_async(config.issuer_url, &http_client)
-                .await
-                .unwrap();
+            CoreProviderMetadata::discover_async(config.issuer_url, &http_client).await?;
 
         let inner_client = CoreClient::from_provider_metadata(
             provider_metadata,
@@ -54,11 +53,11 @@ impl OAuth2Service {
             .map(|raw| Scope::new(raw.to_string()))
             .collect();
 
-        Self {
+        Ok(Self {
             inner_client,
             http_client,
             scopes,
-        }
+        })
     }
 
     pub fn start(&self) -> (Url, CsrfToken, Nonce) {
@@ -72,61 +71,35 @@ impl OAuth2Service {
             .url()
     }
 
+    #[tracing::instrument(err(Debug), skip(self))]
     pub async fn exchange(
         &self,
         code: AuthorizationCode,
         state: CsrfToken,
         csrf: CsrfToken,
         nonce: Nonce,
-    ) -> Result<CoreIdTokenClaims> {
-        if state.secret() != csrf.secret() {
-            return Err(Error::builder()
-                .status(StatusCode::FORBIDDEN)
-                .message("CSRF token not matched".into())
-                .build());
-        }
+    ) -> ApiResult<CoreIdTokenClaims> {
+        ensure!(
+            state.secret() == csrf.secret(),
+            StatusCode::FORBIDDEN,
+            "CSRF token not matched"
+        );
 
-        let token_exchange_request = match self.inner_client.exchange_code(code) {
-            Ok(request) => request,
-            Err(error) => {
-                tracing::error!(?error, "Failed to create token exchange request");
+        let token_exchange_request = self.inner_client.exchange_code(code)?;
 
-                return Err(Error::internal());
-            }
-        };
-
-        let token_response = match token_exchange_request
+        let token_response = token_exchange_request
             .request_async(&self.http_client)
-            .await
-        {
-            Ok(response) => response,
-            Err(error) => {
-                tracing::error!(?error, "Failed to exchange token");
-
-                return Err(Error::internal());
-            }
-        };
+            .await?;
 
         let id_token_verifier: CoreIdTokenVerifier = self
             .inner_client
             .id_token_verifier()
             .require_issuer_match(false);
-        let id_token = match token_response.extra_fields().id_token() {
-            Some(id_token) => id_token,
-            None => {
-                tracing::error!("Token exchange return empty token");
-
-                return Err(Error::internal());
-            }
-        };
-        let claims = match id_token.claims(&id_token_verifier, &nonce) {
-            Ok(claims) => claims,
-            Err(error) => {
-                tracing::error!(?error, "Failed to decode claims");
-
-                return Err(Error::internal());
-            }
-        };
+        let id_token = token_response.extra_fields().id_token().with_context(
+            StatusCode::INTERNAL_SERVER_ERROR,
+            "Token exchange return empty token",
+        )?;
+        let claims = id_token.claims(&id_token_verifier, &nonce)?;
 
         Ok(claims.clone())
     }

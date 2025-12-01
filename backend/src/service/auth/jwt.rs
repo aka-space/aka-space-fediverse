@@ -3,7 +3,7 @@ use chrono::Local;
 use jsonwebtoken::{DecodingKey, EncodingKey, Header, Validation};
 use uuid::Uuid;
 
-use crate::error::{Error, Result};
+use crate::error::{ApiResult, ResultExt};
 use crate::service::auth::Claims;
 
 #[derive(Debug)]
@@ -22,7 +22,8 @@ impl JwtService {
         }
     }
 
-    pub fn encode(&self, id: Uuid) -> Result<String> {
+    #[tracing::instrument(err(Debug), skip(self))]
+    pub fn encode(&self, id: Uuid) -> ApiResult<String> {
         let now = Local::now().timestamp() as u64;
 
         let claims = Claims {
@@ -30,32 +31,16 @@ impl JwtService {
             exp: now + self.expired_in,
         };
 
-        let token = match jsonwebtoken::encode(&Header::default(), &claims, &self.encoding_key) {
-            Ok(token) => token,
-            Err(error) => {
-                tracing::error!(?error, "Failed to generate token");
-
-                return Err(Error::internal());
-            }
-        };
+        let token = jsonwebtoken::encode(&Header::default(), &claims, &self.encoding_key)?;
 
         Ok(token)
     }
 
-    pub fn decode(&self, token: &str) -> Result<Uuid> {
+    #[tracing::instrument(err(Debug), skip(self))]
+    pub fn decode(&self, token: &str) -> ApiResult<Uuid> {
         let token =
-            match jsonwebtoken::decode::<Claims>(token, &self.decoding_key, &Validation::default())
-            {
-                Ok(token) => token,
-                Err(error) => {
-                    tracing::error!(token, ?error, "Failed to decode token");
-
-                    return Err(Error::builder()
-                        .status(StatusCode::UNAUTHORIZED)
-                        .message("Invalid token".to_string())
-                        .build());
-                }
-            };
+            jsonwebtoken::decode::<Claims>(token, &self.decoding_key, &Validation::default())
+                .with_context(StatusCode::UNAUTHORIZED, "Invalid token")?;
 
         Ok(token.claims.sub)
     }
