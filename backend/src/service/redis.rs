@@ -9,6 +9,27 @@ pub struct RedisService {
 }
 
 impl RedisService {
+    pub async fn new(redis_url: &str) -> Result<Self> {
+        let client = match redis::Client::open(redis_url) {
+            Ok(client) => client,
+            Err(error) => {
+                tracing::error!(?error, "Failed to init redis client");
+
+                return Err(Error::internal());
+            }
+        };
+        let connection = match client.get_multiplexed_async_connection().await {
+            Ok(connection) => connection,
+            Err(error) => {
+                tracing::error!(?error, "Failed to init redis connection");
+
+                return Err(Error::internal());
+            }
+        };
+
+        Ok(Self { connection })
+    }
+
     pub async fn set<T: Serialize>(&self, prefix: &str, value: &T) -> Result<String> {
         let mut connection = self.connection.clone();
 
