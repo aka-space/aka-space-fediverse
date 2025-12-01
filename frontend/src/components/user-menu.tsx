@@ -9,18 +9,14 @@ import {
 import { UserIcon, LogOut } from 'lucide-react';
 import { Avatar, AvatarFallback, AvatarImage } from '@radix-ui/react-avatar';
 import { useAuthStore } from '@/store/useAuthStore';
-import { toast } from 'sonner';
+import { useLogout } from '@/hooks/auth/use-logout';
 
 export function UserMenu() {
     const { authUser } = useAuthStore();
+    const { mutate: logout } = useLogout();
 
-    const handleLogout = async () => {
-        const success = await useAuthStore.getState().logout();
-        if (success) {
-            toast.success('Logout successfully');
-        } else {
-            toast.error('Logout failed');
-        }
+    const handleLogout = () => {
+        logout();
     };
 
     return (

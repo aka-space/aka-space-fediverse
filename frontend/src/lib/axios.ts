@@ -9,7 +9,7 @@ axiosInstance.interceptors.response.use(
     (response) => response,
     async (error) => {
         const originalRequest = error.config;
-        const { refreshAccessToken, logout } = useAuthStore.getState();
+        const { refreshAccessToken } = useAuthStore.getState();
 
         if (
             error.response?.status === 401 &&
@@ -24,7 +24,7 @@ axiosInstance.interceptors.response.use(
                 originalRequest.headers.Authorization = `Bearer ${newToken}`;
                 return axiosInstance(originalRequest);
             } else {
-                await logout();
+                console.log('Do not have new token');
             }
         }
 
