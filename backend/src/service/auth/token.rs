@@ -4,7 +4,7 @@ use axum_extra::extract::cookie::{Cookie, SameSite};
 use dashmap::DashMap;
 use uuid::Uuid;
 
-use crate::{config::REFRESH_COOKIE, error::Result, service::auth::JwtService};
+use crate::{config::REFRESH_COOKIE, error::ApiResult, service::auth::JwtService};
 
 const AUTH_ENDPOINT: &str = "/auth";
 
@@ -15,7 +15,8 @@ pub struct TokenService {
 }
 
 impl TokenService {
-    pub fn encode(&self, id: Uuid) -> Result<(String, Cookie<'static>)> {
+    #[tracing::instrument(err(Debug), skip(self))]
+    pub fn encode(&self, id: Uuid) -> ApiResult<(String, Cookie<'static>)> {
         let access_token = self.access.encode(id)?;
         let refresh_token = self.refresh.encode(id)?;
 

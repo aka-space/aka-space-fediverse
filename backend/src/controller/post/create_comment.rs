@@ -16,7 +16,7 @@ use validator::Validate;
 
 use crate::{
     database,
-    error::{Error, Result},
+    error::{ApiError, ApiResult, ResultExt},
     state::ApiState,
 };
 
@@ -41,29 +41,24 @@ pub struct Request {
     security(("jwt_token" = [])),
     responses(
         (status = 201, description = "Comment created; returns created comment id (UUID string)", body = String),
-        (status = 400, description = "Invalid comment content", body = Error),
-        (status = 401, description = "Unauthorized - missing/invalid token", body = Error),
-        (status = 500, description = "Internal server error", body = Error)
+        (status = 400, description = "Invalid comment content", body = ApiError),
+        (status = 401, description = "Unauthorized - missing/invalid token", body = ApiError),
+        (status = 500, description = "Internal server error", body = ApiError)
     )
 )]
+#[tracing::instrument(err(Debug), skip(state))]
 pub async fn create_comment(
     State(state): State<Arc<ApiState>>,
     TypedHeader(bearer): TypedHeader<Authorization<Bearer>>,
     Path(id): Path<Uuid>,
     Json(request): Json<Request>,
-) -> Result<Json<Uuid>> {
+) -> ApiResult<Json<Uuid>> {
     let token = bearer.token();
     let account_id = state.token_service.access.decode(token)?;
 
-    match database::comment::create(id, account_id, &request.content, &state.database).await {
-        Ok(id) => Ok(Json(id)),
-        Err(error) => {
-            tracing::error!(?error, "Failed to create comment");
+    let id = database::comment::create(id, account_id, &request.content, &state.database)
+        .await
+        .with_context(StatusCode::BAD_REQUEST, "Invalid comment content")?;
 
-            Err(Error::builder()
-                .status(StatusCode::BAD_REQUEST)
-                .message("Invalid comment content".to_string())
-                .build())
-        }
-    }
+    Ok(Json(id))
 }

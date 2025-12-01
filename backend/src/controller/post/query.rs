@@ -7,12 +7,12 @@ use serde::Deserialize;
 use crate::{
     controller::post::Post,
     database,
-    error::{Error, Result},
+    error::{ApiError, ApiResult, ResultExt},
     state::ApiState,
     util::{self, Paginated, Pagination, Sort, SortDirection},
 };
 
-#[derive(Deserialize)]
+#[derive(Debug, Deserialize)]
 pub struct Request {
     pub query: Option<String>,
 
@@ -46,17 +46,18 @@ pub struct Request {
     ),
     responses(
         (status = 200, description = "List of posts matching query", body = Paginated<Post>),
-        (status = 400, description = "Bad request / no posts found", body = Error),
-        (status = 500, description = "Internal server error", body = Error)
+        (status = 400, description = "Bad request / no posts found", body = ApiError),
+        (status = 500, description = "Internal server error", body = ApiError)
     )
 )]
+#[tracing::instrument(err(Debug), skip(state))]
 pub async fn query(
     State(state): State<Arc<ApiState>>,
     Query(request): Query<Request>,
-) -> Result<Json<Paginated<Post>>> {
+) -> ApiResult<Json<Paginated<Post>>> {
     let limit = request.limit as usize + 1;
 
-    let raws = match database::post::query(
+    let raws = database::post::query(
         request.query.as_deref(),
         request.tags.as_slice(),
         request.author_name.as_deref(),
@@ -68,17 +69,8 @@ pub async fn query(
         &state.database,
     )
     .await
-    {
-        Ok(raw) => raw,
-        Err(error) => {
-            tracing::error!(?error, "Failed to get posts");
+    .with_context(StatusCode::BAD_REQUEST, "No post found")?;
 
-            return Err(Error::builder()
-                .status(StatusCode::BAD_REQUEST)
-                .message("no post found".to_string())
-                .build());
-        }
-    };
     let has_next = raws.len() == limit;
 
     let mut posts = Vec::with_capacity(raws.len());

@@ -16,7 +16,7 @@ use validator::Validate;
 
 use crate::{
     database,
-    error::{Error, Result},
+    error::{ApiError, ApiResult, ResultExt},
     state::ApiState,
 };
 
@@ -41,30 +41,24 @@ pub struct Request {
     security(("jwt_token" = [])),
     responses(
         (status = 204, description = "Post updated successfully. No content returned."),
-        (status = 400, description = "Invalid post id or content", body = Error),
-        (status = 401, description = "Unauthorized - missing/invalid token", body = Error),
-        (status = 500, description = "Internal server error", body = Error)
+        (status = 400, description = "Invalid post id or content", body = ApiError),
+        (status = 401, description = "Unauthorized - missing/invalid token", body = ApiError),
+        (status = 500, description = "Internal server error", body = ApiError)
     )
 )]
+#[tracing::instrument(err(Debug), skip(state))]
 pub async fn update(
     State(state): State<Arc<ApiState>>,
     TypedHeader(bearer): TypedHeader<Authorization<Bearer>>,
     Path(id): Path<Uuid>,
     Json(request): Json<Request>,
-) -> Result<StatusCode> {
+) -> ApiResult<StatusCode> {
     let token = bearer.token();
     let author_id = state.token_service.access.decode(token)?;
 
-    if let Err(error) =
-        database::post::update(id, author_id, &request.content, &state.database).await
-    {
-        tracing::error!(?error, ?id, "Failed to update post");
-
-        return Err(Error::builder()
-            .status(StatusCode::BAD_REQUEST)
-            .message("Invalid post id or content".to_string())
-            .build());
-    }
+    database::post::update(id, author_id, &request.content, &state.database)
+        .await
+        .with_context(StatusCode::BAD_REQUEST, "Invalid post id or content")?;
 
     Ok(StatusCode::NO_CONTENT)
 }

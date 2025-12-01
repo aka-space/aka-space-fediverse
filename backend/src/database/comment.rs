@@ -35,7 +35,7 @@ pub async fn create(
     .await
 }
 
-#[derive(Default, Deserialize, ToSchema)]
+#[derive(Debug, Default, Deserialize, ToSchema)]
 #[serde(rename_all = "snake_case")]
 #[schema(as = comment::SortableColumn)]
 pub enum SortableColumn {

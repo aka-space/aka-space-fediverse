@@ -7,12 +7,12 @@ use utoipa::ToSchema;
 use validator::Validate;
 
 use crate::{
-    database,
-    error::{Error, Result},
+    database, ensure,
+    error::{ApiError, ApiResult, OptionExt, ResultExt},
     state::ApiState,
 };
 
-#[derive(Deserialize, ToSchema, Validate)]
+#[derive(Debug, Deserialize, ToSchema, Validate)]
 #[schema(example = json!({
     "email": "user@example.com",
     "password": "12345678"
@@ -43,58 +43,34 @@ pub struct Request {
         (
             status = 400,
             description = "Invalid login credential",
-            body = Error
+            body = ApiError
         ),
         (
             status = 500,
             description = "Internal server error",
-            body = Error
+            body = ApiError
         )
     )
 )]
+#[tracing::instrument(err(Debug), skip(state, jar))]
 pub async fn login(
     state: State<Arc<ApiState>>,
     jar: CookieJar,
     Json(request): Json<Request>,
-) -> Result<(CookieJar, String)> {
+) -> ApiResult<(CookieJar, String)> {
     request.validate()?;
 
-    let account = match database::account::get_by_email(&request.email, &state.database).await {
-        Ok(Some(account)) => account,
-        Ok(None) => {
-            tracing::warn!(email = request.email, "No account with given email",);
+    let opt_account = database::account::get_by_email(&request.email, &state.database)
+        .await
+        .with_context(StatusCode::BAD_REQUEST, "Invalid login credential")?;
+    let account = opt_account.with_context(StatusCode::BAD_REQUEST, "Invalid login credential")?;
 
-            return Err(Error::builder()
-                .status(StatusCode::BAD_REQUEST)
-                .message("Invalid login credential".into())
-                .build());
-        }
-        Err(error) => {
-            tracing::warn!(?error, "Failed to fetch account");
-
-            return Err(Error::builder()
-                .status(StatusCode::BAD_REQUEST)
-                .message("Invalid login credential".into())
-                .build());
-        }
-    };
-
-    match bcrypt::verify(&request.password, &account.password) {
-        Ok(true) => {}
-        Ok(false) => {
-            tracing::warn!("Login failed");
-
-            return Err(Error::builder()
-                .status(StatusCode::BAD_REQUEST)
-                .message("Invalid login credential".into())
-                .build());
-        }
-        Err(error) => {
-            tracing::error!(?error, "Failed to verify password");
-
-            return Err(Error::internal());
-        }
-    }
+    let is_password_valid = bcrypt::verify(&request.password, &account.password)?;
+    ensure!(
+        is_password_valid,
+        StatusCode::BAD_REQUEST,
+        "Invalid login credential"
+    );
 
     let (access, refresh) = state.token_service.encode(account.id)?;
 

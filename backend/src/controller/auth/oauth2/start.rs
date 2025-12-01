@@ -11,7 +11,7 @@ use axum_extra::extract::{
 
 use crate::{
     config::{OAUTH2_TEMPORARY, Provider, REDIS_SESSION_PREFIX},
-    error::{Error, Result},
+    error::{ApiError, ApiResult},
     state::ApiState,
 };
 
@@ -33,20 +33,21 @@ use crate::{
         (
             status = 400,
             description = "Bad request (invalid provider or parameters)",
-            body = Error
+            body = ApiError
         ),
         (
             status = 500,
             description = "Internal server error",
-            body = Error
+            body = ApiError
         )
     )
 )]
+#[tracing::instrument(err(Debug), skip(state, jar))]
 pub async fn start(
     State(state): State<Arc<ApiState>>,
     Path(provider): Path<Provider>,
     jar: CookieJar,
-) -> Result<(CookieJar, Redirect)> {
+) -> ApiResult<(CookieJar, Redirect)> {
     let (auth_url, csrf, nonce) = state.oauth2_services[&provider].start();
 
     let redis_key = state

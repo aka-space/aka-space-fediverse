@@ -8,7 +8,7 @@ use axum::{
 
 use crate::{
     database::{self, account::MinimalAccount},
-    error::{Error, Result},
+    error::{ApiError, ApiResult, OptionExt},
     state::ApiState,
 };
 
@@ -21,24 +21,18 @@ use crate::{
     ),
     responses(
         (status = 200, description = "Account with given username", body = MinimalAccount),
-        (status = 400, description = "Account not found", body = Error),
-        (status = 500, description = "Internal server error", body = Error)
+        (status = 400, description = "Account not found", body = ApiError),
+        (status = 500, description = "Internal server error", body = ApiError)
     )
 )]
+#[tracing::instrument(err(Debug), skip(state))]
 pub async fn get_by_username(
     State(state): State<Arc<ApiState>>,
     Path(username): Path<String>,
-) -> Result<Json<MinimalAccount>> {
-    match database::account::get_by_username(&username, &state.database).await {
-        Ok(Some(account)) => Ok(Json(account)),
-        Ok(None) => Err(Error::builder()
-            .status(StatusCode::BAD_REQUEST)
-            .message("No account with given email".to_string())
-            .build()),
-        Err(error) => {
-            tracing::error!(?error, username, "Failed to get account with given email");
+) -> ApiResult<Json<MinimalAccount>> {
+    let opt_account = database::account::get_by_username(&username, &state.database).await?;
+    let account =
+        opt_account.with_context(StatusCode::BAD_REQUEST, "No account with given email")?;
 
-            Err(Error::internal())
-        }
-    }
+    Ok(Json(account))
 }

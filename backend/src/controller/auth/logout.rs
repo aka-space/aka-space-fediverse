@@ -5,7 +5,7 @@ use axum_extra::extract::CookieJar;
 
 use crate::{
     config::REFRESH_COOKIE,
-    error::{Error, Result},
+    error::{ApiError, ApiResult, OptionExt},
     state::ApiState,
 };
 
@@ -23,26 +23,23 @@ use crate::{
         (
             status = 400,
             description = "Not logged in or invalid request",
-            body = Error
+            body = ApiError
         ),
         (
             status = 500,
             description = "Internal server error",
-            body = Error
+            body = ApiError
         )
     )
 )]
-pub async fn logout(State(state): State<Arc<ApiState>>, jar: CookieJar) -> Result<CookieJar> {
+#[tracing::instrument(err(Debug), skip(state, jar))]
+pub async fn logout(State(state): State<Arc<ApiState>>, jar: CookieJar) -> ApiResult<CookieJar> {
     let token_service = &state.token_service;
 
-    let Some(mut cookie) = jar.get(REFRESH_COOKIE).cloned() else {
-        tracing::warn!("Trying to logout before login");
-
-        return Err(Error::builder()
-            .status(StatusCode::BAD_REQUEST)
-            .message("Login first before logout".into())
-            .build());
-    };
+    let mut cookie = jar
+        .get(REFRESH_COOKIE)
+        .cloned()
+        .with_context(StatusCode::BAD_REQUEST, "Login first before logout")?;
     cookie.make_removal();
 
     let token = cookie.value();

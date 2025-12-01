@@ -9,11 +9,11 @@ use validator::Validate;
 use crate::{
     config::CONFIG,
     database,
-    error::{Error, Result},
+    error::{ApiError, ApiResult, ResultExt},
     state::ApiState,
 };
 
-#[derive(Deserialize, ToSchema, Validate)]
+#[derive(Debug, Deserialize, ToSchema, Validate)]
 #[schema(example = json!({
     "email": "user@example.com",
     "username": "user",
@@ -48,53 +48,34 @@ pub struct Request {
         (
             status = 400,
             description = "Invalid registration data",
-            body = Error
+            body = ApiError
         ),
         (
             status = 500,
             description = "Internal server error",
-            body = Error
+            body = ApiError
         )
     )
 )]
+#[tracing::instrument(err(Debug), skip(state, jar))]
 pub async fn register(
     state: State<Arc<ApiState>>,
     jar: CookieJar,
     Json(request): Json<Request>,
-) -> Result<(StatusCode, CookieJar, String)> {
+) -> ApiResult<(StatusCode, CookieJar, String)> {
     request.validate()?;
 
     let hashed_password =
-        match bcrypt::hash_with_salt(&request.password, CONFIG.bcrypt.cost, CONFIG.bcrypt.salt) {
-            Ok(hashed_password) => hashed_password.to_string(),
-            Err(error) => {
-                tracing::error!(?error, "Failed to hash password");
-
-                return Err(Error::builder()
-                    .status(StatusCode::BAD_REQUEST)
-                    .message("Invalid password".into())
-                    .build());
-            }
-        };
-
-    let id = match database::account::create(
+        bcrypt::hash_with_salt(&request.password, CONFIG.bcrypt.cost, CONFIG.bcrypt.salt)
+            .with_context(StatusCode::BAD_REQUEST, "Invalid password")?;
+    let id = database::account::create(
         &request.email,
         &request.username,
-        Some(&hashed_password),
+        Some(&hashed_password.to_string()),
         &state.database,
     )
     .await
-    {
-        Ok(id) => id,
-        Err(error) => {
-            tracing::error!(?error, "Failed to create account");
-
-            return Err(Error::builder()
-                .status(StatusCode::BAD_REQUEST)
-                .message("Invalid register data".into())
-                .build());
-        }
-    };
+    .with_context(StatusCode::BAD_REQUEST, "Invalid register data")?;
 
     let (access, refresh) = state.token_service.encode(id)?;
 

@@ -1,42 +1,153 @@
 use axum::{Json, http::StatusCode, response::IntoResponse};
-use bon::Builder;
 use serde::Serialize;
-use serde_json::Value;
 use utoipa::ToSchema;
 
-pub type Result<T> = std::result::Result<T, Error>;
+pub type ApiResult<T> = std::result::Result<T, ApiError>;
 
-#[derive(Debug, thiserror::Error, Builder, Serialize, ToSchema)]
-#[error("{:#?}", self)]
-pub struct Error {
+#[derive(Debug, Serialize, ToSchema)]
+pub struct Context {
     #[serde(skip)]
     pub status: StatusCode,
 
-    pub message: Option<String>,
+    pub message: String,
 
-    #[schema(value_type = Object)]
-    pub detail: Option<Value>,
+    pub detail: Option<String>,
 }
 
-impl IntoResponse for Error {
+impl Default for Context {
+    fn default() -> Self {
+        Self {
+            status: StatusCode::INTERNAL_SERVER_ERROR,
+            message: "Something went wrong".to_string(),
+            detail: None,
+        }
+    }
+}
+
+#[derive(Debug, Serialize, ToSchema, Default)]
+pub struct ApiError {
+    #[serde(flatten)]
+    pub context: Context,
+
+    #[serde(skip)]
+    pub inner: Option<color_eyre::eyre::Error>,
+}
+
+impl IntoResponse for ApiError {
     fn into_response(self) -> axum::response::Response {
-        (self.status, Json(self)).into_response()
+        (self.context.status, Json(self.context)).into_response()
     }
 }
 
-impl Error {
-    pub fn internal() -> Error {
-        Error::builder()
-            .status(StatusCode::INTERNAL_SERVER_ERROR)
-            .build()
+impl<E> From<E> for ApiError
+where
+    E: Into<color_eyre::eyre::Error>,
+{
+    fn from(error: E) -> Self {
+        ApiError {
+            context: Default::default(),
+            inner: Some(error.into()),
+        }
     }
 }
 
-impl From<validator::ValidationErrors> for Error {
-    fn from(error: validator::ValidationErrors) -> Self {
-        Error::builder()
-            .status(StatusCode::BAD_REQUEST)
-            .detail(serde_json::to_value(error.0).unwrap())
-            .build()
+pub trait ResultExt<T>
+where
+    Self: Sized,
+{
+    fn with_context(self, status: StatusCode, message: &str) -> ApiResult<T> {
+        self.with_full_context(status, message, &None)
     }
+
+    fn with_full_context(
+        self,
+        status: StatusCode,
+        message: &str,
+        detail: &Option<String>,
+    ) -> ApiResult<T>;
+}
+
+impl<T, E> ResultExt<T> for Result<T, E>
+where
+    E: Into<color_eyre::eyre::Error>,
+{
+    fn with_full_context(
+        self,
+        status: StatusCode,
+        message: &str,
+        detail: &Option<String>,
+    ) -> ApiResult<T> {
+        self.map_err(|error| ApiError {
+            context: Context {
+                status,
+                message: message.to_string(),
+                detail: detail.clone(),
+            },
+            inner: Some(error.into()),
+        })
+    }
+}
+
+pub trait OptionExt<T>
+where
+    Self: Sized,
+{
+    fn with_context(self, status: StatusCode, message: &str) -> ApiResult<T> {
+        self.with_full_context(status, message, &None)
+    }
+
+    fn with_full_context(
+        self,
+        status: StatusCode,
+        message: &str,
+        detail: &Option<String>,
+    ) -> ApiResult<T>;
+}
+
+impl<T> OptionExt<T> for Option<T> {
+    fn with_full_context(
+        self,
+        status: StatusCode,
+        message: &str,
+        detail: &Option<String>,
+    ) -> ApiResult<T> {
+        self.ok_or_else(|| ApiError {
+            context: Context {
+                status,
+                message: message.to_string(),
+                detail: detail.clone(),
+            },
+            inner: None,
+        })
+    }
+}
+
+#[macro_export]
+macro_rules! bail {
+    ($status:expr, $fmt:expr $(, $args:expr)* $(,)?) => {
+        return Err($crate::error::ApiError {
+            context: $crate::error::Context {
+                status: $status,
+                message: format!($fmt $(, $args)*),
+                detail: None,
+            },
+            inner: Some(color_eyre::eyre::anyhow!(format!($fmt $(, $args)*))),
+        });
+    };
+}
+
+#[macro_export]
+macro_rules! ensure {
+    ($cond:expr, $status:expr, $fmt:expr $(, $args:expr)* $(,)?) => {
+        if !$cond {
+            return Err($crate::error::ApiError {
+                context: $crate::error::Context {
+                    status: $status,
+                    message: format!($fmt $(, $args)*),
+                    detail: None,
+                },
+                inner: Some(color_eyre::eyre::anyhow!(format!($fmt $(, $args)*))),
+            });
+        }
+    };
 }
