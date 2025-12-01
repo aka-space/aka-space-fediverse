@@ -102,7 +102,7 @@ export default function Home() {
     };
 
     const showNoPost =
-        !loading && (hasLoadedOnce && allPosts.length === 0 && currentPage === 0);
+        !loading && hasLoadedOnce && allPosts.length === 0 && currentPage === 0;
 
     return (
         <div className="w-full flex justify-center mb-6 px-4">

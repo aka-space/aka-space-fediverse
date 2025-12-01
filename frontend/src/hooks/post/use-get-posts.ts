@@ -8,7 +8,7 @@ export const useGetPosts = (
     search = '',
     limit = 10,
     offset = 0,
-    column: 'view' | 'created_at' = 'created_at'
+    column: 'view' | 'created_at' = 'created_at',
 ) => {
     const token = useAuthStore((s) => s.accessToken);
 
@@ -16,7 +16,7 @@ export const useGetPosts = (
         queryKey: ['posts', search, limit, offset, column, token],
         queryFn: async () => {
             try {
-                const direction = "descending";
+                const direction = 'descending';
                 const response = await axiosInstance.get('/post', {
                     params: {
                         limit,
