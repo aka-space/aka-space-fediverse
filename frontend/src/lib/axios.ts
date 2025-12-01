@@ -21,7 +21,7 @@ axiosInstance.interceptors.response.use(
             const newToken = await refreshAccessToken();
 
             if (newToken) {
-                originalRequest.headers['Authorization'] = `Bearer ${newToken}`;
+                originalRequest.headers.Authorization = `Bearer ${newToken}`;
                 return axiosInstance(originalRequest);
             } else {
                 await logout();

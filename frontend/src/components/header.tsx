@@ -6,14 +6,14 @@ import React, { useEffect, useRef, useState } from 'react';
 import { Input } from './ui/input';
 import { UserMenu } from './user-menu';
 import { Button } from './ui/button';
-import { useGetUser } from '@/hooks/use-get-user';
+import { useAuthStore } from '@/store/useAuthStore';
 
 const STORAGE_KEY = 'search-history';
 
 export default function Header() {
     const router = useRouter();
     const pathname = usePathname();
-    const { data: user } = useGetUser();
+    const { authUser } = useAuthStore();
 
     const hideSearch = pathname === '/login' || pathname === '/register';
     const [active, setActive] = useState<string>('');
@@ -64,6 +64,7 @@ export default function Header() {
     };
 
     useEffect(() => {
+        useAuthStore.getInitialState().initAuth();
         const handleClickOutside = (e: MouseEvent) => {
             if (
                 wrapperRef.current &&
@@ -171,7 +172,7 @@ export default function Header() {
                 </div>
             )}
             {/* Menu */}
-            {!user ? (
+            {!authUser ? (
                 <ul className="flex items-center gap-5">
                     <Button
                         variant={active === 'register' ? 'dark' : 'light'}
