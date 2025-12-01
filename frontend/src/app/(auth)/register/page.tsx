@@ -1,7 +1,7 @@
 'use client';
 
 import { RegisterForm } from '@/components/register-form';
-import { useRegister } from '@/hooks/use-register';
+import { useRegister } from '@/hooks/auth/use-register';
 import { RegisterFormData } from '@/schemas/auth';
 import { useRouter } from 'next/navigation';
 import { toast } from 'sonner';
