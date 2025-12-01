@@ -19,7 +19,7 @@ export const usePostsStore = create<PostsState>((set) => ({
     allPosts: [],
     currentPage: 0,
     hasMore: true,
-    filter: 'new' as const,
+    filter: 'new',
 
     setPosts: (posts: Post[]) => set({ allPosts: posts }),
 
@@ -41,6 +41,5 @@ export const usePostsStore = create<PostsState>((set) => ({
     reset: () =>
         set({
             currentPage: 0,
-            filter: 'new',
         }),
 }));

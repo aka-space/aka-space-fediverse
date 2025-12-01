@@ -1,5 +1,4 @@
 import { axiosInstance } from '@/lib/axios';
-import { useAuthStore } from '@/store/useAuthStore';
 import { Post } from '@/types';
 import { useQuery } from '@tanstack/react-query';
 import { toast } from 'sonner';
@@ -8,12 +7,11 @@ export const useGetPosts = (
     search = '',
     limit = 10,
     offset = 0,
-    column: 'view' | 'created_at' = 'created_at',
+    column: 'view' | 'created_at',
+    filter: 'new' | 'hot'
 ) => {
-    const token = useAuthStore((s) => s.accessToken);
-
     return useQuery<{ data: Post[]; hasMore: boolean }, Error>({
-        queryKey: ['posts', search, limit, offset, column, token],
+        queryKey: ['posts', search, limit, offset, column, filter],
         queryFn: async () => {
             try {
                 const direction = 'descending';
@@ -23,11 +21,8 @@ export const useGetPosts = (
                         offset,
                         column,
                         direction,
-                        ...(search && { search }),
-                    },
-                    headers: {
-                        Authorization: `Bearer ${token}`,
-                    },
+                        ...(search && { query: search }),
+                    }
                 });
 
                 if (response.status === 200) {
@@ -44,7 +39,6 @@ export const useGetPosts = (
                 throw new Error('Error fetching posts');
             }
         },
-        enabled: !!token,
         staleTime: 0,
         gcTime: 5 * 60 * 1000,
         placeholderData: { data: [], hasMore: false },
