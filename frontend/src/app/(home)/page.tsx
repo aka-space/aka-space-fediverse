@@ -6,8 +6,7 @@ import { Spinner } from '@/components/ui/spinner';
 import { useGetPosts } from '@/hooks/post/use-get-posts';
 import { Post } from '@/types';
 import { NoPost } from '@/components/no-post';
-import { useEffect, useMemo, useRef } from 'react';
-import { formatTime } from '@/lib/format';
+import { useEffect, useRef, useState } from 'react';
 import { useSearchParams } from 'next/navigation';
 import { Button } from '@/components/ui/button';
 import { useQueryClient } from '@tanstack/react-query';
@@ -34,14 +33,24 @@ export default function Home() {
     const search = searchParams.get('search') ?? '';
 
     const offset = currentPage * limit;
+    const column = filter === 'hot' ? 'view' : 'created_at';
+
     const { data: posts, isPending: loading } = useGetPosts(
         search,
         limit,
         offset,
+        column,
     );
 
     const observerTarget = useRef<HTMLDivElement>(null);
     const loadingRef = useRef(false);
+    const [hasLoadedOnce, setHasLoadedOnce] = useState(false);
+
+    useEffect(() => {
+        reset();
+        loadingRef.current = false;
+        setHasLoadedOnce(false);
+    }, [search, filter, reset]);
 
     useEffect(() => {
         if (posts?.data) {
@@ -52,12 +61,9 @@ export default function Home() {
             }
             setHasMore(posts.hasMore);
             loadingRef.current = false;
+            setHasLoadedOnce(true);
         }
     }, [posts, currentPage, setPosts, appendPosts, setHasMore]);
-
-    useEffect(() => {
-        reset();
-    }, [search, reset]);
 
     useEffect(() => {
         const observer = new IntersectionObserver(
@@ -88,28 +94,15 @@ export default function Home() {
         };
     }, [hasMore, loading, allPosts.length, currentPage, setPage]);
 
-    const sortedPosts = useMemo(() => {
-        if (allPosts.length === 0) return [];
-
-        const postsCopy = [...allPosts];
-
-        if (filter === 'new') {
-            return postsCopy.sort(
-                (a: Post, b: Post) =>
-                    formatTime(a.updated_at) - formatTime(b.updated_at),
-            );
-        } else if (filter === 'hot') {
-            return postsCopy.sort((a: Post, b: Post) => b.view - a.view);
-        }
-
-        return postsCopy;
-    }, [allPosts, filter]);
-
     const handleRefresh = async () => {
         await queryClient.invalidateQueries({ queryKey: ['posts'] });
         reset();
         loadingRef.current = false;
+        setHasLoadedOnce(false);
     };
+
+    const showNoPost =
+        !loading && (hasLoadedOnce && allPosts.length === 0 && currentPage === 0);
 
     return (
         <div className="w-full flex justify-center mb-6 px-4">
@@ -140,15 +133,13 @@ export default function Home() {
                         </div>
                     )}
 
-                    {!loading &&
-                        sortedPosts.length === 0 &&
-                        currentPage === 0 && <NoPost />}
-
-                    {sortedPosts.map((post: Post) => (
+                    {allPosts.map((post: Post) => (
                         <PostCard key={post.id} post={post} />
                     ))}
 
-                    {hasMore && sortedPosts.length > 0 && (
+                    {showNoPost && <NoPost />}
+
+                    {hasMore && allPosts.length > 0 && (
                         <div
                             ref={observerTarget}
                             className="flex justify-center py-4"
@@ -157,7 +148,7 @@ export default function Home() {
                         </div>
                     )}
 
-                    {!hasMore && sortedPosts.length > 0 && (
+                    {!hasMore && allPosts.length > 0 && (
                         <div className="text-center py-4 text-gray-500 dark:text-gray-400 text-sm">
                             You have reached the end
                         </div>
