@@ -60,6 +60,8 @@ services:
       OTEL_EXPORTER_OTLP_TRACES_PROTOCOL: "grpc"
       OTEL_SERVICE_NAME: "aka-backend"
       OTEL_TRACES_SAMPLER: "always_on"
+
+      NO_COLOR: "1"
     image: ${REGISTRY}/backend:latest
     restart: always
     depends_on:

@@ -32,7 +32,13 @@ async fn build() -> ApiResult<Router> {
 
 #[tokio::main]
 async fn main() -> ApiResult<()> {
-    color_eyre::install()?;
+    if std::env::var("NO_COLOR") == Err(std::env::VarError::NotPresent) {
+        color_eyre::install()?;
+    } else {
+        color_eyre::config::HookBuilder::new()
+            .theme(color_eyre::config::Theme::new())
+            .install()?;
+    }
 
     trace::init()?;
 
