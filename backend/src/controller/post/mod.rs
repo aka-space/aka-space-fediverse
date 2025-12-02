@@ -4,6 +4,7 @@ mod get_by_slug;
 mod get_comment;
 mod query;
 mod update;
+mod view;
 
 use std::{collections::HashMap, sync::Arc};
 
@@ -26,6 +27,7 @@ pub use get_by_slug::*;
 pub use get_comment::*;
 pub use query::*;
 pub use update::*;
+pub use view::*;
 
 pub fn build() -> Router<Arc<ApiState>> {
     Router::new()
@@ -34,6 +36,7 @@ pub fn build() -> Router<Arc<ApiState>> {
         // this is actually /post/{slug} but it conflict with /post/{id}
         .route("/post/{id}", routing::get(get_by_slug))
         .route("/post/{id}", routing::put(update))
+        .route("/post/{id}/view", routing::post(view))
         .route("/post/{id}/comment", routing::post(create_comment))
         .route("/post/{id}/comment", routing::get(get_comment))
 }
