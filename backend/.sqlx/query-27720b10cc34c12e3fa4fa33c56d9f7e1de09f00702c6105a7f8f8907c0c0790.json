@@ -1,0 +1,16 @@
+{
+  "db_name": "PostgreSQL",
+  "query": "\n            UPDATE comments\n            SET content = $3,\n                updated_at = now()\n            WHERE id = $1 AND account_id = $2\n        ",
+  "describe": {
+    "columns": [],
+    "parameters": {
+      "Left": [
+        "Uuid",
+        "Uuid",
+        "Text"
+      ]
+    },
+    "nullable": []
+  },
+  "hash": "27720b10cc34c12e3fa4fa33c56d9f7e1de09f00702c6105a7f8f8907c0c0790"
+}
