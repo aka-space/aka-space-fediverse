@@ -21,9 +21,9 @@ use crate::{
 #[utoipa::path(
     get,
     tag = "Comment",
-    path = "/post/{post_id}/comment",
+    path = "/post/{id}/comment",
     params(
-        ("post_id" = Uuid, Path, description = "Post id (UUID)", example = json!("3fa85f64-5717-4562-b3fc-2c963f66afa6")),
+        ("id" = Uuid, Path, description = "Post id (UUID)", example = json!("3fa85f64-5717-4562-b3fc-2c963f66afa6")),
     ),
     params(
         ("cursor" = Option<String>, Query, description = "Cursor for pagination (opaque base64 string)"),
