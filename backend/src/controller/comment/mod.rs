@@ -1,6 +1,8 @@
 mod create;
 mod get_by_post;
+mod get_child;
 mod react;
+mod reply;
 mod update;
 
 use std::{collections::HashMap, sync::Arc};
@@ -20,7 +22,9 @@ use crate::{
 
 pub use create::*;
 pub use get_by_post::*;
+pub use get_child::*;
 pub use react::*;
+pub use reply::*;
 pub use update::*;
 
 pub fn build() -> Router<Arc<ApiState>> {
@@ -28,6 +32,8 @@ pub fn build() -> Router<Arc<ApiState>> {
         .route("/post/{id}/comment", routing::post(create))
         .route("/post/{id}/comment", routing::get(get_by_post))
         .route("/comment/{id}", routing::put(update))
+        .route("/comment/{id}/child", routing::get(get_child))
+        .route("/comment/{id}/reply", routing::post(reply))
         .route("/comment/{id}/react", routing::post(react::react))
 }
 
@@ -41,6 +47,9 @@ pub fn build() -> Router<Arc<ApiState>> {
 }))]
 pub struct Comment {
     pub id: Uuid,
+
+    pub parent_id: Option<Uuid>,
+    pub children_count: usize,
 
     pub account: MinimalAccount,
     pub content: String,
@@ -67,6 +76,8 @@ impl Comment {
 
         Ok(Comment {
             id: raw.id,
+            parent_id: raw.parent_id,
+            children_count: raw.children_count as usize,
             account: MinimalAccount {
                 email: account.email,
                 username: account.username,

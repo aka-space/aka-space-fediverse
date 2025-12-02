@@ -1,19 +1,15 @@
 use std::collections::HashMap;
 
 use chrono::{DateTime, Utc};
-use serde::Deserialize;
 use sqlx::PgExecutor;
-use sqlx_conditional_queries::conditional_query_as;
-use utoipa::ToSchema;
 use uuid::Uuid;
 
-use crate::{
-    database::reaction::Reaction,
-    util::{Pagination, Sort, SortDirection},
-};
+use crate::database::reaction::Reaction;
 
 pub struct Comment {
     pub id: Uuid,
+    pub parent_id: Option<Uuid>,
+    pub children_count: i64,
     pub account_id: Uuid,
     pub content: String,
     pub created_at: DateTime<Utc>,
@@ -28,11 +24,33 @@ pub async fn create(
 ) -> sqlx::Result<Uuid> {
     sqlx::query_scalar!(
         r#"
-            INSERT INTO post_comments(post_id, account_id, content)
+            INSERT INTO comments(post_id, account_id, content)
             VALUES($1, $2, $3)
             RETURNING id
         "#,
         post_id,
+        account_id,
+        content,
+    )
+    .fetch_one(executor)
+    .await
+}
+
+pub async fn reply(
+    parent_id: Uuid,
+    account_id: Uuid,
+    content: &str,
+    executor: impl PgExecutor<'_>,
+) -> sqlx::Result<Uuid> {
+    sqlx::query_scalar!(
+        r#"
+            INSERT INTO comments(post_id, parent_id, account_id, content)
+            SELECT c.post_id, $1, $2, $3
+            FROM comments c
+            WHERE id = $1
+            RETURNING id
+        "#,
+        parent_id,
         account_id,
         content,
     )
@@ -62,42 +80,61 @@ pub async fn react(
     Ok(())
 }
 
-#[derive(Debug, Default, Deserialize, ToSchema)]
-#[serde(rename_all = "snake_case")]
-#[schema(as = comment::SortableColumn)]
-pub enum SortableColumn {
-    #[default]
-    CreatedAt,
-    UpdatedAt,
-}
-
 pub async fn get_by_post(
     post_id: Uuid,
-    sort: Sort<SortableColumn>,
-    pagination: Pagination,
+    limit: i64,
+    last_created_at: Option<DateTime<Utc>>,
+    last_id: Option<Uuid>,
     executor: impl PgExecutor<'_>,
 ) -> sqlx::Result<Vec<Comment>> {
-    let limit = pagination.limit as i64;
-    let offset = pagination.offset as i64;
-
-    conditional_query_as!(
+    sqlx::query_as!(
         Comment,
         r#"
-            SELECT id, account_id, content, created_at, updated_at
-            FROM post_comments
-            WHERE post_id = {post_id}
-            ORDER BY {#column} {#direction}
-            LIMIT {limit}
-            OFFSET {offset}
+            SELECT
+                id,
+                parent_id,
+                (SELECT COUNT(id) FROM comments WHERE parent_id = c.id) as "children_count!",
+                account_id,
+                content,
+                created_at,
+                updated_at
+            FROM comments c
+            WHERE 
+                post_id = $1 AND
+                parent_id IS NULL AND
+                ($2::timestamptz IS NULL OR (created_at, id) < ($2, $3))
+            ORDER BY created_at DESC, id DESC
+            LIMIT $4
         "#,
-        #column = match sort.column {
-            SortableColumn::CreatedAt => "created_at",
-            SortableColumn::UpdatedAt => "updated_at",
-        },
-        #direction = match sort.direction {
-            SortDirection::Ascending => "ASC",
-            SortDirection::Descending => "DESC",
-        },
+        post_id,
+        last_created_at,
+        last_id,
+        limit
+    )
+    .fetch_all(executor)
+    .await
+}
+
+pub async fn get_child(
+    parent_id: Uuid,
+    executor: impl PgExecutor<'_>,
+) -> sqlx::Result<Vec<Comment>> {
+    sqlx::query_as_unchecked!(
+        Comment,
+        r#"
+            SELECT
+                id,
+                parent_id,
+                (SELECT COUNT(id) FROM comments WHERE parent_id = c.id) as children_count,
+                account_id,
+                content,
+                created_at,
+                updated_at
+            FROM comments c
+            WHERE parent_id = $1
+            ORDER BY created_at DESC, id DESC
+        "#,
+        parent_id
     )
     .fetch_all(executor)
     .await
@@ -133,7 +170,7 @@ pub async fn update(
 ) -> sqlx::Result<()> {
     sqlx::query!(
         r#"
-            UPDATE post_comments
+            UPDATE comments
             SET content = $3,
                 updated_at = now()
             WHERE id = $1 AND account_id = $2

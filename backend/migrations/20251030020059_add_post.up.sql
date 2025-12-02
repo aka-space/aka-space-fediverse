@@ -40,7 +40,7 @@ CREATE TABLE IF NOT EXISTS post_reactions(
     PRIMARY KEY (post_id, account_id)
 );
 
-CREATE TABLE IF NOT EXISTS post_comments(
+CREATE TABLE IF NOT EXISTS comments(
     id uuid PRIMARY KEY DEFAULT uuid_generate_v4(),
 
     post_id uuid NOT NULL REFERENCES posts(id),

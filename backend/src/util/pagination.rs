@@ -10,7 +10,7 @@ pub const fn default_offset() -> u64 {
 }
 
 #[derive(Debug, Clone, Copy, Deserialize)]
-pub struct Pagination {
+pub struct SimplePagination {
     #[serde(default = "default_limit")]
     pub limit: u64,
 
@@ -18,8 +18,23 @@ pub struct Pagination {
     pub offset: u64,
 }
 
+#[derive(Debug, Deserialize)]
+pub struct CursorPagination {
+    #[serde(default = "default_limit")]
+    pub limit: u64,
+
+    #[serde(default)]
+    pub cursor: Option<String>,
+}
+
 #[derive(Debug, Serialize, ToSchema)]
 pub struct Paginated<T> {
     pub has_next: bool,
+    pub data: Vec<T>,
+}
+
+#[derive(Debug, Serialize, ToSchema)]
+pub struct CursorPaginated<T> {
+    pub next_cursor: Option<String>,
     pub data: Vec<T>,
 }

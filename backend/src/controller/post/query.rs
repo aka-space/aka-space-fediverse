@@ -9,7 +9,7 @@ use crate::{
     database,
     error::{ApiError, ApiResult, ResultExt},
     state::ApiState,
-    util::{self, Paginated, Pagination, Sort, SortDirection},
+    util::{self, Paginated, SimplePagination, Sort, SortDirection},
 };
 
 #[derive(Debug, Deserialize)]
@@ -62,7 +62,7 @@ pub async fn query(
         request.tags.as_slice(),
         request.author_name.as_deref(),
         request.sort,
-        Pagination {
+        SimplePagination {
             limit: limit as u64,
             offset: request.offset,
         },

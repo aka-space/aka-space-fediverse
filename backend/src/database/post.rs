@@ -9,7 +9,7 @@ use uuid::Uuid;
 
 use crate::{
     database::reaction::Reaction,
-    util::{Pagination, Sort, SortDirection},
+    util::{SimplePagination, Sort, SortDirection},
 };
 
 #[derive(Debug)]
@@ -110,7 +110,7 @@ pub async fn query(
     tags: &[String],
     author_name: Option<&str>,
     sort: Sort<SortableColumn>,
-    pagination: Pagination,
+    pagination: SimplePagination,
     executor: impl PgExecutor<'_>,
 ) -> sqlx::Result<Vec<Post>> {
     let limit = pagination.limit as i64;

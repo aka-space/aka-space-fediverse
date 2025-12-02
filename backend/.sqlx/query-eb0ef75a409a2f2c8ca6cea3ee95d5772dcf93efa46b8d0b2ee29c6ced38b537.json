@@ -1,0 +1,24 @@
+{
+  "db_name": "PostgreSQL",
+  "query": "\n            INSERT INTO comments(post_id, parent_id, account_id, content)\n            SELECT c.post_id, $1, $2, $3\n            FROM comments c\n            WHERE id = $1\n            RETURNING id\n        ",
+  "describe": {
+    "columns": [
+      {
+        "ordinal": 0,
+        "name": "id",
+        "type_info": "Uuid"
+      }
+    ],
+    "parameters": {
+      "Left": [
+        "Uuid",
+        "Uuid",
+        "Text"
+      ]
+    },
+    "nullable": [
+      false
+    ]
+  },
+  "hash": "eb0ef75a409a2f2c8ca6cea3ee95d5772dcf93efa46b8d0b2ee29c6ced38b537"
+}
