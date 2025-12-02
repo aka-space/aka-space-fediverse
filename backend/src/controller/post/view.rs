@@ -27,6 +27,7 @@ use crate::{
     params(
         ("id" = Uuid, Path, description = "Post ID"),
     ),
+    security(("jwt_token" = [])),
     responses(
         (status = 204, description = "View count increased successfully"),
         (status = 400, description = "Invalid post id", body = ApiError),
