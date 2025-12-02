@@ -32,7 +32,7 @@ pub struct Request {
 
 #[utoipa::path(
     post,
-    tags = ["Post", "Comment"],
+    tag = "Comment",
     path = "/post/{id}/comment",
     request_body = Request,
     params(
@@ -47,7 +47,7 @@ pub struct Request {
     )
 )]
 #[tracing::instrument(err(Debug), skip(state))]
-pub async fn create_comment(
+pub async fn create(
     State(state): State<Arc<ApiState>>,
     TypedHeader(bearer): TypedHeader<Authorization<Bearer>>,
     Path(id): Path<Uuid>,

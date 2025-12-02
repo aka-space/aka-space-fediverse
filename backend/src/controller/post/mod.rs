@@ -1,7 +1,5 @@
 mod create;
-mod create_comment;
 mod get_by_slug;
-mod get_comment;
 mod query;
 mod react;
 mod update;
@@ -23,9 +21,7 @@ use crate::{
 };
 
 pub use create::*;
-pub use create_comment::*;
 pub use get_by_slug::*;
-pub use get_comment::*;
 pub use query::*;
 pub use react::*;
 pub use update::*;
@@ -40,8 +36,6 @@ pub fn build() -> Router<Arc<ApiState>> {
         .route("/post/{id}", routing::put(update))
         .route("/post/{id}/view", routing::post(view))
         .route("/post/{id}/react", routing::post(react))
-        .route("/post/{id}/comment", routing::post(create_comment))
-        .route("/post/{id}/comment", routing::get(get_comment))
 }
 
 #[derive(Debug, Serialize, ToSchema)]
