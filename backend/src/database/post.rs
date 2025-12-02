@@ -157,34 +157,22 @@ pub async fn get_by_slug(slug: &str, executor: impl PgExecutor<'_>) -> sqlx::Res
 pub async fn update(
     id: Uuid,
     author_id: Uuid,
-    content: &str,
+    content: &Option<String>,
+    view: Option<i32>,
     executor: impl PgExecutor<'_>,
 ) -> sqlx::Result<()> {
     sqlx::query!(
         r#"
             UPDATE posts
-            SET content = $3,
+            SET content = COALESCE($3, content),
+                view = COALESCE($4, view),
                 updated_at = now()
             WHERE id = $1 AND author_id = $2
         "#,
         id,
         author_id,
-        content
-    )
-    .execute(executor)
-    .await?;
-
-    Ok(())
-}
-
-pub async fn increase_view(id: Uuid, executor: impl PgExecutor<'_>) -> sqlx::Result<()> {
-    sqlx::query!(
-        r#"
-            UPDATE posts
-            SET view = view + 1
-            WHERE id = $1
-        "#,
-        id
+        content.as_ref(),
+        view
     )
     .execute(executor)
     .await?;
