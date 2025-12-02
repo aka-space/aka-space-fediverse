@@ -44,8 +44,9 @@ services:
     environment:
       DATABASE_URL: postgres://${PG_USER}:${PG_PASS}@database/${PG_DB}
       FRONTEND_URL: ${FRONTEND_URL}
-      REDIS_URL: "redis://valkey"
+      REDIS__URL: "redis://valkey"
       CORS__ORIGIN: ${CORS_ORIGIN}
+      SHA256_SECRET: ${SHA256_SECRET}
       BCRYPT__COST: ${BCRYPT_COST}
       BCRYPT__SALT: ${BCRYPT_SALT}
       JWT__SECRET: ${JWT_SECRET}

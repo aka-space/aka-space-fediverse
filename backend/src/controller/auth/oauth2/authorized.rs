@@ -10,8 +10,8 @@ use openidconnect::{AuthorizationCode, CsrfToken, Nonce};
 use serde::Deserialize;
 
 use crate::{
-    config::{CONFIG, OAUTH2_TEMPORARY, Provider},
-    database,
+    config::{CONFIG, Provider},
+    constant, database,
     error::{ApiResult, OptionExt},
     state::ApiState,
 };
@@ -30,7 +30,7 @@ pub async fn authorized(
     Query(query): Query<AuthRequest>,
 ) -> ApiResult<(CookieJar, Redirect)> {
     let cookie = jar
-        .get(OAUTH2_TEMPORARY)
+        .get(constant::OAUTH2_TEMPORARY)
         .with_context(StatusCode::UNAUTHORIZED, "Invalid call to oauth2 api")?;
 
     let (csrf, nonce) = state

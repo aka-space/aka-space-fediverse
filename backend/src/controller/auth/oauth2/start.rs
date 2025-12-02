@@ -10,7 +10,8 @@ use axum_extra::extract::{
 };
 
 use crate::{
-    config::{OAUTH2_TEMPORARY, Provider, REDIS_SESSION_PREFIX},
+    config::Provider,
+    constant,
     error::{ApiError, ApiResult},
     state::ApiState,
 };
@@ -52,10 +53,10 @@ pub async fn start(
 
     let redis_key = state
         .redis_service
-        .set(REDIS_SESSION_PREFIX, &(csrf, nonce))
+        .set_ex(constant::SESSION_PREFIX, &(csrf, nonce))
         .await?;
 
-    let mut cookie = Cookie::new(OAUTH2_TEMPORARY, redis_key);
+    let mut cookie = Cookie::new(constant::OAUTH2_TEMPORARY, redis_key);
     cookie.set_http_only(true);
     cookie.set_same_site(Some(SameSite::None));
     cookie.set_secure(true);

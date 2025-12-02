@@ -23,7 +23,7 @@ impl ApiState {
         let database = PgPool::connect(&CONFIG.database_url).await?;
         sqlx::migrate!().run(&database).await?;
 
-        let redis_service = RedisService::new(&CONFIG.redis_url).await?;
+        let redis_service = RedisService::new(&CONFIG.redis.url, CONFIG.redis.cache_ttl).await?;
 
         let token_service = TokenService {
             access: JwtService::new(&CONFIG.jwt.secret, CONFIG.jwt.expired_in),

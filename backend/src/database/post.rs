@@ -169,7 +169,7 @@ pub async fn update(
         "#,
         id,
         author_id,
-        content
+        content,
     )
     .execute(executor)
     .await?;
@@ -177,14 +177,16 @@ pub async fn update(
     Ok(())
 }
 
-pub async fn increase_view(id: Uuid, executor: impl PgExecutor<'_>) -> sqlx::Result<()> {
+pub async fn update_view(id: Uuid, view: i32, executor: impl PgExecutor<'_>) -> sqlx::Result<()> {
     sqlx::query!(
         r#"
             UPDATE posts
-            SET view = view + 1
+            SET view = $2,
+                updated_at = now()
             WHERE id = $1
         "#,
-        id
+        id,
+        view
     )
     .execute(executor)
     .await?;
