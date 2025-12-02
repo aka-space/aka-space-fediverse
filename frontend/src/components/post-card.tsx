@@ -66,7 +66,14 @@ export function PostCard({ post }: PostCardProps) {
                                 </AvatarFallback>
                             </Avatar>
                             <div>
-                                <p className="font-semibold text-sm text-gray-900 hover:underline cursor-pointer">
+                                <p
+                                    className="font-semibold text-sm text-gray-900 hover:underline cursor-pointer"
+                                    onClick={() => {
+                                        route.push(
+                                            `/?author=${post.author.username}`,
+                                        );
+                                    }}
+                                >
                                     {post.author.username}
                                 </p>
                                 <p className="text-xs text-gray-500">
