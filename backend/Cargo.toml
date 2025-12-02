@@ -12,6 +12,7 @@ chrono = "0.4.42"
 color-eyre = "0.6.5"
 config = { version = "0.15.18", default-features = false }
 dashmap = "6.1.0"
+futures = "0.3.31"
 hex = "0.4.3"
 hmac = "0.12.1"
 init-tracing-opentelemetry = { version = "0.34.0", features = ["otlp", "tracing_subscriber_ext", "metrics"] }

@@ -156,7 +156,7 @@ pub async fn get_by_slug(slug: &str, executor: impl PgExecutor<'_>) -> sqlx::Res
 
 pub async fn update(
     id: Uuid,
-    author_id: Uuid,
+    author_id: Option<Uuid>,
     content: &Option<String>,
     view: Option<i32>,
     executor: impl PgExecutor<'_>,
@@ -167,7 +167,7 @@ pub async fn update(
             SET content = COALESCE($3, content),
                 view = COALESCE($4, view),
                 updated_at = now()
-            WHERE id = $1 AND author_id = $2
+            WHERE id = $1 AND (author_id = null OR author_id = $2)
         "#,
         id,
         author_id,

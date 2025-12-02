@@ -52,6 +52,7 @@ impl RedisService {
         Ok(data)
     }
 
+    #[tracing::instrument(err(Debug), skip(self))]
     pub async fn pfadd(&self, prefix: &str, id: &str, element: &[u8]) -> ApiResult<()> {
         let mut connection = self.connection.clone();
 

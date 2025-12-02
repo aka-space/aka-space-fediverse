@@ -56,9 +56,15 @@ pub async fn update(
     let token = bearer.token();
     let author_id = state.token_service.access.decode(token)?;
 
-    database::post::update(id, author_id, &Some(request.content), None, &state.database)
-        .await
-        .with_context(StatusCode::BAD_REQUEST, "Invalid post id or content")?;
+    database::post::update(
+        id,
+        Some(author_id),
+        &Some(request.content),
+        None,
+        &state.database,
+    )
+    .await
+    .with_context(StatusCode::BAD_REQUEST, "Invalid post id or content")?;
 
     Ok(StatusCode::NO_CONTENT)
 }
