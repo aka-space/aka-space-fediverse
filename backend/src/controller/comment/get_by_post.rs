@@ -14,7 +14,7 @@ use crate::{
     database,
     error::{ApiError, ApiResult, ResultExt},
     state::ApiState,
-    util::{self, Paginated, Pagination, Sort, SortDirection},
+    util::{self, Paginated, SimplePagination, Sort, SortDirection},
 };
 
 #[derive(Debug, Deserialize)]
@@ -57,7 +57,7 @@ pub async fn get_by_post(
     let raws = database::comment::get_by_post(
         post_id,
         request.sort,
-        Pagination {
+        SimplePagination {
             limit: limit as u64,
             offset: request.offset,
         },

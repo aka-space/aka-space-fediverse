@@ -9,7 +9,7 @@ use uuid::Uuid;
 
 use crate::{
     database::reaction::Reaction,
-    util::{Pagination, Sort, SortDirection},
+    util::{SimplePagination, Sort, SortDirection},
 };
 
 pub struct Comment {
@@ -74,7 +74,7 @@ pub enum SortableColumn {
 pub async fn get_by_post(
     post_id: Uuid,
     sort: Sort<SortableColumn>,
-    pagination: Pagination,
+    pagination: SimplePagination,
     executor: impl PgExecutor<'_>,
 ) -> sqlx::Result<Vec<Comment>> {
     let limit = pagination.limit as i64;
