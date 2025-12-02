@@ -1,7 +1,8 @@
-use std::sync::Arc;
+use std::{net::SocketAddr, sync::Arc};
 
 use axum::{
-    extract::{Path, State},
+    body::Body,
+    extract::{ConnectInfo, Path, State},
     http::StatusCode,
 };
 use axum_extra::{
@@ -37,14 +38,21 @@ use crate::{
 pub async fn view(
     State(state): State<Arc<ApiState>>,
     bearer: Option<TypedHeader<Authorization<Bearer>>>,
+    ConnectInfo(peer): ConnectInfo<SocketAddr>,
     Path(id): Path<Uuid>,
+    req: axum::http::Request<Body>,
 ) -> ApiResult<StatusCode> {
     let viewer = match bearer {
         Some(TypedHeader(bearer)) => {
             let token = bearer.token();
             state.token_service.access.decode(token)?.to_string()
         }
-        None => Alphanumeric.sample_string(&mut rand::rng(), constant::RANDOM_SIZE),
+        None => req
+            .headers()
+            .get("x-forwarded-for")
+            .and_then(|hv| hv.to_str().ok())
+            .and_then(|s| s.split(',').next().map(|first| first.trim().to_string()))
+            .unwrap_or(peer.ip().to_string()),
     };
 
     let mut mac = Hmac::<Sha256>::new_from_slice(CONFIG.sha256_secret.as_bytes())?;

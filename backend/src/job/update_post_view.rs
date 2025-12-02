@@ -10,7 +10,7 @@ use uuid::Uuid;
 use crate::{constant, database, error::ApiResult, state::ApiState};
 
 const BATCH_SIZE: usize = 128;
-pub const DELAY: Duration = Duration::from_secs(60 * 60);
+pub const DELAY: Duration = Duration::from_secs(10);
 
 #[tracing::instrument(err(Debug), skip(state))]
 pub async fn run(state: Arc<ApiState>) -> ApiResult<()> {

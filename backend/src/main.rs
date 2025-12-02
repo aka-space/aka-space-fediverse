@@ -48,7 +48,13 @@ async fn main() -> ApiResult<()> {
 
     tracing::info!("Listening on port {}", CONFIG.port);
 
-    let (server, _) = tokio::join!(axum::serve(listener, app), job::run(state));
+    let (server, _) = tokio::join!(
+        axum::serve(
+            listener,
+            app.into_make_service_with_connect_info::<SocketAddr>()
+        ),
+        job::run(state)
+    );
     server?;
 
     Ok(())
