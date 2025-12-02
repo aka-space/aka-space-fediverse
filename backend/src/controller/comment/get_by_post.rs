@@ -13,18 +13,34 @@ use uuid::Uuid;
 use crate::{
     controller::comment::Comment,
     database,
-    error::{ApiResult, ResultExt},
+    error::{ApiError, ApiResult, ResultExt},
     state::ApiState,
-    util::{CursorPagination, Paginated},
+    util::{CursorPaginated, CursorPagination},
 };
 
-#[utoipa::path(get, tag = "Comment", path = "/post/{id}/comment")]
+#[utoipa::path(
+    get,
+    tag = "Comment",
+    path = "/post/{post_id}/comment",
+    params(
+        ("post_id" = Uuid, Path, description = "Post id (UUID)", example = json!("3fa85f64-5717-4562-b3fc-2c963f66afa6")),
+    ),
+    params(
+        ("cursor" = Option<String>, Query, description = "Cursor for pagination (opaque base64 string)"),
+        ("limit" = Option<u32>, Query, description = "Number of items to return"),
+    ),
+    responses(
+        (status = 200, description = "Paginated comments for the post", body = CursorPaginated<Comment>),
+        (status = 400, description = "Bad request / no comments found", body = ApiError),
+        (status = 500, description = "Internal server error", body = ApiError)
+    )
+)]
 #[tracing::instrument(err(Debug), skip(state))]
 pub async fn get_by_post(
     State(state): State<Arc<ApiState>>,
     Path(post_id): Path<Uuid>,
     Query(pagination): Query<CursorPagination>,
-) -> ApiResult<Json<Paginated<Comment>>> {
+) -> ApiResult<Json<CursorPaginated<Comment>>> {
     let limit = pagination.limit as usize + 1;
 
     let raw = pagination.cursor.and_then(|cursor| decode_cursor(&cursor));
@@ -37,15 +53,22 @@ pub async fn get_by_post(
         database::comment::get_by_post(post_id, limit as i64, last_ts, last_id, &state.database)
             .await
             .with_context(StatusCode::BAD_REQUEST, "No comment found")?;
-    let has_next = raws.len() == limit;
+    let next_cursor = if raws.len() == limit {
+        Some(encode_cursor(
+            raws[limit - 2].created_at,
+            raws[limit - 2].id,
+        ))
+    } else {
+        None
+    };
 
     let mut comments = Vec::with_capacity(raws.len());
     for raw in raws.into_iter().take(limit - 1) {
         comments.push(Comment::from_raw(raw, &state.database).await?);
     }
 
-    Ok(Json(Paginated {
-        has_next,
+    Ok(Json(CursorPaginated {
+        next_cursor,
         data: comments,
     }))
 }
