@@ -27,6 +27,7 @@ pub async fn react(
         r#"
             INSERT INTO post_reactions(post_id, account_id, kind)
             VALUES($1, $2, $3)
+            ON CONFLICT DO NOTHING
         "#,
         post_id,
         account_id,

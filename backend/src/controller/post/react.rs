@@ -12,11 +12,10 @@ use axum_extra::{
 use serde::Deserialize;
 use utoipa::ToSchema;
 use uuid::Uuid;
-use validator::Validate;
 
 use crate::{
     database::{self, reaction::Reaction},
-    error::{ApiError, ApiResult, ResultExt},
+    error::{ApiResult, ResultExt},
     state::ApiState,
 };
 
