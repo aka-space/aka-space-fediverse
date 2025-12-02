@@ -67,11 +67,11 @@ impl Post {
             .with_context(StatusCode::BAD_REQUEST, "Post's author is banned")?;
         let author = opt_author.with_context(StatusCode::BAD_REQUEST, "Post's author is banned")?;
 
-        let tags = database::tag::get_by_post(raw.id, database)
+        let tags = database::post::get_tags(raw.id, database)
             .await
             .with_context(StatusCode::BAD_REQUEST, "Post is removed")?;
 
-        let reactions = database::reaction::count_by_post(raw.id, database)
+        let reactions = database::post::count_reactions(raw.id, database)
             .await
             .with_context(StatusCode::BAD_REQUEST, "Post is removed")?;
 

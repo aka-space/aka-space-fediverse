@@ -1,3 +1,5 @@
+use std::collections::HashMap;
+
 use chrono::{DateTime, Utc};
 use serde::Deserialize;
 use sqlx::PgExecutor;
@@ -5,7 +7,10 @@ use sqlx_conditional_queries::conditional_query_as;
 use utoipa::ToSchema;
 use uuid::Uuid;
 
-use crate::util::{Pagination, Sort, SortDirection};
+use crate::{
+    database::reaction::Reaction,
+    util::{Pagination, Sort, SortDirection},
+};
 
 #[derive(Debug)]
 pub struct Post {
@@ -62,6 +67,28 @@ pub async fn add_tags(
         "#,
         id,
         tags
+    )
+    .execute(executor)
+    .await?;
+
+    Ok(())
+}
+
+pub async fn react(
+    id: Uuid,
+    account_id: Uuid,
+    kind: Reaction,
+    executor: impl PgExecutor<'_>,
+) -> sqlx::Result<()> {
+    sqlx::query!(
+        r#"
+            INSERT INTO post_reactions(post_id, account_id, kind)
+            VALUES($1, $2, $3)
+            ON CONFLICT DO NOTHING
+        "#,
+        id,
+        account_id,
+        kind as Reaction
     )
     .execute(executor)
     .await?;
@@ -152,6 +179,45 @@ pub async fn get_by_slug(slug: &str, executor: impl PgExecutor<'_>) -> sqlx::Res
     )
     .fetch_optional(executor)
     .await
+}
+
+pub async fn get_tags(id: Uuid, executor: impl PgExecutor<'_>) -> sqlx::Result<Vec<String>> {
+    sqlx::query_scalar!(
+        r#"
+            SELECT name
+            FROM tags
+            WHERE id IN (
+                SELECT tag_id
+                FROM post_tags
+                WHERE post_id = $1
+            )
+        "#,
+        id
+    )
+    .fetch_all(executor)
+    .await
+}
+
+pub async fn count_reactions(
+    id: Uuid,
+    executor: impl PgExecutor<'_>,
+) -> sqlx::Result<HashMap<Reaction, u64>> {
+    let raw = sqlx::query!(
+        r#"
+            SELECT kind as "kind: Reaction", COUNT(account_id) as count
+            FROM post_reactions
+            WHERE post_id = $1
+            GROUP BY kind
+        "#,
+        id
+    )
+    .fetch_one(executor)
+    .await;
+
+    Ok(HashMap::from_iter(
+        raw.into_iter()
+            .map(|row| (row.kind, row.count.unwrap_or(0) as u64)),
+    ))
 }
 
 pub async fn update(

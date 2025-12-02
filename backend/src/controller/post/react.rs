@@ -50,7 +50,7 @@ pub async fn react(
     let token = bearer.token();
     let author_id = state.token_service.access.decode(token)?;
 
-    database::reaction::react(id, author_id, request.kind, &state.database)
+    database::post::react(id, author_id, request.kind, &state.database)
         .await
         .with_context(StatusCode::BAD_REQUEST, "Invalid post id")?;
 
