@@ -28,7 +28,7 @@ pub async fn create(
 ) -> sqlx::Result<Uuid> {
     sqlx::query_scalar!(
         r#"
-            INSERT INTO post_comments(post_id, account_id, content)
+            INSERT INTO comments(post_id, account_id, content)
             VALUES($1, $2, $3)
             RETURNING id
         "#,
@@ -84,7 +84,7 @@ pub async fn get_by_post(
         Comment,
         r#"
             SELECT id, account_id, content, created_at, updated_at
-            FROM post_comments
+            FROM comments
             WHERE post_id = {post_id}
             ORDER BY {#column} {#direction}
             LIMIT {limit}
@@ -133,7 +133,7 @@ pub async fn update(
 ) -> sqlx::Result<()> {
     sqlx::query!(
         r#"
-            UPDATE post_comments
+            UPDATE comments
             SET content = $3,
                 updated_at = now()
             WHERE id = $1 AND account_id = $2

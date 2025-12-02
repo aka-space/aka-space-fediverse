@@ -1,5 +1,5 @@
 CREATE TABLE IF NOT EXISTS comment_reactions(
-    comment_id uuid NOT NULL REFERENCES post_comments(id),
+    comment_id uuid NOT NULL REFERENCES comments(id),
     account_id uuid NOT NULL REFERENCES accounts(id),
     kind reaction NOT NULL,
 

@@ -1,4 +1,4 @@
-DROP TABLE post_comments;
+DROP TABLE comments;
 DROP TABLE post_reactions;
 DROP TYPE reaction;
 DROP TABLE post_tags;
