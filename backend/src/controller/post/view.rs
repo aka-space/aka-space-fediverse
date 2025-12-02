@@ -8,7 +8,7 @@ use uuid::Uuid;
 
 use crate::{
     database,
-    error::{ApiResult, ResultExt},
+    error::{ApiError, ApiResult, ResultExt},
     state::ApiState,
 };
 
@@ -17,8 +17,12 @@ use crate::{
     tag = "Post",
     path = "/post/{id}/view",
     params(
-        ("id" = Uuid, description = "Post id (UUID)", example = json!("3fa85f64-5717-4562-b3fc-2c963f66afa6"))
+        ("id" = Uuid, Path, description = "Post ID"),
     ),
+    responses(
+        (status = 204, description = "View count increased successfully"),
+        (status = 400, description = "Invalid post id", body = ApiError),
+    )
 )]
 #[tracing::instrument(err(Debug), skip(state))]
 pub async fn view(
