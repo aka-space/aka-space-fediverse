@@ -1,3 +1,5 @@
+use std::collections::HashMap;
+
 use chrono::{DateTime, Utc};
 use serde::Deserialize;
 use sqlx::PgExecutor;
@@ -5,7 +7,10 @@ use sqlx_conditional_queries::conditional_query_as;
 use utoipa::ToSchema;
 use uuid::Uuid;
 
-use crate::util::{Pagination, Sort, SortDirection};
+use crate::{
+    database::reaction::Reaction,
+    util::{Pagination, Sort, SortDirection},
+};
 
 pub struct Comment {
     pub id: Uuid,
@@ -33,6 +38,28 @@ pub async fn create(
     )
     .fetch_one(executor)
     .await
+}
+
+pub async fn react(
+    id: Uuid,
+    account_id: Uuid,
+    kind: Reaction,
+    executor: impl PgExecutor<'_>,
+) -> sqlx::Result<()> {
+    sqlx::query!(
+        r#"
+            INSERT INTO comment_reactions(comment_id, account_id, kind)
+            VALUES($1, $2, $3)
+            ON CONFLICT DO NOTHING
+        "#,
+        id,
+        account_id,
+        kind as Reaction
+    )
+    .execute(executor)
+    .await?;
+
+    Ok(())
 }
 
 #[derive(Debug, Default, Deserialize, ToSchema)]
@@ -74,6 +101,28 @@ pub async fn get_by_post(
     )
     .fetch_all(executor)
     .await
+}
+
+pub async fn count_reactions(
+    id: Uuid,
+    executor: impl PgExecutor<'_>,
+) -> sqlx::Result<HashMap<Reaction, u64>> {
+    let raw = sqlx::query!(
+        r#"
+            SELECT kind as "kind: Reaction", COUNT(account_id) as count
+            FROM comment_reactions
+            WHERE comment_id = $1
+            GROUP BY kind
+        "#,
+        id
+    )
+    .fetch_one(executor)
+    .await;
+
+    Ok(HashMap::from_iter(
+        raw.into_iter()
+            .map(|row| (row.kind, row.count.unwrap_or(0) as u64)),
+    ))
 }
 
 pub async fn update(

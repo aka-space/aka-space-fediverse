@@ -1,0 +1,42 @@
+{
+  "db_name": "PostgreSQL",
+  "query": "\n            SELECT kind as \"kind: Reaction\", COUNT(account_id) as count\n            FROM comment_reactions\n            WHERE comment_id = $1\n            GROUP BY kind\n        ",
+  "describe": {
+    "columns": [
+      {
+        "ordinal": 0,
+        "name": "kind: Reaction",
+        "type_info": {
+          "Custom": {
+            "name": "reaction",
+            "kind": {
+              "Enum": [
+                "like",
+                "love",
+                "haha",
+                "wow",
+                "sad",
+                "angry"
+              ]
+            }
+          }
+        }
+      },
+      {
+        "ordinal": 1,
+        "name": "count",
+        "type_info": "Int8"
+      }
+    ],
+    "parameters": {
+      "Left": [
+        "Uuid"
+      ]
+    },
+    "nullable": [
+      false,
+      null
+    ]
+  },
+  "hash": "220be5e5ad94e4782bfe2be26d416b779caf29550a9e749e4c20d66d34fca5ad"
+}
