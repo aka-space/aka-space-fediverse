@@ -11,12 +11,10 @@ use serde::Deserialize;
 
 use crate::{
     config::{CONFIG, Provider},
-    database,
+    constant, database,
     error::{ApiResult, OptionExt},
     state::ApiState,
 };
-
-use super::OAUTH2_TEMPORARY;
 
 #[derive(Debug, Deserialize)]
 pub struct AuthRequest {
@@ -32,7 +30,7 @@ pub async fn authorized(
     Query(query): Query<AuthRequest>,
 ) -> ApiResult<(CookieJar, Redirect)> {
     let cookie = jar
-        .get(OAUTH2_TEMPORARY)
+        .get(constant::OAUTH2_TEMPORARY)
         .with_context(StatusCode::UNAUTHORIZED, "Invalid call to oauth2 api")?;
 
     let (csrf, nonce) = state

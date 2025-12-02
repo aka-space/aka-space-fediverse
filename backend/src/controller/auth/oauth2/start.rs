@@ -11,12 +11,10 @@ use axum_extra::extract::{
 
 use crate::{
     config::Provider,
-    controller::auth::oauth2::SESSION_PREFIX,
+    constant,
     error::{ApiError, ApiResult},
     state::ApiState,
 };
-
-use super::OAUTH2_TEMPORARY;
 
 #[utoipa::path(
     get,
@@ -55,10 +53,10 @@ pub async fn start(
 
     let redis_key = state
         .redis_service
-        .set_ex(SESSION_PREFIX, &(csrf, nonce))
+        .set_ex(constant::SESSION_PREFIX, &(csrf, nonce))
         .await?;
 
-    let mut cookie = Cookie::new(OAUTH2_TEMPORARY, redis_key);
+    let mut cookie = Cookie::new(constant::OAUTH2_TEMPORARY, redis_key);
     cookie.set_http_only(true);
     cookie.set_same_site(Some(SameSite::None));
     cookie.set_secure(true);
