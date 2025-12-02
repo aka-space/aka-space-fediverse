@@ -7,6 +7,7 @@ import { Input } from './ui/input';
 import { UserMenu } from './user-menu';
 import { Button } from './ui/button';
 import { useAuthStore } from '@/store/useAuthStore';
+import { useGetTags } from '@/hooks/post/use-get-tags';
 
 const STORAGE_KEY = 'search-history';
 
@@ -29,6 +30,10 @@ export default function Header() {
     const inputRef = useRef<HTMLInputElement>(null);
     const wrapperRef = useRef<HTMLDivElement>(null);
 
+    const { data: allTags = [] } = useGetTags();
+    const [showTagDropdown, setShowTagDropdown] = useState(false);
+    const [filteredTags, setFilteredTags] = useState<string[]>([]);
+
     const filteredHistory = search
         ? history.filter((item) =>
               item.toLowerCase().includes(search.toLowerCase()),
@@ -47,20 +52,59 @@ export default function Header() {
 
     const handleChange = (value: string) => {
         setSearch(value);
+
+        if (value.startsWith('tags:')) {
+            const keyword = value.replace('tags:', '').trim().toLowerCase();
+
+            setFilteredTags(
+                allTags.filter((tag: string) =>
+                    tag.toLowerCase().includes(keyword),
+                ),
+            );
+
+            setShowTagDropdown(true);
+            setShowHistory(false);
+        } else {
+            setShowTagDropdown(false);
+        }
     };
 
     const handleSearch = (value: string) => {
         setSearch(value);
         saveHistory(value);
         const params = new URLSearchParams(searchParams);
+
+        if (value.startsWith('tags:')) {
+            const raw = value.replace('tags:', '').trim();
+
+            const tagName = raw
+                .split(',')
+                .map((t) => t.trim())
+                .filter((t) => t.length > 0);
+
+            if (tagName) {
+                params.set('tags', tagName.join(','));
+            } else {
+                params.delete('tags');
+            }
+            params.delete('search');
+            router.replace(`${pathname}?${params.toString()}`);
+            inputRef.current?.focus();
+            setShowHistory(false);
+            setShowTagDropdown(false);
+            return;
+        }
+
         if (value) {
             params.set('search', value);
+            params.delete('tags');
         } else {
             params.delete('search');
         }
         router.replace(`${pathname}?${params.toString()}`);
         inputRef.current?.focus();
         setShowHistory(false);
+        setShowTagDropdown(false);
     };
 
     useEffect(() => {
@@ -166,6 +210,28 @@ export default function Header() {
                                 >
                                     Clear all history
                                 </div>
+                            </div>
+                        )}
+
+                        {showTagDropdown && (
+                            <div className="absolute top-full left-0 w-full bg-white border rounded-md mt-1 shadow-md z-50 max-h-60 overflow-auto">
+                                {filteredTags.map((tag, idx) => (
+                                    <div
+                                        key={idx}
+                                        className="px-3 py-2 hover:bg-gray-100 cursor-pointer"
+                                        onClick={() => {
+                                            handleSearch(`tags:${tag}`);
+                                        }}
+                                    >
+                                        🍏 {tag}
+                                    </div>
+                                ))}
+
+                                {filteredTags.length === 0 && (
+                                    <div className="px-3 py-2 text-gray-500">
+                                        No tags found
+                                    </div>
+                                )}
                             </div>
                         )}
                     </div>
