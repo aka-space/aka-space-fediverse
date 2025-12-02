@@ -22,7 +22,7 @@ export const useGetPosts = (
                         column,
                         direction,
                         ...(search && { query: search }),
-                    },
+                    }
                 });
 
                 if (response.status === 200) {
