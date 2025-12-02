@@ -18,7 +18,26 @@ pub struct Comment {
 
 pub async fn create(
     post_id: Uuid,
-    parent_id: Option<Uuid>,
+    account_id: Uuid,
+    content: &str,
+    executor: impl PgExecutor<'_>,
+) -> sqlx::Result<Uuid> {
+    sqlx::query_scalar!(
+        r#"
+            INSERT INTO comments(post_id, account_id, content)
+            VALUES($1, $2, $3)
+            RETURNING id
+        "#,
+        post_id,
+        account_id,
+        content,
+    )
+    .fetch_one(executor)
+    .await
+}
+
+pub async fn reply(
+    parent_id: Uuid,
     account_id: Uuid,
     content: &str,
     executor: impl PgExecutor<'_>,
@@ -26,10 +45,11 @@ pub async fn create(
     sqlx::query_scalar!(
         r#"
             INSERT INTO comments(post_id, parent_id, account_id, content)
-            VALUES($1, $2, $3, $4)
+            SELECT c.post_id, $1, $2, $3
+            FROM comments c
+            WHERE id = $1
             RETURNING id
         "#,
-        post_id,
         parent_id,
         account_id,
         content,

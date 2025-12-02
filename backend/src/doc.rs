@@ -61,7 +61,6 @@ impl Modify for SecurityAddon {
         Provider,
         SortDirection,
         database::post::SortableColumn,
-        database::comment::SortableColumn,
         ApiError,
     )),
     modifiers(&SecurityAddon),
