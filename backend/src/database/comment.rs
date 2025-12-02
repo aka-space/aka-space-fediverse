@@ -9,11 +9,12 @@ use uuid::Uuid;
 
 use crate::{
     database::reaction::Reaction,
-    util::{SimplePagination, Sort, SortDirection},
+    util::{SimplePagination, Sort, SortDirection, TreeCursorPagination},
 };
 
 pub struct Comment {
     pub id: Uuid,
+    pub parent_id: Option<Uuid>,
     pub account_id: Uuid,
     pub content: String,
     pub created_at: DateTime<Utc>,
@@ -62,42 +63,28 @@ pub async fn react(
     Ok(())
 }
 
-#[derive(Debug, Default, Deserialize, ToSchema)]
-#[serde(rename_all = "snake_case")]
-#[schema(as = comment::SortableColumn)]
-pub enum SortableColumn {
-    #[default]
-    CreatedAt,
-    UpdatedAt,
-}
-
-pub async fn get_by_post(
+pub async fn get_top_level(
     post_id: Uuid,
-    sort: Sort<SortableColumn>,
-    pagination: SimplePagination,
+    limit: i64,
+    last_created_at: Option<DateTime<Utc>>,
+    last_id: Option<Uuid>,
     executor: impl PgExecutor<'_>,
 ) -> sqlx::Result<Vec<Comment>> {
-    let limit = pagination.limit as i64;
-    let offset = pagination.offset as i64;
-
-    conditional_query_as!(
+    sqlx::query_as!(
         Comment,
         r#"
-            SELECT id, account_id, content, created_at, updated_at
+            SELECT id, parent_id, account_id, content, created_at, updated_at
             FROM comments
-            WHERE post_id = {post_id}
-            ORDER BY {#column} {#direction}
-            LIMIT {limit}
-            OFFSET {offset}
+            WHERE post_id = $1 AND
+                  parent_id IS NULL AND
+                  ($2::timestamptz IS NULL OR (created_at, id) < ($2, $3))
+            ORDER BY created_at DESC, id DESC
+            LIMIT $4
         "#,
-        #column = match sort.column {
-            SortableColumn::CreatedAt => "created_at",
-            SortableColumn::UpdatedAt => "updated_at",
-        },
-        #direction = match sort.direction {
-            SortDirection::Ascending => "ASC",
-            SortDirection::Descending => "DESC",
-        },
+        post_id,
+        last_created_at,
+        last_id,
+        limit
     )
     .fetch_all(executor)
     .await
