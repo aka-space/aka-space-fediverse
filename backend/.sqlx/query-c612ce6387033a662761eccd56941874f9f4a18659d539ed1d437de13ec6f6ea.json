@@ -1,0 +1,30 @@
+{
+  "db_name": "PostgreSQL",
+  "query": "\n            INSERT INTO comment_reactions(comment_id, account_id, kind)\n            VALUES($1, $2, $3)\n            ON CONFLICT DO NOTHING\n        ",
+  "describe": {
+    "columns": [],
+    "parameters": {
+      "Left": [
+        "Uuid",
+        "Uuid",
+        {
+          "Custom": {
+            "name": "reaction",
+            "kind": {
+              "Enum": [
+                "like",
+                "love",
+                "haha",
+                "wow",
+                "sad",
+                "angry"
+              ]
+            }
+          }
+        }
+      ]
+    },
+    "nullable": []
+  },
+  "hash": "c612ce6387033a662761eccd56941874f9f4a18659d539ed1d437de13ec6f6ea"
+}
