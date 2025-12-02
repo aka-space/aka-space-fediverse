@@ -9,7 +9,7 @@ pub const fn default_offset() -> u64 {
     0
 }
 
-pub const fn default_child_limit() -> u64 {
+pub const fn default_depth() -> u64 {
     2
 }
 
@@ -27,8 +27,8 @@ pub struct TreeCursorPagination {
     #[serde(default = "default_limit")]
     pub limit: u64,
 
-    #[serde(default = "default_child_limit")]
-    pub child_limit: u64,
+    #[serde(default = "default_depth")]
+    pub depth: u64,
 
     #[serde(default)]
     pub cursor: Option<String>,
