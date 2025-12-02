@@ -11,13 +11,23 @@ export const useAddReactionPost = () => {
     const token = useAuthStore((s) => s.accessToken);
 
     return useMutation({
-        mutationFn: async ({ data, kind }: { data: Post; kind: ReactionType }) => {
-            const response = await axiosInstance.post(`/post/${data.id}/react`, { kind }, {
-                headers: {
-                    'Content-Type': 'application/json',
-                    Authorization: `Bearer ${token}`,
+        mutationFn: async ({
+            data,
+            kind,
+        }: {
+            data: Post;
+            kind: ReactionType;
+        }) => {
+            const response = await axiosInstance.post(
+                `/post/${data.id}/react`,
+                { kind },
+                {
+                    headers: {
+                        'Content-Type': 'application/json',
+                        Authorization: `Bearer ${token}`,
+                    },
                 },
-            });
+            );
             if (response.status !== 204) {
                 throw new Error('Failed to add reaction to post');
             }

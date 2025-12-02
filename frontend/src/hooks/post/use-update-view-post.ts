@@ -11,12 +11,16 @@ export const useUpdateViewPost = () => {
 
     return useMutation({
         mutationFn: async (data: Post) => {
-            const response = await axiosInstance.post(`/post/${data.id}/view`, null, {
-                headers: {
-                    'Content-Type': 'application/json',
-                    Authorization: `Bearer ${token}`,
+            const response = await axiosInstance.post(
+                `/post/${data.id}/view`,
+                null,
+                {
+                    headers: {
+                        'Content-Type': 'application/json',
+                        Authorization: `Bearer ${token}`,
+                    },
                 },
-            });
+            );
             if (response.status !== 204) {
                 throw new Error('Failed to update view count for post');
             }

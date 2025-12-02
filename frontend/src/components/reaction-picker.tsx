@@ -68,7 +68,11 @@ export function ReactionPicker({
                 )}
             >
                 <span className="text-lg">
-                    {currentReaction ? currentReactionData?.emoji : <Heart className="h-4 w-4"/>}
+                    {currentReaction ? (
+                        currentReactionData?.emoji
+                    ) : (
+                        <Heart className="h-4 w-4" />
+                    )}
                 </span>
             </button>
 
@@ -84,7 +88,9 @@ export function ReactionPicker({
                         {REACTIONS.map((reaction) => (
                             <motion.button
                                 key={reaction.type}
-                                onClick={() => handleReactionClick(reaction.type)}
+                                onClick={() =>
+                                    handleReactionClick(reaction.type)
+                                }
                                 whileHover={{ scale: 1.3, y: -5 }}
                                 whileTap={{ scale: 0.9 }}
                                 className={cn(

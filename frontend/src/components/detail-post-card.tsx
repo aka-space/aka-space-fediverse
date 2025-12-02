@@ -32,8 +32,12 @@ export function DetailPostCard({ post }: PostCardProps) {
     const { mutate: addReaction, isPending: isReacting } = useAddReactionPost();
     const user = useAuthStore((s) => s.authUser);
 
-    const { userEmail, reactions, setUserEmail, addReaction: addReactionToStore } =
-        useReactionStore();
+    const {
+        userEmail,
+        reactions,
+        setUserEmail,
+        addReaction: addReactionToStore,
+    } = useReactionStore();
 
     useEffect(() => {
         if (user?.email && user.email !== userEmail) {
