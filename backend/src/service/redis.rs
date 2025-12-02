@@ -4,13 +4,6 @@ use uuid::Uuid;
 
 use crate::error::ApiResult;
 
-pub const DIRTY_POST_KEY: &str = "post:hll:dirty";
-
-#[inline]
-fn get_post_hll_key(post_id: Uuid) -> String {
-    format!("post:{post_id}:hll")
-}
-
 pub struct RedisService {
     pub connection: MultiplexedConnection,
     pub cache_ttl: u64,
@@ -59,26 +52,16 @@ impl RedisService {
         Ok(data)
     }
 
-    pub async fn increase_post_view(&self, post_id: Uuid, hashed_id: &str) -> ApiResult<()> {
+    pub async fn pfadd(&self, prefix: &str, id: &str, element: &[u8]) -> ApiResult<()> {
         let mut connection = self.connection.clone();
 
-        let hll_key = get_post_hll_key(post_id);
+        let hll_key = format!("{prefix}:{id}:hll");
+        let dirty_key = format!("{prefix}:dirty");
 
         let mut pipe = redis::pipe();
-        pipe.atomic()
-            .pfadd(hll_key, hashed_id)
-            .sadd(DIRTY_POST_KEY, post_id.to_string());
+        pipe.atomic().pfadd(hll_key, element).sadd(dirty_key, id);
         pipe.query_async::<()>(&mut connection).await?;
 
         Ok(())
-    }
-
-    pub async fn count_post_view(&self, post_id: Uuid) -> ApiResult<usize> {
-        let mut connection = self.connection.clone();
-
-        let hll_key = get_post_hll_key(post_id);
-        let view = connection.pfcount(hll_key).await?;
-
-        Ok(view)
     }
 }

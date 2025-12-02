@@ -22,6 +22,10 @@ fn default_frontend_url() -> String {
     "http://localhost:3000".to_string()
 }
 
+fn default_sha256_secret() -> String {
+    "secret".to_string()
+}
+
 #[derive(Debug, Deserialize)]
 pub struct Config {
     #[serde(default = "default_port")]
@@ -31,6 +35,9 @@ pub struct Config {
 
     #[serde(default = "default_frontend_url")]
     pub frontend_url: String,
+
+    #[serde(default = "default_sha256_secret")]
+    pub sha256_secret: String,
 
     #[serde(default)]
     pub bcrypt: BcryptConfig,

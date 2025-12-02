@@ -84,6 +84,7 @@ jobs:
       REDIS_URL: ${{ secrets.REDIS_URL }}
       REDIS_PASSWORD: ${{ secrets.REDIS_PASSWORD }}
       CORS_ORIGIN: ${{ secrets.CORS_ORIGIN }}
+      SHA256_SECRET: ${{ secrets.SHA256_SECRET }}
       BCRYPT_COST: ${{ secrets.BCRYPT_COST }}
       BCRYPT_SALT: ${{ secrets.BCRYPT_SALT }}
       JWT_SECRET: ${{ secrets.JWT_SECRET }}

@@ -46,6 +46,7 @@ services:
       FRONTEND_URL: ${FRONTEND_URL}
       REDIS__URL: "redis://valkey"
       CORS__ORIGIN: ${CORS_ORIGIN}
+      SHA256_SECRET: ${SHA256_SECRET}
       BCRYPT__COST: ${BCRYPT_COST}
       BCRYPT__SALT: ${BCRYPT_SALT}
       JWT__SECRET: ${JWT_SECRET}
