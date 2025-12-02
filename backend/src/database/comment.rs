@@ -5,7 +5,7 @@ use sqlx_conditional_queries::conditional_query_as;
 use utoipa::ToSchema;
 use uuid::Uuid;
 
-use crate::util::{Pagination, Sort, SortDirection};
+use crate::{database::reaction::Reaction, util::{Pagination, Sort, SortDirection}};
 
 pub struct Comment {
     pub id: Uuid,
@@ -33,6 +33,28 @@ pub async fn create(
     )
     .fetch_one(executor)
     .await
+}
+
+pub async fn react(
+    id: Uuid,
+    account_id: Uuid,
+    kind: Reaction,
+    executor: impl PgExecutor<'_>,
+) -> sqlx::Result<()> {
+    sqlx::query!(
+        r#"
+            INSERT INTO comment_reactions(comment_id, account_id, kind)
+            VALUES($1, $2, $3)
+            ON CONFLICT DO NOTHING
+        "#,
+        id,
+        account_id,
+        kind as Reaction
+    )
+    .execute(executor)
+    .await?;
+
+    Ok(())
 }
 
 #[derive(Debug, Default, Deserialize, ToSchema)]
