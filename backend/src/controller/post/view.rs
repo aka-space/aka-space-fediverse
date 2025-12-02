@@ -10,7 +10,6 @@ use axum_extra::{
     headers::{Authorization, authorization::Bearer},
 };
 use hmac::{Hmac, Mac};
-use rand::distr::{Alphanumeric, SampleString};
 use sha2::Sha256;
 use uuid::Uuid;
 
