@@ -17,6 +17,27 @@ pub enum Reaction {
     Angry,
 }
 
+pub async fn react(
+    post_id: Uuid,
+    account_id: Uuid,
+    kind: Reaction,
+    executor: impl PgExecutor<'_>,
+) -> sqlx::Result<()> {
+    sqlx::query!(
+        r#"
+            INSERT INTO post_reactions(post_id, account_id, kind)
+            VALUES($1, $2, $3)
+        "#,
+        post_id,
+        account_id,
+        kind as Reaction
+    )
+    .execute(executor)
+    .await?;
+
+    Ok(())
+}
+
 pub async fn count_by_post(
     post_id: Uuid,
     executor: impl PgExecutor<'_>,
