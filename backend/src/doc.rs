@@ -47,6 +47,7 @@ impl Modify for SecurityAddon {
         controller::post::get_by_slug,
         controller::post::query,
         controller::post::update,
+        controller::post::view,
         controller::post::create_comment,
         controller::post::get_comment,
 

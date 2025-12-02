@@ -176,3 +176,18 @@ pub async fn update(
 
     Ok(())
 }
+
+pub async fn increase_view(id: Uuid, executor: impl PgExecutor<'_>) -> sqlx::Result<()> {
+    sqlx::query!(
+        r#"
+            UPDATE posts
+            SET view = view + 1
+            WHERE id = $1
+        "#,
+        id
+    )
+    .execute(executor)
+    .await?;
+
+    Ok(())
+}

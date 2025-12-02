@@ -6,7 +6,7 @@ mod error;
 mod middleware;
 mod service;
 mod state;
-pub mod trace;
+mod trace;
 mod util;
 
 use std::net::SocketAddr;
