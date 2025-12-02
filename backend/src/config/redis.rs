@@ -16,3 +16,12 @@ pub struct RedisConfig {
     #[serde(default = "default_cache_ttl")]
     pub cache_ttl: u64,
 }
+
+impl Default for RedisConfig {
+    fn default() -> Self {
+        Self {
+            url: default_url(),
+            cache_ttl: default_cache_ttl(),
+        }
+    }
+}

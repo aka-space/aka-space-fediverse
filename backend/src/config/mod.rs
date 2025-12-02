@@ -50,6 +50,7 @@ pub struct Config {
 
     pub oauth2: HashMap<Provider, OAuth2Config>,
 
+    #[serde(default)]
     pub redis: RedisConfig,
 }
 
