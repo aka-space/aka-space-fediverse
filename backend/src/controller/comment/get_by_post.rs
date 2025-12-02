@@ -6,65 +6,37 @@ use axum::{
     http::StatusCode,
 };
 use axum_extra::extract::Query;
-use serde::Deserialize;
+use base64::{Engine, engine::general_purpose};
+use chrono::{DateTime, Utc};
 use uuid::Uuid;
 
 use crate::{
     controller::comment::Comment,
     database,
-    error::{ApiError, ApiResult, ResultExt},
+    error::{ApiResult, ResultExt},
     state::ApiState,
-    util::{self, Paginated, SimplePagination, Sort, SortDirection},
+    util::{CursorPagination, Paginated},
 };
 
-#[derive(Debug, Deserialize)]
-pub struct Request {
-    #[serde(flatten)]
-    pub sort: Sort<database::comment::SortableColumn>,
-
-    #[serde(default = "util::default_limit")]
-    pub limit: u64,
-
-    #[serde(default = "util::default_offset")]
-    pub offset: u64,
-}
-
-#[utoipa::path(
-    get,
-    tag = "Comment",
-    path = "/post/{id}/comment",
-    params(
-        ("id" = Uuid, Path, description = "Post id"),
-        ("column" = Option<database::comment::SortableColumn>, Query, description = "Sort column"),
-        ("direction" = Option<SortDirection>, Query, description = "Sort direction (asc|desc)"),
-        ("limit" = Option<u64>, Query, description = "number of items requested (server may return limit+1 to indicate next)"),
-        ("offset" = Option<u64>, Query, description = "offset (0-indexed)"),
-    ),
-    responses(
-        (status = 200, description = "List comments for a post (paginated)", body = Paginated<Comment>),
-        (status = 400, description = "Bad request / no comments found", body = ApiError),
-        (status = 500, description = "Internal server error", body = ApiError)
-    )
-)]
+#[utoipa::path(get, tag = "Comment", path = "/post/{id}/comment")]
 #[tracing::instrument(err(Debug), skip(state))]
 pub async fn get_by_post(
     State(state): State<Arc<ApiState>>,
     Path(post_id): Path<Uuid>,
-    Query(request): Query<Request>,
+    Query(pagination): Query<CursorPagination>,
 ) -> ApiResult<Json<Paginated<Comment>>> {
-    let limit = request.limit as usize + 1;
+    let limit = pagination.limit as usize + 1;
 
-    let raws = database::comment::get_by_post(
-        post_id,
-        request.sort,
-        SimplePagination {
-            limit: limit as u64,
-            offset: request.offset,
-        },
-        &state.database,
-    )
-    .await
-    .with_context(StatusCode::BAD_REQUEST, "No comment found")?;
+    let raw = pagination.cursor.and_then(|cursor| decode_cursor(&cursor));
+    let (last_ts, last_id) = match raw {
+        Some((ts, id)) => (Some(ts), Some(id)),
+        None => (None, None),
+    };
+
+    let raws =
+        database::comment::get_by_post(post_id, limit as i64, last_ts, last_id, &state.database)
+            .await
+            .with_context(StatusCode::BAD_REQUEST, "No comment found")?;
     let has_next = raws.len() == limit;
 
     let mut comments = Vec::with_capacity(raws.len());
@@ -76,4 +48,17 @@ pub async fn get_by_post(
         has_next,
         data: comments,
     }))
+}
+
+fn encode_cursor(ts: DateTime<Utc>, id: Uuid) -> String {
+    general_purpose::STANDARD.encode(format!("{}|{}", ts, id))
+}
+
+fn decode_cursor(cursor: &str) -> Option<(DateTime<Utc>, Uuid)> {
+    let bytes = general_purpose::STANDARD.decode(cursor).ok()?;
+    let s = String::from_utf8(bytes).ok()?;
+    let (ts, id) = s.split_once('|')?;
+    let ts = ts.parse::<DateTime<Utc>>().ok()?;
+    let id = id.parse::<Uuid>().ok()?;
+    Some((ts, id))
 }

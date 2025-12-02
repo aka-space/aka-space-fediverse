@@ -42,6 +42,9 @@ pub fn build() -> Router<Arc<ApiState>> {
 pub struct Comment {
     pub id: Uuid,
 
+    pub parent_id: Option<Uuid>,
+    pub children_count: usize,
+
     pub account: MinimalAccount,
     pub content: String,
     pub reactions: HashMap<Reaction, u64>,
@@ -67,6 +70,8 @@ impl Comment {
 
         Ok(Comment {
             id: raw.id,
+            parent_id: raw.parent_id,
+            children_count: raw.children_count as usize,
             account: MinimalAccount {
                 email: account.email,
                 username: account.username,

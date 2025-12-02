@@ -56,7 +56,7 @@ pub async fn create(
     let token = bearer.token();
     let account_id = state.token_service.access.decode(token)?;
 
-    let id = database::comment::create(id, account_id, &request.content, &state.database)
+    let id = database::comment::create(id, None, account_id, &request.content, &state.database)
         .await
         .with_context(StatusCode::BAD_REQUEST, "Invalid comment content")?;
 

@@ -9,7 +9,7 @@ use crate::database::reaction::Reaction;
 pub struct Comment {
     pub id: Uuid,
     pub parent_id: Option<Uuid>,
-    pub child_count: i64,
+    pub children_count: i64,
     pub account_id: Uuid,
     pub content: String,
     pub created_at: DateTime<Utc>,
@@ -18,17 +18,19 @@ pub struct Comment {
 
 pub async fn create(
     post_id: Uuid,
+    parent_id: Option<Uuid>,
     account_id: Uuid,
     content: &str,
     executor: impl PgExecutor<'_>,
 ) -> sqlx::Result<Uuid> {
     sqlx::query_scalar!(
         r#"
-            INSERT INTO comments(post_id, account_id, content)
-            VALUES($1, $2, $3)
+            INSERT INTO comments(post_id, parent_id, account_id, content)
+            VALUES($1, $2, $3, $4)
             RETURNING id
         "#,
         post_id,
+        parent_id,
         account_id,
         content,
     )
@@ -71,7 +73,7 @@ pub async fn get_by_post(
             SELECT
                 id,
                 parent_id,
-                (SELECT COUNT(id) FROM comments WHERE parent_id = c.id) as "child_count!",
+                (SELECT COUNT(id) FROM comments WHERE parent_id = c.id) as "children_count!",
                 account_id,
                 content,
                 created_at,
@@ -103,7 +105,7 @@ pub async fn get_child(
             SELECT
                 id,
                 parent_id,
-                (SELECT COUNT(id) FROM comments WHERE parent_id = c.id) as child_count,
+                (SELECT COUNT(id) FROM comments WHERE parent_id = c.id) as children_count,
                 account_id,
                 content,
                 created_at,
