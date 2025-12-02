@@ -4,6 +4,18 @@ use uuid::Uuid;
 
 use crate::error::ApiResult;
 
+const DIRTY_POST_KEY: &str = "post:hll:dirty";
+
+#[inline]
+fn get_post_hll_key(post_id: Uuid) -> String {
+    format!("post:{post_id}:hll")
+}
+
+#[inline]
+fn get_post_view_key(post_id: Uuid) -> String {
+    format!("post:{post_id}:view")
+}
+
 pub struct RedisService {
     pub connection: MultiplexedConnection,
 }
@@ -44,5 +56,39 @@ impl RedisService {
         let data = serde_json::from_str(raw)?;
 
         Ok(data)
+    }
+
+    pub async fn increase_post_view(&self, post_id: Uuid, hashed_id: &str) -> ApiResult<()> {
+        let mut connection = self.connection.clone();
+
+        let hll_key = get_post_hll_key(post_id);
+
+        let mut pipe = redis::pipe();
+        pipe.atomic()
+            .pfadd(hll_key, hashed_id)
+            .sadd(DIRTY_POST_KEY, post_id.to_string());
+        pipe.query_async::<()>(&mut connection).await?;
+
+        Ok(())
+    }
+
+    pub async fn count_post_view(&self, post_id: Uuid) -> ApiResult<usize> {
+        let mut connection = self.connection.clone();
+
+        let view_key = get_post_view_key(post_id);
+
+        let cached = connection.get(&view_key).await?;
+        if let Some(view) = cached {
+            let view = view.parse()?;
+
+            return Ok(view);
+        }
+
+        let hll_key = get_post_hll_key(post_id);
+        let view = connection.pfcount(hll_key).await?;
+
+        connection.set(&view_key, view).await?;
+
+        Ok(view)
     }
 }

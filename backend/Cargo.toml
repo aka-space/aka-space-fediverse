@@ -12,6 +12,7 @@ chrono = "0.4.42"
 color-eyre = "0.6.5"
 config = { version = "0.15.18", default-features = false }
 dashmap = "6.1.0"
+hex = "0.4.3"
 init-tracing-opentelemetry = { version = "0.34.0", features = ["otlp", "tracing_subscriber_ext", "metrics"] }
 jsonwebtoken = { version = "10.1.0", features = ["rust_crypto"] }
 openidconnect = "4.0.1"
