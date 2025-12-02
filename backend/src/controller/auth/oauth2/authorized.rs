@@ -10,11 +10,13 @@ use openidconnect::{AuthorizationCode, CsrfToken, Nonce};
 use serde::Deserialize;
 
 use crate::{
-    config::{CONFIG, OAUTH2_TEMPORARY, Provider},
+    config::{CONFIG, Provider},
     database,
     error::{ApiResult, OptionExt},
     state::ApiState,
 };
+
+use super::OAUTH2_TEMPORARY;
 
 #[derive(Debug, Deserialize)]
 pub struct AuthRequest {
