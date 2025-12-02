@@ -54,6 +54,8 @@ impl Modify for SecurityAddon {
         controller::comment::get_by_post,
         controller::comment::update,
         controller::comment::react,
+        controller::comment::reply,
+        controller::comment::get_child,
 
         controller::tag::get_all,
     ),

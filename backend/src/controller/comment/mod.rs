@@ -1,5 +1,6 @@
 mod create;
 mod get_by_post;
+mod get_child;
 mod react;
 mod reply;
 mod update;
@@ -21,6 +22,7 @@ use crate::{
 
 pub use create::*;
 pub use get_by_post::*;
+pub use get_child::*;
 pub use react::*;
 pub use reply::*;
 pub use update::*;
@@ -30,6 +32,7 @@ pub fn build() -> Router<Arc<ApiState>> {
         .route("/post/{id}/comment", routing::post(create))
         .route("/post/{id}/comment", routing::get(get_by_post))
         .route("/comment/{id}", routing::put(update))
+        .route("/comment/{id}/child", routing::get(get_child))
         .route("/comment/{id}/reply", routing::post(reply))
         .route("/comment/{id}/react", routing::post(react::react))
 }
