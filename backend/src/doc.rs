@@ -48,6 +48,7 @@ impl Modify for SecurityAddon {
         controller::post::query,
         controller::post::update,
         controller::post::view,
+        controller::post::react,
         controller::post::create_comment,
         controller::post::get_comment,
 
