@@ -23,7 +23,11 @@ pub async fn run(state: Arc<ApiState>) -> ApiResult<()> {
         .arg(BATCH_SIZE)
         .query_async(&mut connection)
         .await?;
-    tracing::info!(?ids, "Update post view");
+    if ids.is_empty() {
+        return Ok(());
+    }
+
+    tracing::info!(?ids, "Receiving ids");
     let entries = stream::iter(ids.into_iter()).then(|id| async {
         let mut connection = connection.clone();
 
@@ -40,7 +44,7 @@ pub async fn run(state: Arc<ApiState>) -> ApiResult<()> {
     while let Some(entry) = entries.next().await {
         let (id, view) = entry?;
         let id = Uuid::parse_str(&id)?;
-        database::post::update(id, None, &None, Some(view), &mut *transaction).await?;
+        database::post::update_view(id, view, &mut *transaction).await?;
     }
     transaction.commit().await?;
 
