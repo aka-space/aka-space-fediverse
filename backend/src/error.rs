@@ -30,6 +30,7 @@ pub struct ApiError {
     pub context: Context,
 
     #[serde(skip)]
+    #[allow(dead_code)]
     pub inner: Option<color_eyre::eyre::Error>,
 }
 
