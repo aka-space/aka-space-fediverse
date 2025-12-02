@@ -9,10 +9,6 @@ pub const fn default_offset() -> u64 {
     0
 }
 
-pub const fn default_depth() -> u64 {
-    2
-}
-
 #[derive(Debug, Clone, Copy, Deserialize)]
 pub struct SimplePagination {
     #[serde(default = "default_limit")]
@@ -23,12 +19,9 @@ pub struct SimplePagination {
 }
 
 #[derive(Debug, Deserialize)]
-pub struct TreeCursorPagination {
+pub struct CursorPagination {
     #[serde(default = "default_limit")]
     pub limit: u64,
-
-    #[serde(default = "default_depth")]
-    pub depth: u64,
 
     #[serde(default)]
     pub cursor: Option<String>,

@@ -1,20 +1,15 @@
 use std::collections::HashMap;
 
 use chrono::{DateTime, Utc};
-use serde::Deserialize;
 use sqlx::PgExecutor;
-use sqlx_conditional_queries::conditional_query_as;
-use utoipa::ToSchema;
 use uuid::Uuid;
 
-use crate::{
-    database::reaction::Reaction,
-    util::{SimplePagination, Sort, SortDirection, TreeCursorPagination},
-};
+use crate::database::reaction::Reaction;
 
 pub struct Comment {
     pub id: Uuid,
     pub parent_id: Option<Uuid>,
+    pub child_count: i64,
     pub account_id: Uuid,
     pub content: String,
     pub created_at: DateTime<Utc>,
@@ -63,7 +58,7 @@ pub async fn react(
     Ok(())
 }
 
-pub async fn get_top_level(
+pub async fn get_by_post(
     post_id: Uuid,
     limit: i64,
     last_created_at: Option<DateTime<Utc>>,
@@ -73,11 +68,19 @@ pub async fn get_top_level(
     sqlx::query_as!(
         Comment,
         r#"
-            SELECT id, parent_id, account_id, content, created_at, updated_at
-            FROM comments
-            WHERE post_id = $1 AND
-                  parent_id IS NULL AND
-                  ($2::timestamptz IS NULL OR (created_at, id) < ($2, $3))
+            SELECT
+                id,
+                parent_id,
+                (SELECT COUNT(id) FROM comments WHERE parent_id = c.id) as "child_count!",
+                account_id,
+                content,
+                created_at,
+                updated_at
+            FROM comments c
+            WHERE 
+                post_id = $1 AND
+                parent_id IS NULL AND
+                ($2::timestamptz IS NULL OR (created_at, id) < ($2, $3))
             ORDER BY created_at DESC, id DESC
             LIMIT $4
         "#,
@@ -85,6 +88,31 @@ pub async fn get_top_level(
         last_created_at,
         last_id,
         limit
+    )
+    .fetch_all(executor)
+    .await
+}
+
+pub async fn get_child(
+    parent_id: Uuid,
+    executor: impl PgExecutor<'_>,
+) -> sqlx::Result<Vec<Comment>> {
+    sqlx::query_as_unchecked!(
+        Comment,
+        r#"
+            SELECT
+                id,
+                parent_id,
+                (SELECT COUNT(id) FROM comments WHERE parent_id = c.id) as child_count,
+                account_id,
+                content,
+                created_at,
+                updated_at
+            FROM comments c
+            WHERE parent_id = $1
+            ORDER BY created_at DESC, id DESC
+        "#,
+        parent_id
     )
     .fetch_all(executor)
     .await
