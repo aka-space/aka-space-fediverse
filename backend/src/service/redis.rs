@@ -4,16 +4,11 @@ use uuid::Uuid;
 
 use crate::error::ApiResult;
 
-const DIRTY_POST_KEY: &str = "post:hll:dirty";
+pub const DIRTY_POST_KEY: &str = "post:hll:dirty";
 
 #[inline]
 fn get_post_hll_key(post_id: Uuid) -> String {
     format!("post:{post_id}:hll")
-}
-
-#[inline]
-fn get_post_view_key(post_id: Uuid) -> String {
-    format!("post:{post_id}:view")
 }
 
 pub struct RedisService {
@@ -81,19 +76,8 @@ impl RedisService {
     pub async fn count_post_view(&self, post_id: Uuid) -> ApiResult<usize> {
         let mut connection = self.connection.clone();
 
-        let view_key = get_post_view_key(post_id);
-
-        let cached = connection.get(&view_key).await?;
-        if let Some(view) = cached {
-            let view = view.parse()?;
-
-            return Ok(view);
-        }
-
         let hll_key = get_post_hll_key(post_id);
         let view = connection.pfcount(hll_key).await?;
-
-        connection.set_ex(&view_key, view, self.cache_ttl).await?;
 
         Ok(view)
     }
