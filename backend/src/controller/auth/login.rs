@@ -28,6 +28,7 @@ pub struct Request {
 
 #[utoipa::path(
     post,
+    operation_id = "auth::login",
     tag = "Auth",
     path = "/auth/login",
     request_body = Request,

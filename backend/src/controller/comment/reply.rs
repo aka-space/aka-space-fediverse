@@ -32,6 +32,7 @@ pub struct Request {
 
 #[utoipa::path(
     post,
+    operation_id = "comment::reply",
     tag = "Comment",
     path = "/comment/{id}/reply",
     params(

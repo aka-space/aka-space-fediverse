@@ -35,6 +35,7 @@ pub struct Request {
 
 #[utoipa::path(
     post,
+    operation_id = "post::create",
     tag = "Post",
     path = "/post",
     request_body = Request,

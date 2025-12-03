@@ -10,6 +10,7 @@ use crate::{
 
 #[utoipa::path(
     get,
+    operation_id = "tag::get_all",
     tag = "Tag",
     path = "/tag",
     responses(

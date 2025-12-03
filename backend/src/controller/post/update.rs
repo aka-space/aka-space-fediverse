@@ -32,6 +32,7 @@ pub struct Request {
 
 #[utoipa::path(
     put,
+    operation_id = "post::update",
     tag = "Post",
     path = "/post/{id}",
     params(
