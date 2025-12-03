@@ -3,6 +3,7 @@ mod cors;
 mod jwt;
 mod oauth2;
 mod redis;
+mod s3;
 
 use std::{collections::HashMap, sync::LazyLock};
 
@@ -13,6 +14,7 @@ pub use cors::*;
 pub use jwt::*;
 pub use oauth2::*;
 pub use redis::*;
+pub use s3::*;
 
 const fn default_port() -> u16 {
     3000
@@ -52,6 +54,8 @@ pub struct Config {
 
     #[serde(default)]
     pub redis: RedisConfig,
+
+    pub s3: S3Config,
 }
 
 pub static CONFIG: LazyLock<Config> = LazyLock::new(|| {
