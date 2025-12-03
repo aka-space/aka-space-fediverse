@@ -39,7 +39,7 @@ impl ApiState {
             oauth2_services.insert(provider, service);
         }
 
-        let s3 = S3Service::new(&CONFIG.s3.bucket_name, &CONFIG.s3.endpoint).await;
+        let s3 = S3Service::new(&CONFIG.s3.bucket_name, &CONFIG.s3.bucket_prefix).await;
 
         Ok(Arc::new(Self {
             database,

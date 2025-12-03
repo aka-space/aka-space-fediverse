@@ -9,5 +9,5 @@ pub struct S3Config {
     #[serde(default = "default_bucket_name")]
     pub bucket_name: String,
 
-    pub endpoint: String,
+    pub bucket_prefix: String,
 }

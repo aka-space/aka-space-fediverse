@@ -6,18 +6,18 @@ use crate::error::ApiResult;
 pub struct S3Service {
     pub client: Client,
     pub bucket_name: String,
-    pub endpoint: String,
+    pub bucket_prefix: String,
 }
 
 impl S3Service {
-    pub async fn new(bucket_name: &str, endpoint: &str) -> Self {
+    pub async fn new(bucket_name: &str, bucket_prefix: &str) -> Self {
         let config = aws_config::from_env().load().await;
         let client = Client::new(&config);
 
         Self {
             client,
             bucket_name: bucket_name.to_string(),
-            endpoint: endpoint.to_string(),
+            bucket_prefix: bucket_prefix.to_string(),
         }
     }
 
@@ -32,7 +32,7 @@ impl S3Service {
             .send()
             .await?;
 
-        let url = format!("{}/{}", self.endpoint, key);
+        let url = format!("{}/{}", self.bucket_prefix, key);
 
         Ok(url)
     }
