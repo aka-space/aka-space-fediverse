@@ -1,7 +1,7 @@
 use axum::http::StatusCode;
 use openidconnect::{
     AuthenticationFlow, AuthorizationCode, CsrfToken, EndpointMaybeSet, EndpointNotSet,
-    EndpointSet, Nonce, Scope,
+    EndpointSet, Nonce, ProviderMetadataDiscoveryOptions, Scope,
     core::{
         CoreClient, CoreIdTokenClaims, CoreIdTokenVerifier, CoreProviderMetadata, CoreResponseType,
     },
@@ -37,8 +37,12 @@ impl OAuth2Service {
             .redirect(reqwest::redirect::Policy::none())
             .build()?;
 
-        let provider_metadata =
-            CoreProviderMetadata::discover_async(config.issuer_url, &http_client).await?;
+        let provider_metadata = CoreProviderMetadata::discover_async_with_options(
+            config.issuer_url,
+            &http_client,
+            ProviderMetadataDiscoveryOptions::default().validate_issuer_url(false),
+        )
+        .await?;
 
         let inner_client = CoreClient::from_provider_metadata(
             provider_metadata,
