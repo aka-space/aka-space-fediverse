@@ -5,11 +5,12 @@ export type ReactionType = 'like' | 'love' | 'haha' | 'wow' | 'sad' | 'angry';
 
 interface ReactionState {
     userEmail: string | null;
-    reactions: Record<string, ReactionType>;
+    reactions: Record<string, Record<string, ReactionType>>; 
     setUserEmail: (email: string) => void;
-    addReaction: (postId: string, reactionType: ReactionType) => void;
-    getUserReaction: (postId: string) => ReactionType | null;
-    clearAll: () => void;
+    addReaction: (postSlug: string, reactionType: ReactionType) => void;
+    getUserReaction: (postSlug: string) => ReactionType | null;
+    clearUserReactions: () => void;
+    switchUser: (newEmail: string) => void;
 }
 
 export const useReactionStore = create<ReactionState>()(
@@ -19,24 +20,59 @@ export const useReactionStore = create<ReactionState>()(
             reactions: {},
 
             setUserEmail: (email: string) => {
-                set({ userEmail: email });
+                const state = get();
+                
+                if (state.userEmail && state.userEmail !== email) {
+                    set({ userEmail: email });
+                } else {
+                    set({ userEmail: email });
+                }
             },
 
-            addReaction: (postId: string, reactionType: ReactionType) => {
-                set((state) => ({
+            addReaction: (postSlug: string, reactionType: ReactionType) => {
+                const { userEmail, reactions } = get();
+                
+                if (!userEmail) {
+                    console.warn('No user email set');
+                    return;
+                }
+
+                const userReactions = reactions[userEmail] || {};
+                
+                set({
                     reactions: {
-                        ...state.reactions,
-                        [postId]: reactionType,
+                        ...reactions,
+                        [userEmail]: {
+                            ...userReactions,
+                            [postSlug]: reactionType,
+                        },
                     },
-                }));
+                });
             },
 
-            getUserReaction: (postId: string) => {
-                return get().reactions[postId] || null;
+            getUserReaction: (postSlug: string) => {
+                const { userEmail, reactions } = get();
+                
+                if (!userEmail) return null;
+                
+                const userReactions = reactions[userEmail];
+                return userReactions?.[postSlug] || null;
             },
 
-            clearAll: () => {
-                set({ userEmail: null, reactions: {} });
+            clearUserReactions: () => {
+                const { userEmail, reactions } = get();
+                
+                if (!userEmail) return;
+                
+                const { [userEmail]: _, ...remainingReactions } = reactions;
+                
+                set({
+                    reactions: remainingReactions,
+                });
+            },
+
+            switchUser: (newEmail: string) => {
+                set({ userEmail: newEmail });
             },
         }),
         {

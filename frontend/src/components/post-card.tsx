@@ -35,18 +35,23 @@ export function PostCard({ post }: PostCardProps) {
 
     const {
         userEmail,
-        reactions,
         setUserEmail,
         addReaction: addReactionToStore,
+        getUserReaction,
+        switchUser,
     } = useReactionStore();
 
     useEffect(() => {
-        if (user?.email && user.email !== userEmail) {
-            setUserEmail(user.email);
+        if (user?.email) {
+            if (userEmail && userEmail !== user.email) {
+                switchUser(user.email);
+            } else if (!userEmail) {
+                setUserEmail(user.email);
+            }
         }
-    }, [user, userEmail, setUserEmail]);
-
-    const userReaction = reactions[post.id] || null;
+    }, [user, userEmail, setUserEmail, switchUser]);
+    
+    const userReaction = getUserReaction(post.slug);
 
     const totalReactions = useMemo(() => {
         if (!post.reactions || typeof post.reactions !== 'object') return 0;
@@ -100,8 +105,7 @@ export function PostCard({ post }: PostCardProps) {
         if (!previousReaction) {
             setReactionCount((prev: number) => prev + 1);
         }
-
-        addReactionToStore(post.id, reactionType);
+        addReactionToStore(post.slug, reactionType);
 
         addReaction(
             { data: post, kind: reactionType },
