@@ -24,7 +24,7 @@ export const useCreateComment = (postId: string) => {
                         'Content-Type': 'application/json',
                         Authorization: `Bearer ${token}`,
                     },
-                }
+                },
             );
 
             if (response.status !== 201) {

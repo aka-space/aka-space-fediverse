@@ -84,10 +84,8 @@ const CommentPost = ({ postId }: CommentPostProps) => {
         const [showReplies, setShowReplies] = useState(false);
         const isReplying = replyingTo === comment.id;
 
-        const {
-            data: replies,
-            isLoading: repliesLoading,
-        } = useGetChildComments(comment.id);
+        const { data: replies, isLoading: repliesLoading } =
+            useGetChildComments(comment.id);
 
         const { mutate: createReply, isPending: isCreatingReply } =
             useCreateReply(comment.id);
@@ -101,7 +99,7 @@ const CommentPost = ({ postId }: CommentPostProps) => {
                         setReplyingTo(null);
                         setShowReplies(true);
                     },
-                }
+                },
             );
         };
 
@@ -126,7 +124,9 @@ const CommentPost = ({ postId }: CommentPostProps) => {
                                 alt={comment.account.username}
                             />
                             <AvatarFallback>
-                                {comment.account.username.charAt(0).toUpperCase()}
+                                {comment.account.username
+                                    .charAt(0)
+                                    .toUpperCase()}
                             </AvatarFallback>
                         </Avatar>
                     </div>
@@ -158,9 +158,7 @@ const CommentPost = ({ postId }: CommentPostProps) => {
                                             align="end"
                                             className="w-40"
                                         >
-                                            <DropdownMenuItem
-                                                className="text-red-600 dark:text-red-400 focus:text-red-600 dark:focus:text-red-400 focus:bg-red-50 dark:focus:bg-red-950 cursor-pointer"
-                                            >
+                                            <DropdownMenuItem className="text-red-600 dark:text-red-400 focus:text-red-600 dark:focus:text-red-400 focus:bg-red-50 dark:focus:bg-red-950 cursor-pointer">
                                                 <Trash2 className="h-4 w-4 mr-2" />
                                                 Delete
                                             </DropdownMenuItem>
@@ -207,7 +205,8 @@ const CommentPost = ({ postId }: CommentPostProps) => {
                                         }`}
                                     />
                                     <span className="text-xs">
-                                        {showReplies ? 'Hide' : 'View'} {replyCount}{' '}
+                                        {showReplies ? 'Hide' : 'View'}{' '}
+                                        {replyCount}{' '}
                                         {replyCount === 1 ? 'reply' : 'replies'}
                                     </span>
                                 </Button>
@@ -232,7 +231,10 @@ const CommentPost = ({ postId }: CommentPostProps) => {
                                     </div>
                                 ) : replies && replies.length > 0 ? (
                                     replies.map((reply: Comment) => (
-                                        <ReplyItem key={reply.id} reply={reply} />
+                                        <ReplyItem
+                                            key={reply.id}
+                                            reply={reply}
+                                        />
                                     ))
                                 ) : (
                                     <p className="text-xs text-gray-500 text-center py-2">
@@ -290,10 +292,11 @@ const CommentPost = ({ postId }: CommentPostProps) => {
                                             <MoreHorizontal className="h-3 w-3" />
                                         </Button>
                                     </DropdownMenuTrigger>
-                                    <DropdownMenuContent align="end" className="w-32">
-                                        <DropdownMenuItem
-                                            className="text-red-600 cursor-pointer text-xs"
-                                        >
+                                    <DropdownMenuContent
+                                        align="end"
+                                        className="w-32"
+                                    >
+                                        <DropdownMenuItem className="text-red-600 cursor-pointer text-xs">
                                             <Trash2 className="h-3 w-3 mr-2" />
                                             Delete
                                         </DropdownMenuItem>

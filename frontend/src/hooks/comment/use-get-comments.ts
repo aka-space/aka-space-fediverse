@@ -8,20 +8,26 @@ interface GetCommentsParams {
 }
 
 export const useGetComments = ({ postId, limit = 20 }: GetCommentsParams) => {
-    return useInfiniteQuery<CommentResponse, Error, CommentResponse, string[], string | null>({
+    return useInfiniteQuery<
+        CommentResponse,
+        Error,
+        CommentResponse,
+        string[],
+        string | null
+    >({
         queryKey: ['comments', postId],
         queryFn: async ({ pageParam }): Promise<CommentResponse> => {
             const params = new URLSearchParams();
             params.append('limit', limit.toString());
-            
+
             if (pageParam) {
                 params.append('cursor', pageParam);
             }
 
             const response = await axiosInstance.get(
-                `/post/${postId}/comment?${params.toString()}`
+                `/post/${postId}/comment?${params.toString()}`,
             );
-            
+
             if (response.status !== 200) {
                 throw new Error('Failed to fetch comments');
             }

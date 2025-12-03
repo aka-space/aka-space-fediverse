@@ -21,7 +21,7 @@ export const useCreateReply = (commentId: string) => {
                         'Content-Type': 'application/json',
                         Authorization: `Bearer ${token}`,
                     },
-                }
+                },
             );
 
             if (response.status !== 201) {
@@ -31,9 +31,9 @@ export const useCreateReply = (commentId: string) => {
             return response.data;
         },
         onSuccess: () => {
-            queryClient.invalidateQueries({ 
+            queryClient.invalidateQueries({
                 queryKey: ['child-comments', commentId],
-                exact: true 
+                exact: true,
             });
             toast.success('Reply posted successfully');
         },

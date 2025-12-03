@@ -7,9 +7,9 @@ export const useGetChildComments = (commentId: string) => {
         queryKey: ['child-comments', commentId],
         queryFn: async (): Promise<Comment[]> => {
             const response = await axiosInstance.get(
-                `/comment/${commentId}/child`
+                `/comment/${commentId}/child`,
             );
-            
+
             if (response.status !== 200) {
                 throw new Error('Failed to fetch child comments');
             }

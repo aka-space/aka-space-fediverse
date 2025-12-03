@@ -16,7 +16,7 @@ export const useReactComment = (commentId: string, postId?: string) => {
                     headers: {
                         Authorization: `Bearer ${token}`,
                     },
-                }
+                },
             );
 
             if (response.status !== 200) {
@@ -27,11 +27,11 @@ export const useReactComment = (commentId: string, postId?: string) => {
         },
         onSuccess: () => {
             if (postId) {
-                queryClient.invalidateQueries({ 
+                queryClient.invalidateQueries({
                     queryKey: ['comments', postId],
                 });
             }
-            queryClient.invalidateQueries({ 
+            queryClient.invalidateQueries({
                 queryKey: ['child-comments'],
             });
         },
