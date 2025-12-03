@@ -26,6 +26,8 @@ pub struct Account {
 
     pub email: String,
     pub username: String,
+    pub avatar_path: Option<String>,
+
     pub password: String,
     pub role: Role,
 }
@@ -60,6 +62,7 @@ pub async fn get(id: Uuid, executor: impl PgExecutor<'_>) -> sqlx::Result<Option
                 id,
                 email,
                 username,
+                avatar_path,
                 password,
                 role as "role: Role"
             FROM accounts
@@ -104,6 +107,7 @@ pub async fn get_by_email(
                 id,
                 email,
                 username,
+                avatar_path,
                 password,
                 role as "role: Role"
             FROM accounts

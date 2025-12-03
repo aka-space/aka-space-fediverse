@@ -52,11 +52,17 @@ pub async fn authorized(
 
     let email = claims.email().expect("Account must have email").as_str();
     let (username, _) = email.split_once('@').expect("Email must be valid");
+    let avatar_url = claims
+        .picture()
+        .and_then(|x| x.get(None))
+        .map(|x| x.as_str());
 
     let opt_account = database::account::get_by_email(email, &state.database).await?;
     let id = match opt_account {
         Some(account) => account.id,
-        None => database::account::create(email, username, None, &state.database).await?,
+        None => {
+            database::account::create(email, username, avatar_url, None, &state.database).await?
+        }
     };
 
     let (access, refresh) = state.token_service.encode(id)?;

@@ -17,12 +17,14 @@ use crate::{
 #[derive(Serialize, ToSchema)]
 #[schema(example = json!({
     "email": "user@example.com",
-    "username": "user"
+    "username": "user",
+    "avatar_path": "http://example.png"
 }))]
 #[schema(as = auth::me::Account)]
 pub struct Account {
     pub email: String,
     pub username: String,
+    pub avatar_path: Option<String>,
 }
 
 #[axum::debug_handler]
@@ -53,5 +55,6 @@ pub async fn me(
     Ok(Json(Account {
         email: account.email,
         username: account.username,
+        avatar_path: account.avatar_path,
     }))
 }
