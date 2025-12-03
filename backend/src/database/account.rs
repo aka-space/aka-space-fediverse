@@ -15,6 +15,7 @@ pub enum Role {
 pub struct MinimalAccount {
     pub email: String,
     pub username: String,
+    pub avatar_path: Option<String>,
 }
 
 // TODO: remove allow dead code
@@ -32,17 +33,19 @@ pub struct Account {
 pub async fn create(
     email: &str,
     username: &str,
+    avatar_path: Option<&str>,
     password: Option<&str>,
     executor: impl PgExecutor<'_>,
 ) -> sqlx::Result<Uuid> {
     sqlx::query_scalar!(
         r#"
-            INSERT INTO accounts(email, username, password)
-            VALUES($1, $2, COALESCE($3, substr(md5(random()::text), 1, 25)))
+            INSERT INTO accounts(email, username, avatar_path, password)
+            VALUES($1, $2, $3, COALESCE($4, substr(md5(random()::text), 1, 25)))
             RETURNING id
         "#,
         email,
         username,
+        avatar_path,
         password
     )
     .fetch_one(executor)
@@ -78,7 +81,8 @@ pub async fn get_by_username(
         r#"
             SELECT
                 email,
-                username
+                username,
+                avatar_path
             FROM accounts
             WHERE username = $1 AND is_active = true
             LIMIT 1
