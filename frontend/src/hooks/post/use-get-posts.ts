@@ -2,10 +2,11 @@ import { axiosInstance } from '@/lib/axios';
 import { Post } from '@/types';
 import { useQuery } from '@tanstack/react-query';
 import { toast } from 'sonner';
+import qs from 'qs';
 
 export const useGetPosts = (
     search = '',
-    tags = '',
+    tags: string[] = [],
     author_name = '',
     limit = 10,
     offset = 0,
@@ -32,10 +33,12 @@ export const useGetPosts = (
                         offset,
                         column,
                         direction,
-                        author_name,
-                        ...(tags && { tags }),
+                        ...(author_name && { author_name }),
+                        ...(tags.length > 0 && { tags }),
                         ...(search && { query: search }),
                     },
+                    paramsSerializer: (params) =>
+                        qs.stringify(params, { arrayFormat: 'repeat' }),
                 });
 
                 if (response.status === 200) {

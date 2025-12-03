@@ -31,7 +31,7 @@ export default function Home() {
 
     const searchParams = useSearchParams();
     const search = searchParams.get('search') ?? '';
-    const tags = searchParams.get('tags') ?? '';
+    const tags = searchParams.getAll('tags') || [];
     const author = searchParams.get('author') ?? '';
 
     const offset = currentPage * limit;
