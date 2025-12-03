@@ -39,7 +39,7 @@ pub async fn refresh(
     State(state): State<Arc<ApiState>>,
     jar: CookieJar,
 ) -> ApiResult<(CookieJar, String)> {
-    let token_service = &state.token_service;
+    let token_service = &state.token;
 
     let cookie = jar
         .get(REFRESH_COOKIE)
@@ -52,7 +52,7 @@ pub async fn refresh(
         tokens.remove(token);
     }
 
-    let (access, refresh) = state.token_service.encode(id)?;
+    let (access, refresh) = state.token.encode(id)?;
 
     tracing::info!(access, ?refresh, ?id, "Token created");
 

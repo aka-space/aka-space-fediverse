@@ -54,7 +54,7 @@ pub async fn reply(
     Json(request): Json<Request>,
 ) -> ApiResult<Json<Uuid>> {
     let token = bearer.token();
-    let account_id = state.token_service.access.decode(token)?;
+    let account_id = state.token.access.decode(token)?;
 
     let id = database::comment::reply(id, account_id, &request.content, &state.database)
         .await

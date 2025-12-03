@@ -17,12 +17,14 @@ use crate::{
 #[derive(Serialize, ToSchema)]
 #[schema(example = json!({
     "email": "user@example.com",
-    "username": "user"
+    "username": "user",
+    "avatar_path": "http://example.png"
 }))]
 #[schema(as = auth::me::Account)]
 pub struct Account {
     pub email: String,
     pub username: String,
+    pub avatar_path: Option<String>,
 }
 
 #[axum::debug_handler]
@@ -43,7 +45,7 @@ pub async fn me(
     TypedHeader(bearer): TypedHeader<Authorization<Bearer>>,
 ) -> ApiResult<Json<Account>> {
     let token = bearer.token();
-    let id = state.token_service.access.decode(token)?;
+    let id = state.token.access.decode(token)?;
 
     let opt_account = database::account::get(id, &state.database)
         .await
@@ -53,5 +55,6 @@ pub async fn me(
     Ok(Json(Account {
         email: account.email,
         username: account.username,
+        avatar_path: account.avatar_path,
     }))
 }

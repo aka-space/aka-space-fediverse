@@ -81,6 +81,7 @@ impl Comment {
             account: MinimalAccount {
                 email: account.email,
                 username: account.username,
+                avatar_path: account.avatar_path,
             },
             content: raw.content,
             reactions,

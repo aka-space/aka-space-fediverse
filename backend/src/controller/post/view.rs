@@ -44,7 +44,7 @@ pub async fn view(
     let viewer = match bearer {
         Some(TypedHeader(bearer)) => {
             let token = bearer.token();
-            state.token_service.access.decode(token)?.to_string()
+            state.token.access.decode(token)?.to_string()
         }
         None => req
             .headers()
@@ -60,7 +60,7 @@ pub async fn view(
     let viewer = hex::encode(viewer);
 
     state
-        .redis_service
+        .redis
         .pfadd(constant::POST_PREFIX, &id.to_string(), viewer.as_bytes())
         .await?;
 

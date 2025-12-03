@@ -49,10 +49,10 @@ pub async fn start(
     Path(provider): Path<Provider>,
     jar: CookieJar,
 ) -> ApiResult<(CookieJar, Redirect)> {
-    let (auth_url, csrf, nonce) = state.oauth2_services[&provider].start();
+    let (auth_url, csrf, nonce) = state.oauth2[&provider].start();
 
     let redis_key = state
-        .redis_service
+        .redis
         .set_ex(constant::SESSION_PREFIX, &(csrf, nonce))
         .await?;
 

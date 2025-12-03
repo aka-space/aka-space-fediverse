@@ -76,6 +76,7 @@ impl Post {
             author: MinimalAccount {
                 email: author.email,
                 username: author.username,
+                avatar_path: author.avatar_path,
             },
             title: raw.title,
             content: raw.content,

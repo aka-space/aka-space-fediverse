@@ -34,7 +34,7 @@ use crate::{
 )]
 #[tracing::instrument(err(Debug), skip(state, jar))]
 pub async fn logout(State(state): State<Arc<ApiState>>, jar: CookieJar) -> ApiResult<CookieJar> {
-    let token_service = &state.token_service;
+    let token_service = &state.token;
 
     let mut cookie = jar
         .get(REFRESH_COOKIE)

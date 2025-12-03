@@ -54,7 +54,7 @@ pub async fn update(
     Json(request): Json<Request>,
 ) -> ApiResult<StatusCode> {
     let token = bearer.token();
-    let author_id = state.token_service.access.decode(token)?;
+    let author_id = state.token.access.decode(token)?;
 
     database::post::update(id, author_id, &request.content, &state.database)
         .await
