@@ -51,11 +51,12 @@ pub async fn authorized(
     tracing::info!(?claims);
 
     let email = claims.email().expect("Account must have email").as_str();
+    let (username, _) = email.split_once('@').expect("Email must be valid");
 
     let opt_account = database::account::get_by_email(email, &state.database).await?;
     let id = match opt_account {
         Some(account) => account.id,
-        None => database::account::create(email, email, None, &state.database).await?,
+        None => database::account::create(email, username, None, &state.database).await?,
     };
 
     let (access, refresh) = state.token_service.encode(id)?;
