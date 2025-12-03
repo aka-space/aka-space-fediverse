@@ -1,41 +1,45 @@
 'use client';
 
+import { axiosInstance } from '@/lib/axios';
+import { useAuthStore } from '@/store/useAuthStore';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
+import { toast } from 'sonner';
 
-const API_URL = 'https://68765855814c0dfa653bba48.mockapi.io/comment';
-
-interface CreateCommentData {
-    comment: string;
-    author: {
-        name: string | undefined;
-        avatar: string;
-    };
-    postId: string;
-    commentId: string | null;
-    createdAt: string;
-    likes: number;
+interface CreateCommentPayload {
+    content: string;
+    commentId?: string | null;
 }
 
-export const useCreateComment = () => {
+export const useCreateComment = (postId: string) => {
     const queryClient = useQueryClient();
+    const token = useAuthStore((s) => s.accessToken);
 
     return useMutation({
-        mutationFn: async (data: CreateCommentData) => {
-            const response = await fetch(API_URL, {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify(data),
-            });
-            if (!response.ok) {
+        mutationFn: async (data: CreateCommentPayload) => {
+            const response = await axiosInstance.post(
+                `/post/${postId}/comment`,
+                data,
+                {
+                    headers: {
+                        'Content-Type': 'application/json',
+                        Authorization: `Bearer ${token}`,
+                    },
+                }
+            );
+
+            if (response.status !== 201) {
                 throw new Error('Failed to create comment');
             }
-            return response.json();
+
+            return response.data;
         },
         onSuccess: () => {
-            queryClient.invalidateQueries({ queryKey: ['comments'] });
+            queryClient.invalidateQueries({ queryKey: ['comments', postId] });
+            toast.success('Comment posted successfully');
         },
         onError: (error) => {
             console.error('Error creating comment:', error);
+            toast.error('Failed to post comment');
         },
     });
 };
