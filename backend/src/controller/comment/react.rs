@@ -40,7 +40,7 @@ pub async fn react(
     Json(request): Json<Request>,
 ) -> ApiResult<StatusCode> {
     let token = bearer.token();
-    let author_id = state.token_service.access.decode(token)?;
+    let author_id = state.token.access.decode(token)?;
 
     database::comment::react(id, author_id, request.kind, &state.database)
         .await

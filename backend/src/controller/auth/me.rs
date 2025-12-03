@@ -45,7 +45,7 @@ pub async fn me(
     TypedHeader(bearer): TypedHeader<Authorization<Bearer>>,
 ) -> ApiResult<Json<Account>> {
     let token = bearer.token();
-    let id = state.token_service.access.decode(token)?;
+    let id = state.token.access.decode(token)?;
 
     let opt_account = database::account::get(id, &state.database)
         .await

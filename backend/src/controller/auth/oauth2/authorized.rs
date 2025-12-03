@@ -34,12 +34,12 @@ pub async fn authorized(
         .with_context(StatusCode::UNAUTHORIZED, "Invalid call to oauth2 api")?;
 
     let (csrf, nonce) = state
-        .redis_service
+        .redis
         .get::<(CsrfToken, Nonce)>(cookie.value())
         .await?
         .with_context(StatusCode::UNAUTHORIZED, "Invalid call to oauth2 api")?;
 
-    let claims = state.oauth2_services[&provider]
+    let claims = state.oauth2[&provider]
         .exchange(
             AuthorizationCode::new(query.code),
             CsrfToken::new(query.state),
@@ -65,7 +65,7 @@ pub async fn authorized(
         }
     };
 
-    let (access, refresh) = state.token_service.encode(id)?;
+    let (access, refresh) = state.token.encode(id)?;
 
     tracing::info!(access, ?refresh, ?id, "Token created");
 

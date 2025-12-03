@@ -14,7 +14,7 @@ pub const DELAY: Duration = Duration::from_secs(10);
 
 #[tracing::instrument(err(Debug), skip(state))]
 pub async fn run(state: Arc<ApiState>) -> ApiResult<()> {
-    let mut connection = state.redis_service.connection.clone();
+    let mut connection = state.redis.connection.clone();
 
     let dirty_key = format!("{}:dirty", constant::POST_PREFIX);
 

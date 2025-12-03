@@ -8,14 +8,16 @@ use crate::{
     service::{
         auth::{JwtService, OAuth2Service, TokenService},
         redis::RedisService,
+        s3::S3Service,
     },
 };
 
 pub struct ApiState {
     pub database: PgPool,
-    pub redis_service: RedisService,
-    pub token_service: TokenService,
-    pub oauth2_services: HashMap<Provider, OAuth2Service>,
+    pub redis: RedisService,
+    pub token: TokenService,
+    pub oauth2: HashMap<Provider, OAuth2Service>,
+    pub s3: S3Service,
 }
 
 impl ApiState {
@@ -37,11 +39,14 @@ impl ApiState {
             oauth2_services.insert(provider, service);
         }
 
+        let s3 = S3Service::new(&CONFIG.s3.bucket_name, &CONFIG.s3.endpoint).await;
+
         Ok(Arc::new(Self {
             database,
-            redis_service,
-            token_service,
-            oauth2_services,
+            redis: redis_service,
+            token: token_service,
+            oauth2: oauth2_services,
+            s3,
         }))
     }
 }

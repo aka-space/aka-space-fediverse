@@ -53,7 +53,7 @@ pub async fn create(
     Json(request): Json<Request>,
 ) -> ApiResult<String> {
     let token = bearer.token();
-    let author_id = state.token_service.access.decode(token)?;
+    let author_id = state.token.access.decode(token)?;
 
     let mut transaction = state.database.begin().await?;
 
