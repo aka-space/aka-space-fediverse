@@ -14,7 +14,6 @@ import { useRouter } from 'next/navigation';
 import { formatOverview, formatTimeAgo } from '@/lib/format';
 import { ReportModal } from './report-modal';
 import { useState, useMemo } from 'react';
-import { useGetComments } from '@/hooks/comment/use-get-comments';
 
 interface PostCardProps {
     post: Post;
@@ -27,14 +26,6 @@ export function PostCard({ post }: PostCardProps) {
     const handleNavigate = (slug: string) => {
         route.push(`/post/${slug}`);
     };
-
-    const { data: comments } = useGetComments();
-
-    const commentCount = useMemo(() => {
-        return comments?.filter(
-            (comment: Comment) => comment.postId === post.id,
-        ).length;
-    }, [comments, post.id]);
 
     const contentPreview = useMemo(() => {
         const text = post.content.replace(/<[^>]*>/g, '');
@@ -145,7 +136,6 @@ export function PostCard({ post }: PostCardProps) {
                             </button>
                             <button className="flex items-center gap-1 hover:text-blue-500 transition-colors">
                                 <MessageCircle className="h-4 w-4" />
-                                <span>{commentCount}</span>
                             </button>
                         </div>
                     </div>

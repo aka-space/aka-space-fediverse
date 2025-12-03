@@ -3,7 +3,7 @@ import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Heart, MessageCircle, MoreHorizontal } from 'lucide-react';
-import { Comment, Post } from '@/types';
+import { Post } from '@/types';
 import { formatTimeAgo } from '@/lib/format';
 import {
     DropdownMenu,
@@ -11,11 +11,8 @@ import {
     DropdownMenuItem,
     DropdownMenuTrigger,
 } from './ui/dropdown-menu';
-import { useUpdatePost } from '@/hooks/post/use-update-post';
-import { toast } from 'sonner';
-import { useMemo, useState } from 'react';
+import { useState } from 'react';
 import { ReportModal } from './report-modal';
-import { useGetComments } from '@/hooks/comment/use-get-comments';
 
 interface PostCardProps {
     post: Post;
@@ -23,14 +20,6 @@ interface PostCardProps {
 
 export function DetailPostCard({ post }: PostCardProps) {
     const [isReportModalOpen, setIsReportModalOpen] = useState(false);
-    const { mutate: likePost } = useUpdatePost();
-    const { data: comments } = useGetComments();
-
-    const commentCount = useMemo(() => {
-        return comments?.filter(
-            (comment: Comment) => comment.postId === post.id,
-        ).length;
-    }, [post.id]);
 
     return (
         <>
@@ -138,7 +127,6 @@ export function DetailPostCard({ post }: PostCardProps) {
                             </button>
                             <button className="flex items-center gap-1 hover:text-blue-500 transition-colors">
                                 <MessageCircle className="h-4 w-4" />
-                                <span>{commentCount}</span>
                             </button>
                         </div>
                     </div>
