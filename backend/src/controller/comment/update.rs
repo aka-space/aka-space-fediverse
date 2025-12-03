@@ -32,6 +32,7 @@ pub struct Request {
 
 #[utoipa::path(
     put,
+    operation_id = "comment::update",
     tag = "Comment",
     path = "/comment/{id}",
     request_body = Request,

@@ -15,6 +15,7 @@ use crate::{
 
 #[utoipa::path(
     get,
+    operation_id = "comment::get_child",
     tag = "Comment",
     path = "/comment/{id}/child",
     params(
