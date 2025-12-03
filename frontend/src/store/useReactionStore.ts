@@ -5,7 +5,7 @@ export type ReactionType = 'like' | 'love' | 'haha' | 'wow' | 'sad' | 'angry';
 
 interface ReactionState {
     userEmail: string | null;
-    reactions: Record<string, Record<string, ReactionType>>; 
+    reactions: Record<string, Record<string, ReactionType>>;
     setUserEmail: (email: string) => void;
     addReaction: (postSlug: string, reactionType: ReactionType) => void;
     getUserReaction: (postSlug: string) => ReactionType | null;
@@ -21,7 +21,7 @@ export const useReactionStore = create<ReactionState>()(
 
             setUserEmail: (email: string) => {
                 const state = get();
-                
+
                 if (state.userEmail && state.userEmail !== email) {
                     set({ userEmail: email });
                 } else {
@@ -31,14 +31,14 @@ export const useReactionStore = create<ReactionState>()(
 
             addReaction: (postSlug: string, reactionType: ReactionType) => {
                 const { userEmail, reactions } = get();
-                
+
                 if (!userEmail) {
                     console.warn('No user email set');
                     return;
                 }
 
                 const userReactions = reactions[userEmail] || {};
-                
+
                 set({
                     reactions: {
                         ...reactions,
@@ -52,20 +52,20 @@ export const useReactionStore = create<ReactionState>()(
 
             getUserReaction: (postSlug: string) => {
                 const { userEmail, reactions } = get();
-                
+
                 if (!userEmail) return null;
-                
+
                 const userReactions = reactions[userEmail];
                 return userReactions?.[postSlug] || null;
             },
 
             clearUserReactions: () => {
                 const { userEmail, reactions } = get();
-                
+
                 if (!userEmail) return;
-                
+
                 const { [userEmail]: _, ...remainingReactions } = reactions;
-                
+
                 set({
                     reactions: remainingReactions,
                 });

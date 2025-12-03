@@ -50,7 +50,7 @@ export function PostCard({ post }: PostCardProps) {
             }
         }
     }, [user, userEmail, setUserEmail, switchUser]);
-    
+
     const userReaction = getUserReaction(post.slug);
 
     const totalReactions = useMemo(() => {
