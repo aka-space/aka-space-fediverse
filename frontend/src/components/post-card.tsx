@@ -138,7 +138,14 @@ export function PostCard({ post }: PostCardProps) {
                                 </AvatarFallback>
                             </Avatar>
                             <div>
-                                <p className="font-semibold text-sm text-gray-900 hover:underline cursor-pointer">
+                                <p
+                                    className="font-semibold text-sm text-gray-900 hover:underline cursor-pointer"
+                                    onClick={() => {
+                                        route.push(
+                                            `/?author=${post.author.username}`,
+                                        );
+                                    }}
+                                >
                                     {post.author.username}
                                 </p>
                                 <p className="text-xs text-gray-500">
@@ -194,6 +201,9 @@ export function PostCard({ post }: PostCardProps) {
                                     key={tag}
                                     variant="secondary"
                                     className="text-xs bg-gray-100 text-gray-700 hover:bg-gray-200 cursor-pointer"
+                                    onClick={() => {
+                                        route.push(`/?tags=${tag}`);
+                                    }}
                                 >
                                     {tag}
                                 </Badge>

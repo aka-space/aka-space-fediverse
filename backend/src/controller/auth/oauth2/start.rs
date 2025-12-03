@@ -10,7 +10,8 @@ use axum_extra::extract::{
 };
 
 use crate::{
-    config::{OAUTH2_TEMPORARY, Provider, REDIS_SESSION_PREFIX},
+    config::Provider,
+    constant,
     error::{ApiError, ApiResult},
     state::ApiState,
 };
@@ -48,14 +49,14 @@ pub async fn start(
     Path(provider): Path<Provider>,
     jar: CookieJar,
 ) -> ApiResult<(CookieJar, Redirect)> {
-    let (auth_url, csrf, nonce) = state.oauth2_services[&provider].start();
+    let (auth_url, csrf, nonce) = state.oauth2[&provider].start();
 
     let redis_key = state
-        .redis_service
-        .set(REDIS_SESSION_PREFIX, &(csrf, nonce))
+        .redis
+        .set_ex(constant::SESSION_PREFIX, &(csrf, nonce))
         .await?;
 
-    let mut cookie = Cookie::new(OAUTH2_TEMPORARY, redis_key);
+    let mut cookie = Cookie::new(constant::OAUTH2_TEMPORARY, redis_key);
     cookie.set_http_only(true);
     cookie.set_same_site(Some(SameSite::None));
     cookie.set_secure(true);

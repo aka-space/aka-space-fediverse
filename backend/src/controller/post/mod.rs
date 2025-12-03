@@ -1,7 +1,5 @@
 mod create;
-mod create_comment;
 mod get_by_slug;
-mod get_comment;
 mod query;
 mod react;
 mod update;
@@ -23,9 +21,7 @@ use crate::{
 };
 
 pub use create::*;
-pub use create_comment::*;
 pub use get_by_slug::*;
-pub use get_comment::*;
 pub use query::*;
 pub use react::*;
 pub use update::*;
@@ -40,8 +36,6 @@ pub fn build() -> Router<Arc<ApiState>> {
         .route("/post/{id}", routing::put(update))
         .route("/post/{id}/view", routing::post(view))
         .route("/post/{id}/react", routing::post(react))
-        .route("/post/{id}/comment", routing::post(create_comment))
-        .route("/post/{id}/comment", routing::get(get_comment))
 }
 
 #[derive(Debug, Serialize, ToSchema)]
@@ -67,11 +61,11 @@ impl Post {
             .with_context(StatusCode::BAD_REQUEST, "Post's author is banned")?;
         let author = opt_author.with_context(StatusCode::BAD_REQUEST, "Post's author is banned")?;
 
-        let tags = database::tag::get_by_post(raw.id, database)
+        let tags = database::post::get_tags(raw.id, database)
             .await
             .with_context(StatusCode::BAD_REQUEST, "Post is removed")?;
 
-        let reactions = database::reaction::count_by_post(raw.id, database)
+        let reactions = database::post::count_reactions(raw.id, database)
             .await
             .with_context(StatusCode::BAD_REQUEST, "Post is removed")?;
 
@@ -82,6 +76,7 @@ impl Post {
             author: MinimalAccount {
                 email: author.email,
                 username: author.username,
+                avatar_path: author.avatar_path,
             },
             title: raw.title,
             content: raw.content,

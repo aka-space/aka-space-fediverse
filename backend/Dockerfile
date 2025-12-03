@@ -17,7 +17,7 @@ COPY .sqlx ./.sqlx
 COPY migrations ./migrations
 RUN cargo build --release
 
-FROM debian:bookworm AS application
+FROM debian:stable AS application
 
 RUN apt-get update \
     && apt-get install libssl3 ca-certificates -y \

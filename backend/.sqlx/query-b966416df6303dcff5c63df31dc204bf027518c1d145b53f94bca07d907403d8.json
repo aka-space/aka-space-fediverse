@@ -1,6 +1,6 @@
 {
   "db_name": "PostgreSQL",
-  "query": "\n            SELECT\n                id,\n                email,\n                username,\n                password,\n                role as \"role: Role\"\n            FROM accounts\n            WHERE id = $1 AND is_active = true\n            LIMIT 1\n        ",
+  "query": "\n            SELECT\n                id,\n                email,\n                username,\n                avatar_path,\n                password,\n                role as \"role: Role\"\n            FROM accounts\n            WHERE id = $1 AND is_active = true\n            LIMIT 1\n        ",
   "describe": {
     "columns": [
       {
@@ -20,11 +20,16 @@
       },
       {
         "ordinal": 3,
+        "name": "avatar_path",
+        "type_info": "Text"
+      },
+      {
+        "ordinal": 4,
         "name": "password",
         "type_info": "Varchar"
       },
       {
-        "ordinal": 4,
+        "ordinal": 5,
         "name": "role: Role",
         "type_info": {
           "Custom": {
@@ -48,9 +53,10 @@
       false,
       false,
       false,
+      true,
       false,
       false
     ]
   },
-  "hash": "67801457d5231b8a65d53ba384730a1e17c620879443499d7b4184263d7ad8ae"
+  "hash": "b966416df6303dcff5c63df31dc204bf027518c1d145b53f94bca07d907403d8"
 }

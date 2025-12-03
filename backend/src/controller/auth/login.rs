@@ -72,7 +72,7 @@ pub async fn login(
         "Invalid login credential"
     );
 
-    let (access, refresh) = state.token_service.encode(account.id)?;
+    let (access, refresh) = state.token.encode(account.id)?;
 
     tracing::info!(access, ?refresh, ?account.id, "Token created");
 

@@ -2,16 +2,28 @@ import { axiosInstance } from '@/lib/axios';
 import { Post } from '@/types';
 import { useQuery } from '@tanstack/react-query';
 import { toast } from 'sonner';
+import qs from 'qs';
 
 export const useGetPosts = (
     search = '',
+    tags: string[] = [],
+    author_name = '',
     limit = 10,
     offset = 0,
     column: 'view' | 'created_at',
     filter: 'new' | 'hot',
 ) => {
     return useQuery<{ data: Post[]; hasMore: boolean }, Error>({
-        queryKey: ['posts', search, limit, offset, column, filter],
+        queryKey: [
+            'posts',
+            search,
+            limit,
+            offset,
+            column,
+            filter,
+            tags,
+            author_name,
+        ],
         queryFn: async () => {
             try {
                 const direction = 'descending';
@@ -21,8 +33,12 @@ export const useGetPosts = (
                         offset,
                         column,
                         direction,
+                        ...(author_name && { author_name }),
+                        ...(tags.length > 0 && { tags }),
                         ...(search && { query: search }),
                     },
+                    paramsSerializer: (params) =>
+                        qs.stringify(params, { arrayFormat: 'repeat' }),
                 });
 
                 if (response.status === 200) {

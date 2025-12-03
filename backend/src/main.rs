@@ -1,15 +1,17 @@
 mod config;
+mod constant;
 mod controller;
 mod database;
 mod doc;
 mod error;
+mod job;
 mod middleware;
 mod service;
 mod state;
 mod trace;
 mod util;
 
-use std::net::SocketAddr;
+use std::{net::SocketAddr, sync::Arc};
 
 use axum::Router;
 use tokio::net::TcpListener;
@@ -17,9 +19,7 @@ use tower_http::trace::TraceLayer;
 
 use crate::{config::CONFIG, error::ApiResult, state::ApiState};
 
-async fn build() -> ApiResult<Router> {
-    let state = ApiState::new().await?;
-
+async fn build(state: Arc<ApiState>) -> ApiResult<Router> {
     Ok(Router::new()
         .merge(controller::build())
         .merge(doc::build())
@@ -42,13 +42,20 @@ async fn main() -> ApiResult<()> {
 
     trace::init()?;
 
-    let app = build().await?;
-
+    let state = ApiState::new().await?;
+    let app = build(state.clone()).await?;
     let listener = TcpListener::bind(SocketAddr::new([0, 0, 0, 0].into(), CONFIG.port)).await?;
 
     tracing::info!("Listening on port {}", CONFIG.port);
 
-    axum::serve(listener, app).await?;
+    let (server, _) = tokio::join!(
+        axum::serve(
+            listener,
+            app.into_make_service_with_connect_info::<SocketAddr>()
+        ),
+        job::run(state)
+    );
+    server?;
 
     Ok(())
 }
