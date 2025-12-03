@@ -84,7 +84,8 @@ pub async fn react(
         r#"
             INSERT INTO post_reactions(post_id, account_id, kind)
             VALUES($1, $2, $3)
-            ON CONFLICT DO NOTHING
+            ON CONFLICT(post_id, account_id) DO UPDATE SET
+                kind = EXCLUDED.kind
         "#,
         id,
         account_id,
