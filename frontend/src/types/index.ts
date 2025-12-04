@@ -53,6 +53,12 @@ export type UserRegister = {
     password: string;
 };
 
+export type User = {
+    avatar_path: string;
+    username: string;
+    email: string;
+};
+
 export interface Emoji {
     emoji: string;
     label: string;
