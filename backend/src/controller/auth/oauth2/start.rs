@@ -28,6 +28,7 @@ use crate::{
     path = "/oauth2/{provider}",
     params(
         ("provider" = Provider, description = "OAuth2 Provider (path parameter)"),
+        ("Referer" = String, Header, description = "Referer header containing origin"),
     ),
     responses(
         (
