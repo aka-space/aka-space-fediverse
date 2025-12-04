@@ -11,7 +11,7 @@ export const useReactComment = (commentId: string, postId?: string) => {
         mutationFn: async () => {
             const response = await axiosInstance.post(
                 `/comment/${commentId}/react`,
-                {},
+                {kind: 'like'},
                 {
                     headers: {
                         Authorization: `Bearer ${token}`,
@@ -19,7 +19,7 @@ export const useReactComment = (commentId: string, postId?: string) => {
                 },
             );
 
-            if (response.status !== 200) {
+            if (response.status !== 204) {
                 throw new Error('Failed to react to comment');
             }
 

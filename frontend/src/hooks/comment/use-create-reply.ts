@@ -24,7 +24,7 @@ export const useCreateReply = (commentId: string) => {
                 },
             );
 
-            if (response.status !== 201) {
+            if (response.status !== 200) {
                 throw new Error('Failed to create reply');
             }
 

@@ -7,7 +7,6 @@ import { toast } from 'sonner';
 
 interface CreateCommentPayload {
     content: string;
-    commentId?: string | null;
 }
 
 export const useCreateComment = (postId: string) => {
@@ -27,7 +26,7 @@ export const useCreateComment = (postId: string) => {
                 },
             );
 
-            if (response.status !== 201) {
+            if (response.status !== 200) {
                 throw new Error('Failed to create comment');
             }
 

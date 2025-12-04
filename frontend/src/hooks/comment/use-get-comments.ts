@@ -8,13 +8,7 @@ interface GetCommentsParams {
 }
 
 export const useGetComments = ({ postId, limit = 20 }: GetCommentsParams) => {
-    return useInfiniteQuery<
-        CommentResponse,
-        Error,
-        CommentResponse,
-        string[],
-        string | null
-    >({
+    return useInfiniteQuery({
         queryKey: ['comments', postId],
         queryFn: async ({ pageParam }): Promise<CommentResponse> => {
             const params = new URLSearchParams();
