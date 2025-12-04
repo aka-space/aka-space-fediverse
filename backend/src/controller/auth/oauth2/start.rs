@@ -57,10 +57,11 @@ pub async fn start(
     Path(provider): Path<Provider>,
     jar: CookieJar,
 ) -> ApiResult<(CookieJar, Redirect)> {
-    let (auth_url, csrf, nonce) = state.oauth2[&provider].start();
+    let (auth_url, csrf, nonce, pkce_verifier) = state.oauth2[&provider].start();
     let session = OAuth2Session {
         csrf,
         nonce,
+        pkce_verifier,
         origin: referer.to_string(),
     };
 
