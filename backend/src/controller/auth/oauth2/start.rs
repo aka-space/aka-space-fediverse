@@ -4,14 +4,19 @@ use axum::{
     extract::{Path, State},
     response::Redirect,
 };
-use axum_extra::extract::{
-    CookieJar,
-    cookie::{Cookie, SameSite},
+use axum_extra::{
+    TypedHeader,
+    extract::{
+        CookieJar,
+        cookie::{Cookie, SameSite},
+    },
+    headers::Referer,
 };
 
 use crate::{
     config::Provider,
     constant,
+    controller::auth::oauth2::OAuth2Session,
     error::{ApiError, ApiResult},
     state::ApiState,
 };
@@ -23,6 +28,7 @@ use crate::{
     path = "/oauth2/{provider}",
     params(
         ("provider" = Provider, description = "OAuth2 Provider (path parameter)"),
+        ("Referer" = String, Header, description = "Referer header containing origin"),
     ),
     responses(
         (
@@ -47,14 +53,20 @@ use crate::{
 #[tracing::instrument(err(Debug), skip(state, jar))]
 pub async fn start(
     State(state): State<Arc<ApiState>>,
+    TypedHeader(referer): TypedHeader<Referer>,
     Path(provider): Path<Provider>,
     jar: CookieJar,
 ) -> ApiResult<(CookieJar, Redirect)> {
     let (auth_url, csrf, nonce) = state.oauth2[&provider].start();
+    let session = OAuth2Session {
+        csrf,
+        nonce,
+        origin: referer.to_string(),
+    };
 
     let redis_key = state
         .redis
-        .set_ex(constant::SESSION_PREFIX, &(csrf, nonce))
+        .set_ex(constant::SESSION_PREFIX, &session)
         .await?;
 
     let mut cookie = Cookie::new(constant::OAUTH2_TEMPORARY, redis_key);
