@@ -11,6 +11,7 @@ use crate::{
 
 #[utoipa::path(
     post,
+    operation_id = "auth::logout",
     tag = "Auth",
     path = "/auth/logout",
     security(("jwt_token" = [])),

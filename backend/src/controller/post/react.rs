@@ -27,6 +27,7 @@ pub struct Request {
 
 #[utoipa::path(
     post,
+    operation_id = "post::react",
     tag = "Post",
     path = "/post/{id}/react",
     params(

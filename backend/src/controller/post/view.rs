@@ -22,6 +22,7 @@ use crate::{
 
 #[utoipa::path(
     post,
+    operation_id = "post::view",
     tag = "Post",
     path = "/post/{id}/view",
     params(
