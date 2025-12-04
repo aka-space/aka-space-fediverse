@@ -134,7 +134,10 @@ export function PostCard({ post }: PostCardProps) {
                                 <Heart className="h-4 w-4" />
                                 <span>{post.view}</span>
                             </button>
-                            <button className="flex items-center gap-1 hover:text-blue-500 transition-colors" onClick={() => handleNavigate(post.slug)}>
+                            <button
+                                className="flex items-center gap-1 hover:text-blue-500 transition-colors"
+                                onClick={() => handleNavigate(post.slug)}
+                            >
                                 <MessageCircle className="h-4 w-4" />
                             </button>
                         </div>

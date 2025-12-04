@@ -11,7 +11,7 @@ export const useReactComment = (commentId: string, postId?: string) => {
         mutationFn: async () => {
             const response = await axiosInstance.post(
                 `/comment/${commentId}/react`,
-                {kind: 'like'},
+                { kind: 'like' },
                 {
                     headers: {
                         Authorization: `Bearer ${token}`,

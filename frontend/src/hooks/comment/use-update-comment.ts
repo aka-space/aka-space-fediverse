@@ -9,7 +9,10 @@ export const useUpdateComment = () => {
 
     return useMutation({
         mutationFn: async (data: Comment) => {
-            const response = await axiosInstance.put(`/comments/${data.id}`, data);
+            const response = await axiosInstance.put(
+                `/comments/${data.id}`,
+                data,
+            );
             if (response.status !== 204) {
                 throw new Error('Failed to update comment');
             }

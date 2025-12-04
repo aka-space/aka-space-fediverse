@@ -48,8 +48,9 @@ const CommentItem = ({
     const { data: replies, isLoading: repliesLoading } = useGetChildComments(
         comment.id,
     );
-    const { mutate: createReply, isPending: isCreatingReply } =
-        useCreateReply(comment.id);
+    const { mutate: createReply, isPending: isCreatingReply } = useCreateReply(
+        comment.id,
+    );
     const { mutate: reactComment } = useReactComment(comment.id, postId);
     const { authUser } = useAuthStore();
 
@@ -78,7 +79,7 @@ const CommentItem = ({
         reactComment();
     };
 
-    const replyCount = replies?.length || 0;;
+    const replyCount = replies?.length || 0;
 
     return (
         <div className="relative">
@@ -122,9 +123,7 @@ const CommentItem = ({
                                         align="end"
                                         className="w-40"
                                     >
-                                        <DropdownMenuItem
-                                            className="text-red-600 dark:text-red-400 focus:text-red-600 dark:focus:text-red-400 focus:bg-red-50 dark:focus:bg-red-950 cursor-pointer"
-                                        >
+                                        <DropdownMenuItem className="text-red-600 dark:text-red-400 focus:text-red-600 dark:focus:text-red-400 focus:bg-red-50 dark:focus:bg-red-950 cursor-pointer">
                                             <Trash2 className="h-4 w-4 mr-2" />
                                             Delete
                                         </DropdownMenuItem>
