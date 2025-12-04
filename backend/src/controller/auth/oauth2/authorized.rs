@@ -47,6 +47,7 @@ pub async fn authorized(
             CsrfToken::new(query.state),
             session.csrf,
             session.nonce,
+            session.pkce_verifier,
         )
         .await?;
 
