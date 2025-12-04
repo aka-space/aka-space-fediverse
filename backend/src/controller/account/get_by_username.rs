@@ -14,6 +14,7 @@ use crate::{
 
 #[utoipa::path(
     get,
+    operation_id = "account::get_by_username",
     tag = "Account",
     path = "/account/{username}",
     params(

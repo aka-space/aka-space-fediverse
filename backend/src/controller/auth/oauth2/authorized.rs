@@ -6,12 +6,14 @@ use axum::{
     response::Redirect,
 };
 use axum_extra::extract::CookieJar;
-use openidconnect::{AuthorizationCode, CsrfToken, Nonce};
+use openidconnect::{AuthorizationCode, CsrfToken};
 use serde::Deserialize;
 
 use crate::{
-    config::{CONFIG, Provider},
-    constant, database,
+    config::Provider,
+    constant,
+    controller::auth::oauth2::OAuth2Session,
+    database,
     error::{ApiResult, OptionExt},
     state::ApiState,
 };
@@ -33,9 +35,9 @@ pub async fn authorized(
         .get(constant::OAUTH2_TEMPORARY)
         .with_context(StatusCode::UNAUTHORIZED, "Invalid call to oauth2 api")?;
 
-    let (csrf, nonce) = state
+    let session = state
         .redis
-        .get::<(CsrfToken, Nonce)>(cookie.value())
+        .get::<OAuth2Session>(cookie.value())
         .await?
         .with_context(StatusCode::UNAUTHORIZED, "Invalid call to oauth2 api")?;
 
@@ -43,8 +45,9 @@ pub async fn authorized(
         .exchange(
             AuthorizationCode::new(query.code),
             CsrfToken::new(query.state),
-            csrf,
-            nonce,
+            session.csrf,
+            session.nonce,
+            session.pkce_verifier,
         )
         .await?;
 
@@ -69,5 +72,5 @@ pub async fn authorized(
 
     tracing::info!(access, ?refresh, ?id, "Token created");
 
-    Ok((jar.add(refresh), Redirect::to(&CONFIG.frontend_url)))
+    Ok((jar.add(refresh), Redirect::to(&session.origin)))
 }

@@ -1,6 +1,6 @@
 {
   "db_name": "PostgreSQL",
-  "query": "\n            INSERT INTO comment_reactions(comment_id, account_id, kind)\n            VALUES($1, $2, $3)\n            ON CONFLICT DO NOTHING\n        ",
+  "query": "\n            INSERT INTO comment_reactions(comment_id, account_id, kind)\n            VALUES($1, $2, $3)\n            ON CONFLICT(comment_id, account_id) DO UPDATE SET\n                kind = EXCLUDED.kind\n        ",
   "describe": {
     "columns": [],
     "parameters": {
@@ -26,5 +26,5 @@
     },
     "nullable": []
   },
-  "hash": "c612ce6387033a662761eccd56941874f9f4a18659d539ed1d437de13ec6f6ea"
+  "hash": "2e42586eec8cb76074fb4a5dc7e1adf03fca5c6d595287e8f199bee9ccbcb856"
 }

@@ -11,6 +11,7 @@ use crate::{
 
 #[utoipa::path(
     post,
+    operation_id = "auth::refresh",
     tag = "Auth",
     path = "/auth/refresh",
     responses(

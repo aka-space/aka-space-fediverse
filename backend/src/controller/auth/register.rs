@@ -59,6 +59,7 @@ pub struct RequestDoc {
 
 #[utoipa::path(
     post,
+    operation_id = "auth::register",
     tag = "Auth",
     path = "/auth/register",
     request_body(

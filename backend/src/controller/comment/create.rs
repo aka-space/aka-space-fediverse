@@ -32,6 +32,7 @@ pub struct Request {
 
 #[utoipa::path(
     post,
+    operation_id = "comment::create",
     tag = "Comment",
     path = "/post/{id}/comment",
     request_body = Request,

@@ -15,6 +15,7 @@ use crate::{
 
 #[utoipa::path(
     get,
+    operation_id = "post::get_by_slug",
     tag = "Post",
     path = "/post/{slug}",
     params(
