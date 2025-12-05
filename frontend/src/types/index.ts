@@ -18,6 +18,7 @@ export type Post = {
 export type CommentAuthor = {
     email: string;
     username: string;
+    avatar_path: string | '';
 };
 
 export type Comment = {
