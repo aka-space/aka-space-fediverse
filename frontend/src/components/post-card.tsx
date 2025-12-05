@@ -145,7 +145,7 @@ export function PostCard({ post }: PostCardProps) {
                                     {post.author.username}
                                 </p>
                                 <p className="text-xs text-gray-500">
-                                    {formatTimeAgo(post.updated_at)}
+                                    {formatTimeAgo(post.created_at)}
                                 </p>
                             </div>
                         </div>
