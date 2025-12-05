@@ -16,6 +16,13 @@ export default function Header() {
     const pathname = usePathname();
     const { authUser } = useAuthStore();
 
+    const accessToken = useAuthStore((state) => state.accessToken);
+    useEffect(() => {
+        if (accessToken) {
+            router.push('/');
+        }
+    }, [accessToken, router]);
+
     const hideSearch = pathname === '/login' || pathname === '/register';
     const [active, setActive] = useState<string>('');
     const [isScrolled, setIsScrolled] = useState(false);
@@ -169,7 +176,13 @@ export default function Header() {
                 }}
                 className="flex items-center cursor-pointer"
             >
-                <Image src="/logo.png" alt="Logo" width={38} height={38} />
+                <Image
+                    src="/logo.png"
+                    alt="Logo"
+                    width={38}
+                    height={38}
+                    priority
+                />
                 <span className="font-bold text-xl">AKA</span>
             </div>
             {!hideSearch && (
