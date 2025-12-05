@@ -1,9 +1,5 @@
 import React, { useState } from 'react';
 import { Avatar, AvatarFallback, AvatarImage } from './ui/avatar';
-import { Textarea } from './ui/textarea';
-import { Button } from './ui/button';
-import { Send } from 'lucide-react';
-import { Spinner } from './ui/spinner';
 import { useCreateComment } from '@/hooks/comment/use-create-comment';
 import { useAuthStore } from '@/store/useAuthStore';
 import MessageInput from './ui/message-input-block/message-input-block';
@@ -48,6 +44,10 @@ const CommentInput = ({ postId }: { postId: string }) => {
             handleSubmit();
         }
     };
+
+    if (!authUser) {
+        return <div></div>;
+    }
 
     return (
         <div className="flex gap-3 py-4">
