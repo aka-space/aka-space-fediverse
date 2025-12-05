@@ -1,6 +1,7 @@
 export type Post = {
     id: string;
     author: {
+        avatar_path: string | '';
         username: string;
         email: string;
     };

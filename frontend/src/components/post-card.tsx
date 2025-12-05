@@ -56,10 +56,10 @@ export function PostCard({ post }: PostCardProps) {
                         <div className="flex items-center gap-3">
                             <Avatar className="h-10 w-10 cursor-pointer">
                                 <AvatarImage
-                                    src={`/${post.author.username?.toLowerCase()}.png`}
+                                    src={post.author.avatar_path || ''}
                                     alt={post.author.username}
                                 />
-                                <AvatarFallback className="bg-gray-200">
+                                <AvatarFallback className="bg-black text-white">
                                     {post.author.username
                                         ?.substring(0, 2)
                                         .toUpperCase()}

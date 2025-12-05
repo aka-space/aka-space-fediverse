@@ -21,19 +21,15 @@ export function UserMenu() {
     return (
         <DropdownMenu modal={false}>
             <DropdownMenuTrigger asChild>
-                <Avatar className="cursor-pointer">
+                <Avatar className="cursor-pointer h-8 w-8 overflow-hidden">
                     <AvatarImage
                         src={authUser?.avatar_path || ''}
                         alt={authUser?.username || 'avatar'}
-                        className="w-8 rounded-full shadow-md border-2 border-gray-300"
+                        className="h-full w-full rounded-full object-cover"
                     />
-                    <AvatarFallback className=" bg-amber-500 text-white font-bold text-sm w-8 h-8 rounded-full border-2 border-gray-300 shadow-md flex items-center justify-center">
+                    <AvatarFallback className="bg-black text-white text-sm w-8 h-8 rounded-full flex items-center justify-center">
                         {authUser?.username
-                            ? authUser.username
-                                  .split('')
-                                  .slice(0, 2)
-                                  .map((n: string) => n.toUpperCase())
-                                  .join('')
+                            ? authUser.username?.substring(0, 2).toUpperCase()
                             : 'NO'}
                     </AvatarFallback>
                 </Avatar>
@@ -41,19 +37,17 @@ export function UserMenu() {
             <DropdownMenuContent className="w-60 mr-4" align="start">
                 <DropdownMenuGroup>
                     <div className="flex items-center gap-2 border-b px-2 pb-1 mb-1">
-                        <Avatar>
+                        <Avatar className="h-6 w-6 overflow-hidden">
                             <AvatarImage
                                 src={authUser?.avatar_path || ''}
                                 alt={authUser?.username || 'avatar'}
-                                className="w-6 rounded-full shadow-md"
+                                className="h-full w-full rounded-full object-cover"
                             />
-                            <AvatarFallback className=" bg-amber-500 text-white font-bold text-sm w-6 h-6 rounded-full shadow-md flex items-center justify-center">
+                            <AvatarFallback className=" bg-black text-white text-sm w-6 h-6 rounded-full flex items-center justify-center">
                                 {authUser?.username
                                     ? authUser.username
-                                          .split('')
-                                          .slice(0, 2)
-                                          .map((n: string) => n.toUpperCase())
-                                          .join('')
+                                          ?.substring(0, 2)
+                                          .toUpperCase()
                                     : 'NO'}
                             </AvatarFallback>
                         </Avatar>

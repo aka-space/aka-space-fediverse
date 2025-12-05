@@ -61,10 +61,12 @@ const CommentInput = ({ postId }: { postId: string }) => {
         <div className="flex gap-3 py-4">
             <Avatar className="h-10 w-10">
                 <AvatarImage
-                    src={`${authUser?.username.toLowerCase()}.png`}
+                    src={authUser?.avatar_path || undefined}
                     alt={authUser?.username}
                 />
-                <AvatarFallback className="bg-gray-200">ME</AvatarFallback>
+                <AvatarFallback className="bg-black text-white">
+                    {authUser?.username?.substring(0, 2).toUpperCase()}
+                </AvatarFallback>
             </Avatar>
 
             <div className="flex-1 flex flex-col gap-2">
