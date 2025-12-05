@@ -15,17 +15,18 @@ export type Post = {
     tags: string[];
 };
 
+export type CommentAuthor = {
+    email: string;
+    username: string;
+};
+
 export type Comment = {
     id: string;
-    author: {
-        name: string;
-        avatar: string;
-    };
-    postId: string;
-    commentId: string | null;
-    comment: string;
-    createdAt: string;
-    likes: number;
+    content: string;
+    created_at: string;
+    updated_at: string;
+    account: CommentAuthor;
+    postId?: string;
 };
 
 export type PostDataForCreate = {
@@ -65,4 +66,14 @@ export interface Emoji {
     label: string;
     group?: string;
     skin?: number;
+}
+
+export interface CommentResponse {
+    data: Comment[];
+    next_cursor: string | null;
+}
+
+export interface ChildCommentResponse {
+    data: Comment[];
+    next_cursor: string | null;
 }

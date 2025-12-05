@@ -27,6 +27,7 @@ pub struct Request {
 
 #[utoipa::path(
     post,
+    operation_id = "comment::react",
     tag = "Comment",
     path = "/comment/{id}/react",
     request_body = Request,

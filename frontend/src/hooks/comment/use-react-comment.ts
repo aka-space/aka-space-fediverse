@@ -1,44 +1,43 @@
-'use client';
-
 import { axiosInstance } from '@/lib/axios';
 import { useAuthStore } from '@/store/useAuthStore';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { toast } from 'sonner';
 
-interface CreateCommentPayload {
-    content: string;
-}
-
-export const useCreateComment = (postId: string) => {
+export const useReactComment = (commentId: string, postId?: string) => {
     const queryClient = useQueryClient();
     const token = useAuthStore((s) => s.accessToken);
 
     return useMutation({
-        mutationFn: async (data: CreateCommentPayload) => {
+        mutationFn: async () => {
             const response = await axiosInstance.post(
-                `/post/${postId}/comment`,
-                data,
+                `/comment/${commentId}/react`,
+                { kind: 'like' },
                 {
                     headers: {
-                        'Content-Type': 'application/json',
                         Authorization: `Bearer ${token}`,
                     },
                 },
             );
 
-            if (response.status !== 200) {
-                throw new Error('Failed to create comment');
+            if (response.status !== 204) {
+                throw new Error('Failed to react to comment');
             }
 
             return response.data;
         },
         onSuccess: () => {
-            queryClient.invalidateQueries({ queryKey: ['comments', postId] });
-            toast.success('Comment posted successfully');
+            if (postId) {
+                queryClient.invalidateQueries({
+                    queryKey: ['comments', postId],
+                });
+            }
+            queryClient.invalidateQueries({
+                queryKey: ['child-comments'],
+            });
         },
         onError: (error) => {
-            console.error('Error creating comment:', error);
-            toast.error('Failed to post comment');
+            console.error('Error reacting to comment:', error);
+            toast.error('Failed to react');
         },
     });
 };

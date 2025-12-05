@@ -1,16 +1,12 @@
 import React, { useState } from 'react';
 import { Avatar, AvatarFallback, AvatarImage } from './ui/avatar';
-import { Textarea } from './ui/textarea';
-import { Button } from './ui/button';
-import { Send } from 'lucide-react';
-import { Spinner } from './ui/spinner';
 import { useCreateComment } from '@/hooks/comment/use-create-comment';
 import { useAuthStore } from '@/store/useAuthStore';
 import MessageInput from './ui/message-input-block/message-input-block';
 
 const CommentInput = ({ postId }: { postId: string }) => {
     const { authUser } = useAuthStore();
-    const { mutate: createComment } = useCreateComment();
+    const { mutate: createComment } = useCreateComment(postId);
 
     const [comment, setComment] = useState<string>('');
     const [isSubmitting, setIsSubmitting] = useState<boolean>(false);
@@ -21,15 +17,7 @@ const CommentInput = ({ postId }: { postId: string }) => {
         setIsSubmitting(true);
         try {
             const data = {
-                comment: comment.trim(),
-                author: {
-                    name: authUser?.username,
-                    avatar: `${authUser?.username}.png`,
-                },
-                postId: postId,
-                commentId: null,
-                createdAt: new Date().toISOString(),
-                likes: 0,
+                content: comment.trim(),
             };
 
             createComment(data, {
@@ -56,6 +44,10 @@ const CommentInput = ({ postId }: { postId: string }) => {
             handleSubmit();
         }
     };
+
+    if (!authUser) {
+        return <div></div>;
+    }
 
     return (
         <div className="flex gap-3 py-4">

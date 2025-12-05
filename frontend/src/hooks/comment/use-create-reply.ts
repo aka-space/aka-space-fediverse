@@ -1,22 +1,20 @@
-'use client';
-
 import { axiosInstance } from '@/lib/axios';
 import { useAuthStore } from '@/store/useAuthStore';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { toast } from 'sonner';
 
-interface CreateCommentPayload {
+interface CreateReplyPayload {
     content: string;
 }
 
-export const useCreateComment = (postId: string) => {
+export const useCreateReply = (commentId: string) => {
     const queryClient = useQueryClient();
     const token = useAuthStore((s) => s.accessToken);
 
     return useMutation({
-        mutationFn: async (data: CreateCommentPayload) => {
+        mutationFn: async (data: CreateReplyPayload) => {
             const response = await axiosInstance.post(
-                `/post/${postId}/comment`,
+                `/comment/${commentId}/reply`,
                 data,
                 {
                     headers: {
@@ -27,18 +25,21 @@ export const useCreateComment = (postId: string) => {
             );
 
             if (response.status !== 200) {
-                throw new Error('Failed to create comment');
+                throw new Error('Failed to create reply');
             }
 
             return response.data;
         },
         onSuccess: () => {
-            queryClient.invalidateQueries({ queryKey: ['comments', postId] });
-            toast.success('Comment posted successfully');
+            queryClient.invalidateQueries({
+                queryKey: ['child-comments', commentId],
+                exact: true,
+            });
+            toast.success('Reply posted successfully');
         },
         onError: (error) => {
-            console.error('Error creating comment:', error);
-            toast.error('Failed to post comment');
+            console.error('Error creating reply:', error);
+            toast.error('Failed to post reply');
         },
     });
 };

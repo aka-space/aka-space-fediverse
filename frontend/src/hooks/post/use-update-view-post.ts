@@ -2,22 +2,18 @@
 
 import { axiosInstance } from '@/lib/axios';
 import { useAuthStore } from '@/store/useAuthStore';
+import { Post } from '@/types';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
-import { toast } from 'sonner';
 
-interface CreateCommentPayload {
-    content: string;
-}
-
-export const useCreateComment = (postId: string) => {
+export const useUpdateViewPost = () => {
     const queryClient = useQueryClient();
     const token = useAuthStore((s) => s.accessToken);
 
     return useMutation({
-        mutationFn: async (data: CreateCommentPayload) => {
+        mutationFn: async (data: Post) => {
             const response = await axiosInstance.post(
-                `/post/${postId}/comment`,
-                data,
+                `/post/${data.id}/view`,
+                null,
                 {
                     headers: {
                         'Content-Type': 'application/json',
@@ -25,20 +21,17 @@ export const useCreateComment = (postId: string) => {
                     },
                 },
             );
-
-            if (response.status !== 200) {
-                throw new Error('Failed to create comment');
+            if (response.status !== 204) {
+                throw new Error('Failed to update view count for post');
             }
-
             return response.data;
         },
         onSuccess: () => {
-            queryClient.invalidateQueries({ queryKey: ['comments', postId] });
-            toast.success('Comment posted successfully');
+            queryClient.invalidateQueries({ queryKey: ['posts'] });
+            console.log('Post view count updated successfully');
         },
         onError: (error) => {
-            console.error('Error creating comment:', error);
-            toast.error('Failed to post comment');
+            console.error('Error updating view count for post:', error);
         },
     });
 };

@@ -68,7 +68,8 @@ pub async fn react(
         r#"
             INSERT INTO comment_reactions(comment_id, account_id, kind)
             VALUES($1, $2, $3)
-            ON CONFLICT DO NOTHING
+            ON CONFLICT(comment_id, account_id) DO UPDATE SET
+                kind = EXCLUDED.kind
         "#,
         id,
         account_id,
@@ -153,8 +154,8 @@ pub async fn count_reactions(
         "#,
         id
     )
-    .fetch_one(executor)
-    .await;
+    .fetch_all(executor)
+    .await?;
 
     Ok(HashMap::from_iter(
         raw.into_iter()

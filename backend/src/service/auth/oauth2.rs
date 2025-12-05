@@ -1,7 +1,8 @@
 use axum::http::StatusCode;
 use openidconnect::{
     AuthenticationFlow, AuthorizationCode, CsrfToken, EndpointMaybeSet, EndpointNotSet,
-    EndpointSet, Nonce, ProviderMetadataDiscoveryOptions, Scope,
+    EndpointSet, Nonce, PkceCodeChallenge, PkceCodeVerifier, ProviderMetadataDiscoveryOptions,
+    Scope,
     core::{
         CoreClient, CoreIdTokenClaims, CoreIdTokenVerifier, CoreProviderMetadata, CoreResponseType,
     },
@@ -64,15 +65,21 @@ impl OAuth2Service {
         })
     }
 
-    pub fn start(&self) -> (Url, CsrfToken, Nonce) {
-        self.inner_client
+    pub fn start(&self) -> (Url, CsrfToken, Nonce, PkceCodeVerifier) {
+        let (pkce_challenge, pkce_verifier) = PkceCodeChallenge::new_random_sha256();
+
+        let (url, csrf, nonce) = self
+            .inner_client
             .authorize_url(
                 AuthenticationFlow::<CoreResponseType>::AuthorizationCode,
                 CsrfToken::new_random,
                 Nonce::new_random,
             )
+            .set_pkce_challenge(pkce_challenge)
             .add_scopes(self.scopes.clone())
-            .url()
+            .url();
+
+        (url, csrf, nonce, pkce_verifier)
     }
 
     #[tracing::instrument(err(Debug), skip(self))]
@@ -82,6 +89,7 @@ impl OAuth2Service {
         state: CsrfToken,
         csrf: CsrfToken,
         nonce: Nonce,
+        pkce_verifier: PkceCodeVerifier,
     ) -> ApiResult<CoreIdTokenClaims> {
         ensure!(
             state.secret() == csrf.secret(),
@@ -89,7 +97,10 @@ impl OAuth2Service {
             "CSRF token not matched"
         );
 
-        let token_exchange_request = self.inner_client.exchange_code(code)?;
+        let token_exchange_request = self
+            .inner_client
+            .exchange_code(code)?
+            .set_pkce_verifier(pkce_verifier);
 
         let token_response = token_exchange_request
             .request_async(&self.http_client)

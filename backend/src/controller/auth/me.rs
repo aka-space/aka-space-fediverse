@@ -30,6 +30,7 @@ pub struct Account {
 #[axum::debug_handler]
 #[utoipa::path(
     get,
+    operation_id = "auth::me",
     tag = "Auth",
     path = "/auth/me",
     security(("jwt_token" = [])),

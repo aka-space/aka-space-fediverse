@@ -20,10 +20,6 @@ const fn default_port() -> u16 {
     3000
 }
 
-fn default_frontend_url() -> String {
-    "http://localhost:3000".to_string()
-}
-
 fn default_sha256_secret() -> String {
     "secret".to_string()
 }
@@ -34,9 +30,6 @@ pub struct Config {
     pub port: u16,
 
     pub database_url: String,
-
-    #[serde(default = "default_frontend_url")]
-    pub frontend_url: String,
 
     #[serde(default = "default_sha256_secret")]
     pub sha256_secret: String,
