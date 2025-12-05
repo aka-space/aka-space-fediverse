@@ -8,7 +8,11 @@ export const useRegister = () => {
 
     return useMutation({
         mutationFn: async (data: UserRegister) => {
-            const res = await axiosInstance.post('auth/register', data);
+            const res = await axiosInstance.post('auth/register', data, {
+                headers: {
+                    'Content-Type': 'multipart/form-data',
+                },
+            });
             if (!res.data) {
                 throw new Error('Register failed');
             }
