@@ -63,7 +63,7 @@ export function RegisterForm({
                                                         }
                                                         placeholder="Username"
                                                         autoComplete="off"
-                                                        className="pl-10 placeholder:text-gray-350 selection:bg-white selection:text-black"
+                                                        className="pl-10 placeholder:text-gray-350 selection:bg-white selection:text-black h-10"
                                                     />
                                                 </div>
                                                 {fieldState.invalid && (
@@ -95,7 +95,7 @@ export function RegisterForm({
                                                             }
                                                             placeholder="Email"
                                                             autoComplete="off"
-                                                            className="pl-10 placeholder:text-gray-350 selection:bg-white selection:text-black"
+                                                            className="pl-10 placeholder:text-gray-350 selection:bg-white selection:text-black h-10"
                                                         />
                                                     </div>
                                                     {fieldState.invalid && (
@@ -129,7 +129,7 @@ export function RegisterForm({
                                                             type="password"
                                                             placeholder="Password"
                                                             autoComplete="on"
-                                                            className="pl-10 placeholder:text-gray-350 selection:bg-white selection:text-black"
+                                                            className="pl-10 placeholder:text-gray-350 selection:bg-white selection:text-black h-10"
                                                         />
                                                     </div>
                                                     {fieldState.invalid && (
@@ -163,7 +163,7 @@ export function RegisterForm({
                                                             type="password"
                                                             placeholder="Confirm password"
                                                             autoComplete="on"
-                                                            className="pl-10 placeholder:text-gray-350 selection:bg-white selection:text-black"
+                                                            className="pl-10 placeholder:text-gray-350 selection:bg-white selection:text-black h-10"
                                                         />
                                                     </div>
                                                     {fieldState.invalid && (
@@ -198,32 +198,46 @@ export function RegisterForm({
                                         </span>
                                         <div className="flex-1 h-px bg-gray-300"></div>
                                     </div>
-                                    <div className="flex gap-5 justify-center pt-2">
-                                        <Image
-                                            className="rounded-full w-11 cursor-pointer"
-                                            src="/logo-google.jpg"
-                                            alt="Login With GG"
-                                            width={35}
-                                            height={35}
+                                    <div className="flex flex-col gap-4 mt-6">
+                                        <Button
+                                            variant="light"
+                                            type="button"
+                                            className="h-10 w-full cursor-pointer"
                                             onClick={() =>
                                                 redirect(
                                                     `${process.env.NEXT_PUBLIC_API_URL}/oauth2/google`,
                                                 )
                                             }
-                                        />
+                                        >
+                                            <Image
+                                                className="rounded-full w-7 "
+                                                src="/logo-google.jpg"
+                                                alt="Login With GG"
+                                                width={35}
+                                                height={35}
+                                            />
+                                            Login with Google
+                                        </Button>
 
-                                        <Image
-                                            className="rounded-full w-11 cursor-pointer"
-                                            src="/logo-microsoft.png"
-                                            alt="Login With Microsoft"
-                                            width={35}
-                                            height={35}
+                                        <Button
+                                            variant="light"
+                                            type="button"
+                                            className="h-10 w-full cursor-pointer"
                                             onClick={() =>
                                                 redirect(
                                                     `${process.env.NEXT_PUBLIC_API_URL}/oauth2/microsoft`,
                                                 )
                                             }
-                                        />
+                                        >
+                                            <Image
+                                                className="rounded-full w-7"
+                                                src="/logo-microsoft.png"
+                                                alt="Login With Microsoft"
+                                                width={35}
+                                                height={35}
+                                            />
+                                            Login with Microsoft
+                                        </Button>
                                     </div>
                                 </div>
 
