@@ -2,8 +2,8 @@ import { Card, CardContent, CardHeader } from '@/components/ui/card';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
-import { Heart, MessageCircle, MoreHorizontal } from 'lucide-react';
-import { Post } from '@/types';
+import { MessageCircle, MoreHorizontal } from 'lucide-react';
+import { Comment, Post } from '@/types';
 import { formatTimeAgo } from '@/lib/format';
 import {
     DropdownMenu,
@@ -11,15 +11,92 @@ import {
     DropdownMenuItem,
     DropdownMenuTrigger,
 } from './ui/dropdown-menu';
-import { useState } from 'react';
+import { useMemo, useState, useEffect } from 'react';
 import { ReportModal } from './report-modal';
+import { useGetComments } from '@/hooks/comment/use-get-comments';
+import { PostReactions } from './post-reactions';
+import { useAddReactionPost } from '@/hooks/post/use-add-reaction-post';
+import { useAuthStore } from '@/store/useAuthStore';
+import { useReactionStore } from '@/store/useReactionStore';
+import { ReactionType } from './reaction-picker';
+import { useRouter } from 'next/navigation';
 
 interface PostCardProps {
     post: Post;
 }
 
 export function DetailPostCard({ post }: PostCardProps) {
+    const router = useRouter();
     const [isReportModalOpen, setIsReportModalOpen] = useState(false);
+    const { mutate: addReaction, isPending: isReacting } = useAddReactionPost();
+    const user = useAuthStore((s) => s.authUser);
+
+    const {
+        userEmail,
+        setUserEmail,
+        addReaction: addReactionToStore,
+        getUserReaction,
+        switchUser,
+    } = useReactionStore();
+
+    useEffect(() => {
+        if (user?.email) {
+            if (userEmail && userEmail !== user.email) {
+                switchUser(user.email);
+            } else if (!userEmail) {
+                setUserEmail(user.email);
+            }
+        }
+    }, [user, userEmail, setUserEmail, switchUser]);
+
+    const userReaction = getUserReaction(post.slug);
+
+    const totalReactions = useMemo(() => {
+        if (!post.reactions || typeof post.reactions !== 'object') return 0;
+        return Object.values(post.reactions).reduce(
+            (sum, count) => sum + count,
+            0,
+        );
+    }, [post.reactions]);
+
+    const [reactionCount, setReactionCount] = useState(totalReactions);
+
+    useEffect(() => {
+        setReactionCount(totalReactions);
+    }, [totalReactions]);
+
+    const reactionBreakdown = useMemo(() => {
+        if (!post.reactions || typeof post.reactions !== 'object') return {};
+        return post.reactions as Record<string, number>;
+    }, [post.reactions]);
+
+    const handleReactionSelect = (reactionType: ReactionType) => {
+        if (!user) {
+            router.push('/login');
+            return;
+        }
+
+        if (isReacting) return;
+
+        const previousReaction = userReaction;
+
+        if (!previousReaction) {
+            setReactionCount((prev: number) => prev + 1);
+        }
+
+        addReactionToStore(post.slug, reactionType);
+
+        addReaction(
+            { data: post, kind: reactionType },
+            {
+                onError: () => {
+                    if (!previousReaction) {
+                        setReactionCount((prev: number) => prev - 1);
+                    }
+                },
+            },
+        );
+    };
 
     return (
         <>
@@ -121,10 +198,14 @@ export function DetailPostCard({ post }: PostCardProps) {
                         </div>
 
                         <div className="flex items-center gap-6 text-sm text-gray-500 dark:text-gray-400">
-                            <button className="flex items-center gap-1 hover:text-red-700 transition-colors">
-                                <Heart className="h-4 w-4" />
-                                <span>{post.view}</span>
-                            </button>
+                            <PostReactions
+                                reactionCount={reactionCount}
+                                reactionBreakdown={reactionBreakdown}
+                                userReaction={userReaction}
+                                isReacting={isReacting}
+                                onReactionSelect={handleReactionSelect}
+                            />
+
                             <button className="flex items-center gap-1 hover:text-blue-500 transition-colors">
                                 <MessageCircle className="h-4 w-4" />
                             </button>

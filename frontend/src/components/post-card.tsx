@@ -8,12 +8,19 @@ import {
     DropdownMenuItem,
     DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
-import { Heart, MessageCircle, MoreHorizontal } from 'lucide-react';
+import { MessageCircle, MoreHorizontal } from 'lucide-react';
 import { Post, Comment } from '@/types';
 import { useRouter } from 'next/navigation';
 import { formatOverview, formatTimeAgo } from '@/lib/format';
 import { ReportModal } from './report-modal';
-import { useState, useMemo } from 'react';
+import { useState, useMemo, useEffect } from 'react';
+import { useGetComments } from '@/hooks/comment/use-get-comments';
+import { useUpdateViewPost } from '@/hooks/post/use-update-view-post';
+import { ReactionType } from './reaction-picker';
+import { PostReactions } from './post-reactions';
+import { useAddReactionPost } from '@/hooks/post/use-add-reaction-post';
+import { useAuthStore } from '@/store/useAuthStore';
+import { useReactionStore } from '@/store/useReactionStore';
 
 interface PostCardProps {
     post: Post;
@@ -22,8 +29,46 @@ interface PostCardProps {
 export function PostCard({ post }: PostCardProps) {
     const route = useRouter();
     const [isReportModalOpen, setIsReportModalOpen] = useState(false);
+    const { mutate: updateViewCount } = useUpdateViewPost();
+    const { mutate: addReaction, isPending: isReacting } = useAddReactionPost();
+    const user = useAuthStore((s) => s.authUser);
+
+    const {
+        userEmail,
+        setUserEmail,
+        addReaction: addReactionToStore,
+        getUserReaction,
+        switchUser,
+    } = useReactionStore();
+
+    useEffect(() => {
+        if (user?.email) {
+            if (userEmail && userEmail !== user.email) {
+                switchUser(user.email);
+            } else if (!userEmail) {
+                setUserEmail(user.email);
+            }
+        }
+    }, [user, userEmail, setUserEmail, switchUser]);
+
+    const userReaction = getUserReaction(post.slug);
+
+    const totalReactions = useMemo(() => {
+        if (!post.reactions || typeof post.reactions !== 'object') return 0;
+        return Object.values(post.reactions).reduce(
+            (sum, count) => sum + count,
+            0,
+        );
+    }, [post.reactions]);
+
+    const [reactionCount, setReactionCount] = useState(totalReactions);
+
+    useEffect(() => {
+        setReactionCount(totalReactions);
+    }, [totalReactions]);
 
     const handleNavigate = (slug: string) => {
+        updateViewCount(post);
         route.push(`/post/${slug}`);
     };
 
@@ -38,6 +83,38 @@ export function PostCard({ post }: PostCardProps) {
             .replace(/&#39;/g, "'");
         return decoded.trim();
     }, [post.content]);
+
+    const handleReactionSelect = (reactionType: ReactionType) => {
+        if (!user) {
+            route.push('/login');
+            return;
+        }
+
+        if (isReacting) return;
+
+        const previousReaction = userReaction;
+
+        if (!previousReaction) {
+            setReactionCount((prev: number) => prev + 1);
+        }
+        addReactionToStore(post.slug, reactionType);
+
+        addReaction(
+            { data: post, kind: reactionType },
+            {
+                onError: () => {
+                    if (!previousReaction) {
+                        setReactionCount((prev: number) => prev - 1);
+                    }
+                },
+            },
+        );
+    };
+
+    const reactionBreakdown = useMemo(() => {
+        if (!post.reactions || typeof post.reactions !== 'object') return {};
+        return post.reactions as Record<string, number>;
+    }, [post.reactions]);
 
     return (
         <>
@@ -130,14 +207,15 @@ export function PostCard({ post }: PostCardProps) {
                         </div>
 
                         <div className="flex items-center gap-6 text-sm text-gray-500">
-                            <button className="flex items-center gap-1 hover:text-red-700 transition-colors">
-                                <Heart className="h-4 w-4" />
-                                <span>{post.view}</span>
-                            </button>
-                            <button
-                                className="flex items-center gap-1 hover:text-blue-500 transition-colors"
-                                onClick={() => handleNavigate(post.slug)}
-                            >
+                            <PostReactions
+                                reactionCount={reactionCount}
+                                reactionBreakdown={reactionBreakdown}
+                                userReaction={userReaction}
+                                isReacting={isReacting}
+                                onReactionSelect={handleReactionSelect}
+                            />
+
+                            <button className="flex items-center gap-1 hover:text-blue-500 transition-colors">
                                 <MessageCircle className="h-4 w-4" />
                             </button>
                         </div>
