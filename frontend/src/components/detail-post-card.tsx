@@ -28,7 +28,6 @@ interface PostCardProps {
 export function DetailPostCard({ post }: PostCardProps) {
     const router = useRouter();
     const [isReportModalOpen, setIsReportModalOpen] = useState(false);
-    const { data: comments } = useGetComments();
     const { mutate: addReaction, isPending: isReacting } = useAddReactionPost();
     const user = useAuthStore((s) => s.authUser);
 
@@ -65,12 +64,6 @@ export function DetailPostCard({ post }: PostCardProps) {
     useEffect(() => {
         setReactionCount(totalReactions);
     }, [totalReactions]);
-
-    const commentCount = useMemo(() => {
-        return comments?.filter(
-            (comment: Comment) => comment.postId === post.id,
-        ).length;
-    }, [comments, post.id]);
 
     const reactionBreakdown = useMemo(() => {
         if (!post.reactions || typeof post.reactions !== 'object') return {};
@@ -215,7 +208,6 @@ export function DetailPostCard({ post }: PostCardProps) {
 
                             <button className="flex items-center gap-1 hover:text-blue-500 transition-colors">
                                 <MessageCircle className="h-4 w-4" />
-                                <span>{commentCount}</span>
                             </button>
                         </div>
                     </div>

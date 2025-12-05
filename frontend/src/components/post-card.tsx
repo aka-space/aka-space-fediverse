@@ -8,10 +8,10 @@ import {
     DropdownMenuItem,
     DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
-import { MessageCircle, MoreHorizontal } from 'lucide-react';
+import { Eye, MessageCircle, MoreHorizontal } from 'lucide-react';
 import { Post, Comment } from '@/types';
 import { useRouter } from 'next/navigation';
-import { formatOverview, formatTimeAgo } from '@/lib/format';
+import { formatNumber, formatOverview, formatTimeAgo } from '@/lib/format';
 import { ReportModal } from './report-modal';
 import { useState, useMemo, useEffect } from 'react';
 import { useGetComments } from '@/hooks/comment/use-get-comments';
@@ -71,14 +71,6 @@ export function PostCard({ post }: PostCardProps) {
         updateViewCount(post);
         route.push(`/post/${slug}`);
     };
-
-    const { data: comments } = useGetComments();
-
-    const commentCount = useMemo(() => {
-        return comments?.filter(
-            (comment: Comment) => comment.postId === post.id,
-        ).length;
-    }, [comments, post.id]);
 
     const contentPreview = useMemo(() => {
         const text = post.content.replace(/<[^>]*>/g, '');
@@ -215,6 +207,13 @@ export function PostCard({ post }: PostCardProps) {
                         </div>
 
                         <div className="flex items-center gap-6 text-sm text-gray-500">
+                            <div className="flex items-center gap-1.5 hover:text-gray-700 dark:hover:text-gray-300 transition-colors">
+                                <Eye className="h-4 w-4" />
+                                <span className="font-medium">
+                                    {formatNumber(post.view)}
+                                </span>
+                            </div>
+
                             <PostReactions
                                 reactionCount={reactionCount}
                                 reactionBreakdown={reactionBreakdown}
@@ -223,9 +222,11 @@ export function PostCard({ post }: PostCardProps) {
                                 onReactionSelect={handleReactionSelect}
                             />
 
-                            <button className="flex items-center gap-1 hover:text-blue-500 transition-colors">
+                            <button
+                                className="flex items-center gap-1 hover:text-blue-500 transition-colors"
+                                onClick={() => handleNavigate(post.slug)}
+                            >
                                 <MessageCircle className="h-4 w-4" />
-                                <span>{commentCount}</span>
                             </button>
                         </div>
                     </div>

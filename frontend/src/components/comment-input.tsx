@@ -10,7 +10,7 @@ import MessageInput from './ui/message-input-block/message-input-block';
 
 const CommentInput = ({ postId }: { postId: string }) => {
     const { authUser } = useAuthStore();
-    const { mutate: createComment } = useCreateComment();
+    const { mutate: createComment } = useCreateComment(postId);
 
     const [comment, setComment] = useState<string>('');
     const [isSubmitting, setIsSubmitting] = useState<boolean>(false);
@@ -21,15 +21,7 @@ const CommentInput = ({ postId }: { postId: string }) => {
         setIsSubmitting(true);
         try {
             const data = {
-                comment: comment.trim(),
-                author: {
-                    name: authUser?.username,
-                    avatar: `${authUser?.username}.png`,
-                },
-                postId: postId,
-                commentId: null,
-                createdAt: new Date().toISOString(),
-                likes: 0,
+                content: comment.trim(),
             };
 
             createComment(data, {
