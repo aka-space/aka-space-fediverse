@@ -214,13 +214,13 @@ export function RegisterForm({
 
                                         <Image
                                             className="rounded-full w-11 cursor-pointer"
-                                            src="/logo-github.jpg"
-                                            alt="Login With GG"
+                                            src="/logo-microsoft.png"
+                                            alt="Login With Microsoft"
                                             width={35}
                                             height={35}
                                             onClick={() =>
                                                 redirect(
-                                                    `${process.env.NEXT_PUBLIC_API_URL}/oauth2/github`,
+                                                    `${process.env.NEXT_PUBLIC_API_URL}/oauth2/microsoft`,
                                                 )
                                             }
                                         />
