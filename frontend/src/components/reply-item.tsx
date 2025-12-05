@@ -83,11 +83,11 @@ const ReplyItem = ({ reply, postId, depth = 0 }: ReplyItemProps) => {
         <div className="flex gap-3">
             <Avatar className="h-8 w-8 cursor-pointer">
                 <AvatarImage
-                    src={`/${reply.account.username.toLowerCase()}.png`}
+                    src={reply.account.avatar_path}
                     alt={reply.account.username}
                 />
-                <AvatarFallback>
-                    {reply.account.username.charAt(0).toUpperCase()}
+                <AvatarFallback className="bg-black text-white">
+                    {reply.account.username.substring(0, 2).toUpperCase()}
                 </AvatarFallback>
             </Avatar>
 

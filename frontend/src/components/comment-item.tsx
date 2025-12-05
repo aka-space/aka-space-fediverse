@@ -87,11 +87,13 @@ const CommentItem = ({
                 <div className="relative">
                     <Avatar className="h-10 w-10 relative z-10 cursor-pointer">
                         <AvatarImage
-                            src={`/${comment.account.username.toLowerCase()}.png`}
+                            src={comment.account.avatar_path || ''}
                             alt={comment.account.username}
                         />
-                        <AvatarFallback>
-                            {comment.account.username.charAt(0).toUpperCase()}
+                        <AvatarFallback className="bg-black text-white">
+                            {comment.account.username
+                                ?.substring(0, 2)
+                                .toUpperCase()}
                         </AvatarFallback>
                     </Avatar>
                 </div>

@@ -1,12 +1,12 @@
 import { axiosInstance } from '@/lib/axios';
-import { UserRegister } from '@/types';
+import { User } from '@/types';
 import { create } from 'zustand';
 import { persist } from 'zustand/middleware';
 
 interface AuthState {
     accessToken: string | null;
-    authUser: UserRegister | null;
-    setUser: (user: UserRegister | null) => void;
+    authUser: User | null;
+    setUser: (user: User | null) => void;
     setAccessToken: (token: string | null) => void;
     refreshAccessToken: () => Promise<string | null>;
     getUser: () => Promise<string | null>;

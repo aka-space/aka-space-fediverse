@@ -1,6 +1,7 @@
 export type Post = {
     id: string;
     author: {
+        avatar_path: string | '';
         username: string;
         email: string;
     };
@@ -17,6 +18,7 @@ export type Post = {
 export type CommentAuthor = {
     email: string;
     username: string;
+    avatar_path: string | '';
 };
 
 export type Comment = {
@@ -52,6 +54,12 @@ export type UserRegister = {
     username: string;
     email: string;
     password: string;
+};
+
+export type User = {
+    avatar_path: string;
+    username: string;
+    email: string;
 };
 
 export interface Emoji {

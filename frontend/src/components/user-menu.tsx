@@ -1,4 +1,3 @@
-import { Button } from '@/components/ui/button';
 import {
     DropdownMenu,
     DropdownMenuContent,
@@ -6,7 +5,7 @@ import {
     DropdownMenuItem,
     DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
-import { UserIcon, LogOut } from 'lucide-react';
+import { LogOut } from 'lucide-react';
 import { Avatar, AvatarFallback, AvatarImage } from '@radix-ui/react-avatar';
 import { useAuthStore } from '@/store/useAuthStore';
 import { useLogout } from '@/hooks/auth/use-logout';
@@ -22,17 +21,34 @@ export function UserMenu() {
     return (
         <DropdownMenu modal={false}>
             <DropdownMenuTrigger asChild>
-                <Button className="w-8 h-8 rounded-full flex items-center justify-center bg-gray-300 text-white cursor-pointer">
-                    <UserIcon size={18} />
-                </Button>
+                <Avatar className="cursor-pointer h-8 w-8 overflow-hidden">
+                    <AvatarImage
+                        src={authUser?.avatar_path || ''}
+                        alt={authUser?.username || 'avatar'}
+                        className="h-full w-full rounded-full object-cover"
+                    />
+                    <AvatarFallback className="bg-black text-white text-sm w-8 h-8 rounded-full flex items-center justify-center">
+                        {authUser?.username
+                            ? authUser.username?.substring(0, 2).toUpperCase()
+                            : 'NO'}
+                    </AvatarFallback>
+                </Avatar>
             </DropdownMenuTrigger>
             <DropdownMenuContent className="w-60 mr-4" align="start">
                 <DropdownMenuGroup>
-                    <div className="flex items-center gap-2 border-b px-2 mb-1">
-                        <Avatar className="h-7 w-7 rounded-lg overflow-hidden">
-                            <AvatarImage src="/test-avt.jpg" alt="avt" />
-                            <AvatarFallback className="rounded-lg">
-                                CN
+                    <div className="flex items-center gap-2 border-b px-2 pb-1 mb-1">
+                        <Avatar className="h-6 w-6 overflow-hidden">
+                            <AvatarImage
+                                src={authUser?.avatar_path || ''}
+                                alt={authUser?.username || 'avatar'}
+                                className="h-full w-full rounded-full object-cover"
+                            />
+                            <AvatarFallback className=" bg-black text-white text-sm w-6 h-6 rounded-full flex items-center justify-center">
+                                {authUser?.username
+                                    ? authUser.username
+                                          ?.substring(0, 2)
+                                          .toUpperCase()
+                                    : 'NO'}
                             </AvatarFallback>
                         </Avatar>
 
