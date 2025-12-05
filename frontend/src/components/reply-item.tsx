@@ -114,10 +114,11 @@ const ReplyItem = ({ reply, postId, depth = 0 }: ReplyItemProps) => {
                                         <MoreHorizontal className="h-3 w-3" />
                                     </Button>
                                 </DropdownMenuTrigger>
-                                <DropdownMenuContent align="end" className="w-32">
-                                    <DropdownMenuItem
-                                        className="text-red-600 cursor-pointer text-xs"
-                                    >
+                                <DropdownMenuContent
+                                    align="end"
+                                    className="w-32"
+                                >
+                                    <DropdownMenuItem className="text-red-600 cursor-pointer text-xs">
                                         <Trash2 className="h-3 w-3 mr-2" />
                                         Delete
                                     </DropdownMenuItem>
