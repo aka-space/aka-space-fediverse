@@ -212,8 +212,8 @@ pub async fn count_reactions(
         "#,
         id
     )
-    .fetch_one(executor)
-    .await;
+    .fetch_all(executor)
+    .await?;
 
     Ok(HashMap::from_iter(
         raw.into_iter()
