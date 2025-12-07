@@ -52,7 +52,7 @@ export default function Home() {
     const loadingRef = useRef(false);
     const [hasLoadedOnce, setHasLoadedOnce] = useState(false);
     const containerRef = useRef<HTMLDivElement>(null);
-    
+
     const previousPostsCount = useRef(0);
     const animatedPostIds = useRef<Set<string>>(new Set());
 
@@ -82,10 +82,10 @@ export default function Home() {
     useEffect(() => {
         if (allPosts.length > 0 && containerRef.current) {
             const cards = containerRef.current.querySelectorAll('.post-card');
-            
+
             const newCardsArray = Array.from(cards).slice(
                 previousPostsCount.current,
-                allPosts.length
+                allPosts.length,
             );
 
             const unanimmatedCards = newCardsArray.filter((_, index) => {
@@ -98,7 +98,7 @@ export default function Home() {
                 unanimmatedCards.forEach((card, index) => {
                     const postIndex = previousPostsCount.current + index;
                     const post = allPosts[postIndex];
-                    
+
                     if (post) {
                         animatedPostIds.current.add(post.id);
                     }
@@ -197,10 +197,7 @@ export default function Home() {
                     )}
 
                     {allPosts.map((post: Post) => (
-                        <div
-                            key={post.id}
-                            className="post-card"
-                        >
+                        <div key={post.id} className="post-card">
                             <PostCard post={post} />
                         </div>
                     ))}
