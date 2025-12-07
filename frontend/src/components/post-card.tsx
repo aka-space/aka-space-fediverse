@@ -9,18 +9,18 @@ import {
     DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
 import { Eye, MessageCircle, MoreHorizontal } from 'lucide-react';
-import { Post, Comment } from '@/types';
+import { Post } from '@/types';
 import { useRouter } from 'next/navigation';
 import { formatNumber, formatOverview, formatTimeAgo } from '@/lib/format';
 import { ReportModal } from './report-modal';
-import { useState, useMemo, useEffect } from 'react';
-import { useGetComments } from '@/hooks/comment/use-get-comments';
+import { useState, useMemo, useEffect, useRef } from 'react';
 import { useUpdateViewPost } from '@/hooks/post/use-update-view-post';
 import { ReactionType } from './reaction-picker';
 import { PostReactions } from './post-reactions';
 import { useAddReactionPost } from '@/hooks/post/use-add-reaction-post';
 import { useAuthStore } from '@/store/useAuthStore';
 import { useReactionStore } from '@/store/useReactionStore';
+import { gsap } from 'gsap';
 
 interface PostCardProps {
     post: Post;
@@ -116,9 +116,58 @@ export function PostCard({ post }: PostCardProps) {
         return post.reactions as Record<string, number>;
     }, [post.reactions]);
 
+    const cardRef = useRef<HTMLDivElement>(null);
+    const bounceAnimation = useRef<gsap.core.Tween | null>(null);
+
+    useEffect(() => {
+        const card = cardRef.current;
+        if (!card) return;
+
+        const handleMouseEnter = () => {
+            if (bounceAnimation.current) {
+                bounceAnimation.current.kill();
+            }
+
+            bounceAnimation.current = gsap.to(card, {
+                y: -8,
+                duration: 0.4,
+                ease: 'power1.inOut',
+                yoyo: true,
+                repeat: -1,
+                boxShadow:
+                    '0 20px 25px -5px rgba(0, 0, 0, 0.15), 0 10px 10px -5px rgba(0, 0, 0, 0.04)',
+            });
+        };
+
+        const handleMouseLeave = () => {
+            if (bounceAnimation.current) {
+                bounceAnimation.current.kill();
+            }
+
+            gsap.to(card, {
+                y: 0,
+                boxShadow:
+                    '0 1px 3px 0 rgba(0, 0, 0, 0.1), 0 1px 2px 0 rgba(0, 0, 0, 0.06)',
+                duration: 0.3,
+                ease: 'power2.out',
+            });
+        };
+
+        card.addEventListener('mouseenter', handleMouseEnter);
+        card.addEventListener('mouseleave', handleMouseLeave);
+
+        return () => {
+            card.removeEventListener('mouseenter', handleMouseEnter);
+            card.removeEventListener('mouseleave', handleMouseLeave);
+            if (bounceAnimation.current) {
+                bounceAnimation.current.kill();
+            }
+        };
+    }, []);
+
     return (
         <>
-            <Card className="w-full hover:shadow-md transition-shadow gap-0">
+            <Card ref={cardRef} className="w-full transition-shadow gap-0">
                 <CardHeader className="pb-3">
                     <div className="flex items-start justify-between">
                         <div className="flex items-center gap-3">
