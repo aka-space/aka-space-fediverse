@@ -22,7 +22,7 @@ WORKDIR /app
 
 ENV NEXT_TELEMETRY_DISABLED=1
 
-RUN adduser --system --uid 1001 nextjs
+RUN chown -R 1001:1001 /app
 
 COPY --from=builder /app/public ./public
 
