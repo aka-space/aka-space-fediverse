@@ -4,12 +4,12 @@ import React, { useState } from 'react';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Button } from '@/components/ui/button';
 import {
-    Heart,
     MessageCircle,
     MoreHorizontal,
     Trash2,
     Loader2,
     ChevronDown,
+    ThumbsUp,
 } from 'lucide-react';
 import {
     DropdownMenu,
@@ -129,16 +129,24 @@ const ReplyItem = ({ reply, postId, depth = 0 }: ReplyItemProps) => {
                     <p className="text-xs text-gray-700 dark:text-gray-300">
                         {reply.content}
                     </p>
+
+                    <div className="mt-0.5">
+                        {reply.reactions.like > 0 && (
+                            <span className="text-xs text-gray-500 dark:text-gray-400">
+                                👍{reply.reactions.like}
+                            </span>
+                        )}
+                    </div>
                 </div>
 
-                <div className="flex items-center gap-3 mt-1 ml-2">
+                <div className="flex items-center gap-2 mt-1 ml-2">
                     <Button
                         variant="ghost"
                         size="sm"
-                        className="h-auto p-0 text-gray-600 dark:text-gray-400 hover:text-red-500"
+                        className="h-auto py-1 text-gray-600 dark:text-gray-400 hover:text-blue-500"
                         onClick={handleLikeReply}
                     >
-                        <Heart className="h-3 w-3 mr-1" />
+                        <ThumbsUp className="h-3 w-3 mr-1" />
                         <span className="text-xs">Like</span>
                     </Button>
 
@@ -146,7 +154,7 @@ const ReplyItem = ({ reply, postId, depth = 0 }: ReplyItemProps) => {
                         <Button
                             variant="ghost"
                             size="sm"
-                            className="h-auto p-0 text-gray-600 dark:text-gray-400 hover:text-blue-500 cursor-pointer"
+                            className="h-auto py-1 text-gray-600 dark:text-gray-400 hover:text-blue-500 cursor-pointer"
                             onClick={handleReplyClick}
                         >
                             <MessageCircle className="h-3 w-3 mr-1" />
@@ -162,9 +170,8 @@ const ReplyItem = ({ reply, postId, depth = 0 }: ReplyItemProps) => {
                             onClick={handleToggleNestedReplies}
                         >
                             <ChevronDown
-                                className={`h-3 w-3 mr-1 transition-transform ${
-                                    showNestedReplies ? 'rotate-180' : ''
-                                }`}
+                                className={`h-3 w-3 mr-1 transition-transform ${showNestedReplies ? 'rotate-180' : ''
+                                    }`}
                             />
                             <span className="text-xs">
                                 {showNestedReplies ? 'Hide' : 'View'}{' '}
