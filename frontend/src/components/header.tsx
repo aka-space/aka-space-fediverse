@@ -8,6 +8,7 @@ import { UserMenu } from './user-menu';
 import { Button } from './ui/button';
 import { useAuthStore } from '@/store/useAuthStore';
 import { useGetTags } from '@/hooks/post/use-get-tags';
+import { useDebounce } from '@/hooks/post/use-debounce';
 
 const STORAGE_KEY = 'search-history';
 
@@ -17,6 +18,7 @@ export default function Header() {
     const { authUser } = useAuthStore();
 
     const accessToken = useAuthStore((state) => state.accessToken);
+
     useEffect(() => {
         if (accessToken) {
             router.push('/');
@@ -40,6 +42,7 @@ export default function Header() {
     const { data: allTags = [] } = useGetTags();
     const [showTagDropdown, setShowTagDropdown] = useState(false);
     const [filteredTags, setFilteredTags] = useState<string[]>([]);
+    const debouncedSearch = useDebounce(search, 500);
 
     const filteredHistory = search
         ? history.filter((item) =>
@@ -149,6 +152,14 @@ export default function Header() {
             window.removeEventListener('scroll', handleScroll);
         };
     }, []);
+
+    useEffect(() => {
+        if (!debouncedSearch) return;
+
+        if (showTagDropdown) return;
+
+        handleSearch(debouncedSearch);
+    }, [debouncedSearch]);
 
     const deleteHistory = (item: string) => {
         const newHistory = history.filter((h) => h !== item);
