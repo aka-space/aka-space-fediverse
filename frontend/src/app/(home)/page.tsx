@@ -14,7 +14,7 @@ import { usePostsStore } from '@/store/usePostsStore';
 import { gsap } from 'gsap';
 
 export default function Home() {
-    const limit = 4;
+    const limit = 3;
     const queryClient = useQueryClient();
 
     const {
