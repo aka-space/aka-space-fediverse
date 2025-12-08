@@ -14,7 +14,7 @@ import { usePostsStore } from '@/store/usePostsStore';
 import { gsap } from 'gsap';
 
 export default function Home() {
-    const limit = 2;
+    const limit = 4;
     const queryClient = useQueryClient();
 
     const {
@@ -209,7 +209,7 @@ export default function Home() {
                             ref={observerTarget}
                             className="flex justify-center py-4"
                         >
-                            {loading && currentPage > 0 && <Spinner />}
+                            <Spinner />
                         </div>
                     )}
                 </div>
