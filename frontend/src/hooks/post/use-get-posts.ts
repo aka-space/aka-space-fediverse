@@ -25,6 +25,7 @@ export const useGetPosts = (
             author_name,
         ],
         queryFn: async () => {
+            console.log('Fetching posts with params:');
             try {
                 const direction = 'descending';
                 const response = await axiosInstance.get('/post', {
@@ -41,6 +42,7 @@ export const useGetPosts = (
                         qs.stringify(params, { arrayFormat: 'repeat' }),
                 });
 
+
                 if (response.status === 200) {
                     const data: Post[] = response.data.data;
                     const hasMore = response.data.has_next;
@@ -55,10 +57,5 @@ export const useGetPosts = (
                 throw new Error('Error fetching posts');
             }
         },
-        staleTime: 0,
-        gcTime: 5 * 60 * 1000,
-        placeholderData: { data: [], hasMore: false },
-        refetchOnMount: false,
-        refetchOnWindowFocus: false,
     });
 };

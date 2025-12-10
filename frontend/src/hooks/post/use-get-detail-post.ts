@@ -6,7 +6,7 @@ import { toast } from 'sonner';
 export const useGetDetailPost = (slug: string) => {
     const token = useAuthStore((s) => s.accessToken);
     return useQuery({
-        queryKey: ['post'],
+        queryKey: ['post', slug],
         queryFn: async () => {
             try {
                 const response = await axiosInstance.get(`/post/${slug}`, {

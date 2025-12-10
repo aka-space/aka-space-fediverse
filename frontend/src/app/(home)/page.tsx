@@ -177,17 +177,6 @@ export default function Home() {
                                 setFilter(newFilter as 'new' | 'hot')
                             }
                         />
-                        <Button
-                            variant="outline"
-                            size="sm"
-                            onClick={handleRefresh}
-                            disabled={loading && currentPage === 0}
-                            className="hover:bg-gray-200/70"
-                        >
-                            {loading && currentPage === 0
-                                ? 'Refreshing...'
-                                : 'Refresh'}
-                        </Button>
                     </div>
 
                     {loading && currentPage === 0 && (
