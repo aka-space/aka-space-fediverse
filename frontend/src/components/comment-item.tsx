@@ -137,7 +137,6 @@ const CommentItem = ({
                         <p className="text-sm text-gray-700 dark:text-gray-300">
                             {comment.content}
                         </p>
-
                     </div>
 
                     <div className="flex items-center gap-4 mt-2 ml-2">
@@ -178,8 +177,9 @@ const CommentItem = ({
                             onClick={handleToggleReplies}
                         >
                             <ChevronDown
-                                className={`h-4 w-4 mr-1 transition-transform ${showReplies ? 'rotate-180' : ''
-                                    }`}
+                                className={`h-4 w-4 mr-1 transition-transform ${
+                                    showReplies ? 'rotate-180' : ''
+                                }`}
                             />
                             <span className="text-xs">
                                 {showReplies ? 'Hide' : 'View'} {replyCount}{' '}

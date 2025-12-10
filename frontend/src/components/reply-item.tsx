@@ -161,7 +161,6 @@ const ReplyItem = ({ reply, postId, depth = 0 }: ReplyItemProps) => {
                             </span>
                         )}
                     </div>
-
                 </div>
 
                 {nestedReplyCount > 0 && (
@@ -172,8 +171,9 @@ const ReplyItem = ({ reply, postId, depth = 0 }: ReplyItemProps) => {
                         onClick={handleToggleNestedReplies}
                     >
                         <ChevronDown
-                            className={`h-3 w-3 mr-1 transition-transform ${showNestedReplies ? 'rotate-180' : ''
-                                }`}
+                            className={`h-3 w-3 mr-1 transition-transform ${
+                                showNestedReplies ? 'rotate-180' : ''
+                            }`}
                         />
                         <span className="text-xs">
                             {showNestedReplies ? 'Hide' : 'View'}{' '}
