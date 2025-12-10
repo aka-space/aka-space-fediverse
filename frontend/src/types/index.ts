@@ -27,6 +27,9 @@ export type Comment = {
     created_at: string;
     updated_at: string;
     account: CommentAuthor;
+    reactions: {
+        like: number;
+    };
     postId?: string;
 };
 
