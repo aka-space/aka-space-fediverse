@@ -8,7 +8,6 @@ import { Post } from '@/types';
 import { NoPost } from '@/components/no-post';
 import { useEffect, useRef, useState } from 'react';
 import { useSearchParams } from 'next/navigation';
-import { Button } from '@/components/ui/button';
 import { useQueryClient } from '@tanstack/react-query';
 import { usePostsStore } from '@/store/usePostsStore';
 import { gsap } from 'gsap';
@@ -177,17 +176,6 @@ export default function Home() {
                                 setFilter(newFilter as 'new' | 'hot')
                             }
                         />
-                        <Button
-                            variant="outline"
-                            size="sm"
-                            onClick={handleRefresh}
-                            disabled={loading && currentPage === 0}
-                            className="hover:bg-gray-200/70"
-                        >
-                            {loading && currentPage === 0
-                                ? 'Refreshing...'
-                                : 'Refresh'}
-                        </Button>
                     </div>
 
                     {loading && currentPage === 0 && (

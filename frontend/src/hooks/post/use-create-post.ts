@@ -25,7 +25,7 @@ export const useCreatePost = () => {
             return response.data;
         },
         onSuccess: () => {
-            queryClient.invalidateQueries({ queryKey: ['posts', token] });
+            queryClient.invalidateQueries({ queryKey: ['posts'] });
 
             resetPostData();
         },
