@@ -138,13 +138,6 @@ const CommentItem = ({
                             {comment.content}
                         </p>
 
-                        <div className="mt-0.5">
-                            {comment.reactions.like > 0 && (
-                                <span className="text-xs text-gray-500 dark:text-gray-400">
-                                    👍{comment.reactions.like}
-                                </span>
-                            )}
-                        </div>
                     </div>
 
                     <div className="flex items-center gap-4 mt-2 ml-2">
@@ -168,25 +161,32 @@ const CommentItem = ({
                             <span className="text-xs">Reply</span>
                         </Button>
 
-                        {replyCount > 0 && (
-                            <Button
-                                variant="ghost"
-                                size="sm"
-                                className="h-auto p-0 text-gray-600 dark:text-gray-400 hover:text-blue-500 cursor-pointer"
-                                onClick={handleToggleReplies}
-                            >
-                                <ChevronDown
-                                    className={`h-4 w-4 mr-1 transition-transform ${
-                                        showReplies ? 'rotate-180' : ''
-                                    }`}
-                                />
-                                <span className="text-xs">
-                                    {showReplies ? 'Hide' : 'View'} {replyCount}{' '}
-                                    {replyCount === 1 ? 'reply' : 'replies'}
+                        <div className="flex items-center gap-1">
+                            {comment.reactions.like > 0 && (
+                                <span className="text-xs text-gray-500 dark:text-gray-400">
+                                    👍{comment.reactions.like}
                                 </span>
-                            </Button>
-                        )}
+                            )}
+                        </div>
                     </div>
+
+                    {replyCount > 0 && (
+                        <Button
+                            variant="ghost"
+                            size="sm"
+                            className="h-auto p-0 text-gray-600 dark:text-gray-400 hover:text-blue-500 cursor-pointer mt-2.5 ml-2"
+                            onClick={handleToggleReplies}
+                        >
+                            <ChevronDown
+                                className={`h-4 w-4 mr-1 transition-transform ${showReplies ? 'rotate-180' : ''
+                                    }`}
+                            />
+                            <span className="text-xs">
+                                {showReplies ? 'Hide' : 'View'} {replyCount}{' '}
+                                {replyCount === 1 ? 'reply' : 'replies'}
+                            </span>
+                        </Button>
+                    )}
 
                     {isReplying && (
                         <div className="mt-3">

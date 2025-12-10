@@ -129,14 +129,6 @@ const ReplyItem = ({ reply, postId, depth = 0 }: ReplyItemProps) => {
                     <p className="text-xs text-gray-700 dark:text-gray-300">
                         {reply.content}
                     </p>
-
-                    <div className="mt-0.5">
-                        {reply.reactions.like > 0 && (
-                            <span className="text-xs text-gray-500 dark:text-gray-400">
-                                👍{reply.reactions.like}
-                            </span>
-                        )}
-                    </div>
                 </div>
 
                 <div className="flex items-center gap-2 mt-1 ml-2">
@@ -162,26 +154,34 @@ const ReplyItem = ({ reply, postId, depth = 0 }: ReplyItemProps) => {
                         </Button>
                     )}
 
-                    {nestedReplyCount > 0 && (
-                        <Button
-                            variant="ghost"
-                            size="sm"
-                            className="h-auto p-0 text-gray-600 dark:text-gray-400 hover:text-blue-500 cursor-pointer"
-                            onClick={handleToggleNestedReplies}
-                        >
-                            <ChevronDown
-                                className={`h-3 w-3 mr-1 transition-transform ${
-                                    showNestedReplies ? 'rotate-180' : ''
-                                }`}
-                            />
-                            <span className="text-xs">
-                                {showNestedReplies ? 'Hide' : 'View'}{' '}
-                                {nestedReplyCount}{' '}
-                                {nestedReplyCount === 1 ? 'reply' : 'replies'}
+                    <div className="flex items-center gap-1">
+                        {reply.reactions.like > 0 && (
+                            <span className="text-xs text-gray-500 dark:text-gray-400">
+                                👍{reply.reactions.like}
                             </span>
-                        </Button>
-                    )}
+                        )}
+                    </div>
+
                 </div>
+
+                {nestedReplyCount > 0 && (
+                    <Button
+                        variant="ghost"
+                        size="sm"
+                        className="h-auto p-0 text-gray-600 dark:text-gray-400 hover:text-blue-500 cursor-pointer mt-2.5 ml-2"
+                        onClick={handleToggleNestedReplies}
+                    >
+                        <ChevronDown
+                            className={`h-3 w-3 mr-1 transition-transform ${showNestedReplies ? 'rotate-180' : ''
+                                }`}
+                        />
+                        <span className="text-xs">
+                            {showNestedReplies ? 'Hide' : 'View'}{' '}
+                            {nestedReplyCount}{' '}
+                            {nestedReplyCount === 1 ? 'reply' : 'replies'}
+                        </span>
+                    </Button>
+                )}
 
                 {isReplying && (
                     <div className="mt-2">
