@@ -42,7 +42,6 @@ export const useGetPosts = (
                         qs.stringify(params, { arrayFormat: 'repeat' }),
                 });
 
-
                 if (response.status === 200) {
                     const data: Post[] = response.data.data;
                     const hasMore = response.data.has_next;

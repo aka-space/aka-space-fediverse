@@ -8,7 +8,6 @@ import { Post } from '@/types';
 import { NoPost } from '@/components/no-post';
 import { useEffect, useRef, useState } from 'react';
 import { useSearchParams } from 'next/navigation';
-import { Button } from '@/components/ui/button';
 import { useQueryClient } from '@tanstack/react-query';
 import { usePostsStore } from '@/store/usePostsStore';
 import { gsap } from 'gsap';
