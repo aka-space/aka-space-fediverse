@@ -133,9 +133,18 @@ const CommentItem = ({
                                 </DropdownMenu>
                             )}
                         </div>
+
                         <p className="text-sm text-gray-700 dark:text-gray-300">
                             {comment.content}
                         </p>
+
+                        <div className="mt-0.5">
+                            {comment.reactions.like > 0 && (
+                                <span className="text-xs text-gray-500 dark:text-gray-400">
+                                    👍{comment.reactions.like}
+                                </span>
+                            )}
+                        </div>
                     </div>
 
                     <div className="flex items-center gap-4 mt-2 ml-2">
