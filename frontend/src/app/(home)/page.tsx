@@ -11,9 +11,10 @@ import { useSearchParams } from 'next/navigation';
 import { Button } from '@/components/ui/button';
 import { useQueryClient } from '@tanstack/react-query';
 import { usePostsStore } from '@/store/usePostsStore';
+import { gsap } from 'gsap';
 
 export default function Home() {
-    const limit = 10;
+    const limit = 3;
     const queryClient = useQueryClient();
 
     const {
@@ -50,17 +51,25 @@ export default function Home() {
     const observerTarget = useRef<HTMLDivElement>(null);
     const loadingRef = useRef(false);
     const [hasLoadedOnce, setHasLoadedOnce] = useState(false);
+    const containerRef = useRef<HTMLDivElement>(null);
+
+    const previousPostsCount = useRef(0);
+    const animatedPostIds = useRef<Set<string>>(new Set());
 
     useEffect(() => {
         reset();
         loadingRef.current = false;
         setHasLoadedOnce(false);
+        previousPostsCount.current = 0;
+        animatedPostIds.current.clear();
     }, [search, filter, reset]);
 
     useEffect(() => {
         if (posts?.data) {
             if (currentPage === 0) {
                 setPosts(posts.data);
+                previousPostsCount.current = 0;
+                animatedPostIds.current.clear();
             } else {
                 appendPosts(posts.data);
             }
@@ -69,6 +78,53 @@ export default function Home() {
             setHasLoadedOnce(true);
         }
     }, [posts, currentPage, setPosts, appendPosts, setHasMore]);
+
+    useEffect(() => {
+        if (allPosts.length > 0 && containerRef.current) {
+            const cards = containerRef.current.querySelectorAll('.post-card');
+
+            const newCardsArray = Array.from(cards).slice(
+                previousPostsCount.current,
+                allPosts.length,
+            );
+
+            const unanimmatedCards = newCardsArray.filter((_, index) => {
+                const postIndex = previousPostsCount.current + index;
+                const post = allPosts[postIndex];
+                return post && !animatedPostIds.current.has(post.id);
+            });
+
+            if (unanimmatedCards.length > 0) {
+                unanimmatedCards.forEach((card, index) => {
+                    const postIndex = previousPostsCount.current + index;
+                    const post = allPosts[postIndex];
+
+                    if (post) {
+                        animatedPostIds.current.add(post.id);
+                    }
+
+                    gsap.fromTo(
+                        card,
+                        {
+                            opacity: 0,
+                            y: 50,
+                            scale: 0.95,
+                        },
+                        {
+                            opacity: 1,
+                            y: 0,
+                            scale: 1,
+                            duration: 0.8,
+                            delay: index * 0.15,
+                            ease: 'power2.out',
+                        },
+                    );
+                });
+
+                previousPostsCount.current = allPosts.length;
+            }
+        }
+    }, [allPosts.length, allPosts]);
 
     useEffect(() => {
         const observer = new IntersectionObserver(
@@ -104,6 +160,8 @@ export default function Home() {
         reset();
         loadingRef.current = false;
         setHasLoadedOnce(false);
+        previousPostsCount.current = 0;
+        animatedPostIds.current.clear();
     };
 
     const showNoPost =
@@ -112,7 +170,7 @@ export default function Home() {
     return (
         <div className="w-full flex justify-center mb-6 px-4">
             <div className="flex flex-col gap-6 max-w-4xl w-full">
-                <div className="space-y-8">
+                <div className="space-y-8" ref={containerRef}>
                     <div className="flex items-center justify-between">
                         <PostsFilter
                             setFilter={(newFilter) =>
@@ -139,7 +197,9 @@ export default function Home() {
                     )}
 
                     {allPosts.map((post: Post) => (
-                        <PostCard key={post.id} post={post} />
+                        <div key={post.id} className="post-card">
+                            <PostCard post={post} />
+                        </div>
                     ))}
 
                     {showNoPost && <NoPost />}
@@ -149,13 +209,7 @@ export default function Home() {
                             ref={observerTarget}
                             className="flex justify-center py-4"
                         >
-                            {loading && currentPage > 0 && <Spinner />}
-                        </div>
-                    )}
-
-                    {!hasMore && allPosts.length > 0 && (
-                        <div className="text-center py-4 text-gray-500 dark:text-gray-400 text-sm">
-                            You have reached the end
+                            <Spinner />
                         </div>
                     )}
                 </div>
